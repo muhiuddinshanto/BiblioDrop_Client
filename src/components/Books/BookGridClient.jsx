@@ -1,0 +1,150 @@
+"use client";
+
+import BookCard from "@/components/Books/BookCard";
+import Link from "next/link";
+import { useState, useMemo } from "react";
+
+export default function BookGridClient({ initialBooks }) {
+    // সার্ভার থেকে আসা ডাটাকে স্টেটের ডিফল্ট ভ্যালু বানিয়ে দিলাম
+    const [books] = useState(initialBooks);
+
+    // ফিল্টারিং ও সর্টিং এর স্টেটসমূহ
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [maxPrice, setMaxPrice] = useState(100);
+    const [sortBy, setSortBy] = useState("Popularity");
+
+    const handleCategoryChange = (category) => {
+        if (selectedCategories.includes(category)) {
+            setSelectedCategories(selectedCategories.filter((c) => c !== category));
+        } else {
+            setSelectedCategories([...selectedCategories, category]);
+        }
+    };
+
+    const handleClearFilters = () => {
+        setSelectedCategories([]);
+        setMaxPrice(100);
+        setSortBy("Popularity");
+    };
+
+    // সার্ভার থেকে পাওয়া books-এর ওপর ফিল্টারিং চলবে
+    const filteredAndSortedBooks = useMemo(() => {
+        let result = [...books];
+
+        if (selectedCategories.length > 0) {
+            result = result.filter((book) => selectedCategories.includes(book.category));
+        }
+
+        result = result.filter((book) => book.price <= maxPrice);
+
+        if (sortBy === "Price: Low to High") {
+            result.sort((a, b) => a.price - b.price);
+        } else if (sortBy === "Price: High to Low") {
+            result.sort((a, b) => b.price - a.price);
+        }
+
+        return result;
+    }, [books, selectedCategories, maxPrice, sortBy]);
+
+
+    return (
+        <section className="w-full bg-white px-6 py-16 lg:px-8">
+
+            <div className="mx-auto max-w-7xl grid grid-cols-1 gap-10 lg:grid-cols-12">
+
+                {/* === সাইডবার ফিল্টার === */}
+                <div className="hidden lg:col-span-3 lg:flex flex-col gap-8 border-r border-gray-100 pr-8">
+                    <div>
+                        <h3 className="text-lg font-black text-[#0F172A] tracking-tight">Filters</h3>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Category</span>
+                        {["Philosophy", "Architecture", "History", "Science", "Cartography", "Technology"].map((cat) => (
+                            <label key={cat} className="flex items-center gap-3 text-sm font-bold text-slate-700 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedCategories.includes(cat)}
+                                    onChange={() => handleCategoryChange(cat)}
+                                    className="h-4 w-4 rounded border-gray-300 text-[#0F172A] focus:ring-[#D4AF37]"
+                                />
+                                {cat}
+                            </label>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Price Range (Up to ${maxPrice})</span>
+                        <input
+                            type="range"
+                            min="15"
+                            max="100"
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(Number(e.target.value))}
+                            className="w-full accent-[#0F172A] cursor-pointer"
+                        />
+                        <div className="flex justify-between text-xs font-bold text-slate-500">
+                            <span>$15</span>
+                            <span>$100+</span>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleClearFilters}
+                        className="mt-4 w-full rounded-xl border border-[#D4AF37]/40 bg-transparent py-3 text-sm font-bold text-[#0F172A] hover:bg-slate-50 transition-colors"
+                    >
+                        Clear All Filters
+                    </button>
+                </div>
+
+                {/* === মেইন বুক গ্রিড === */}
+                <div className="lg:col-span-9">
+                    <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
+                        <div>
+                            <h2 className="text-2xl font-black text-[#0F172A] tracking-tight sm:text-3xl">Scholarly Collections</h2>
+                            <p className="mt-1 text-sm font-medium text-slate-500">
+                                Found {filteredAndSortedBooks.length} volumes curated for you.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-slate-400">Sort by:</span>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-[#0F172A] outline-none shadow-sm focus:border-[#D4AF37] cursor-pointer"
+                            >
+                                <option>Popularity</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    {filteredAndSortedBooks.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+                            {filteredAndSortedBooks.map((book) => {
+                                
+                                return (
+                                    // ফিক্সড: প্রত্যেকটি কার্ডকে আলাদা ডাইনামিক লিঙ্কে র‍্যাপ করা হয়েছে
+                                    <Link href={`/books/${book._id}`} key={book._id} className="block">
+                                        <BookCard book={book} />
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <p className="text-lg font-bold text-slate-700">No books match your filters.</p>
+                            <button onClick={handleClearFilters} className="mt-3 text-sm text-[#D4AF37] font-extrabold underline">Reset Filters</button>
+                        </div>
+                    )}
+
+
+                </div>
+            </div>
+
+        </section>
+    );
+}
