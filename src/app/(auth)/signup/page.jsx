@@ -49,11 +49,7 @@ export default function RegisterForm() {
         email: formData.get("email"),
         password: formData.get("password"),
         image: formData.get("photoUrl"),
-
-        // 🚀 সমাধান: 'metadata' এর বদলে 'data' অবজেক্ট ব্যবহার করা হয়েছে
-        data: {
-          role: role,
-        },
+        role: role,
       });
 
       if (error) {

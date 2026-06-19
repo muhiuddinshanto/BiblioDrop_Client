@@ -11,20 +11,51 @@ import {
   MdLocalShipping,
   MdBookmark,
   MdImportContacts,
-  MdAdd
+  MdAdd,
+  MdLayers,
+  MdDashboard
 } from 'react-icons/md';
+import { authClient } from '@/lib/auth-client';
 
 export default function Sidebar() {
   const pathname = usePathname();
 
+  const  { data: session, isPending, error } = authClient.useSession();
+  
+    const { user } = session || {};
+  
+    const role = user?.role;
+    
+
   // নেভিগেশন আইটেমগুলোর অ্যারে
-  const navItems = [
+  const userNavLink = [
     { name: 'Overview', href: '/dashboard/user/overview', icon: MdMenuBook },
     { name: 'Delivery History', href: '/dashboard/user/orders', icon: MdLocalShipping },
     { name: 'Wishlist', href: '/dashboard/user/wishlist', icon: MdBookmark },
     { name: 'My Reading List', href: '/dashboard/user/reading-list', icon: MdImportContacts },
     { name: 'My Reviews', href: '/dashboard/user/reviews', icon: MdHistoryEdu },
   ];
+  const librarianNavLink = [
+  { name: 'Overview', href: '/dashboard/librarian/overview', icon: MdDashboard },
+  { name: 'Add Book', href: '/dashboard/librarian/add-book', icon: MdMenuBook },
+  { name: 'Manage Inventory', href: '/dashboard/librarian/inventory', icon: MdLayers },
+  { name: 'Manage Deliveries', href: '/dashboard/librarian/deliveries',icon: MdLocalShipping },
+];
+  const adminNavLink = [
+    { name: 'Overview', href: '/dashboard/user/overview', icon: MdMenuBook },
+    { name: 'Delivery History', href: '/dashboard/user/orders', icon: MdLocalShipping },
+    { name: 'Wishlist', href: '/dashboard/user/wishlist', icon: MdBookmark },
+    { name: 'My Reading List', href: '/dashboard/user/reading-list', icon: MdImportContacts },
+    { name: 'My Reviews', href: '/dashboard/user/reviews', icon: MdHistoryEdu },
+  ];
+
+   const navLinkMap = {
+        user: userNavLink,
+        librarian: librarianNavLink,
+        admin: adminNavLink,
+    };
+
+    const navItems = navLinkMap[role || 'user'];
 
   return (
     <aside className="hidden lg:flex flex-col h-screen w-64 sticky top-0 py-6 bg-[#f6f3f4] border-r border-[#c5c6cc]/20">

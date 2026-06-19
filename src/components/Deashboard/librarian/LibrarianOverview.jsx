@@ -1,0 +1,176 @@
+"use client";
+
+import React from 'react';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Legend
+} from 'recharts';
+import { 
+  MdDashboard, 
+  MdMenuBook, 
+  MdAttachMoney, 
+  MdHourglassTop, 
+  MdTrendingUp,
+  MdStar
+} from 'react-icons/md';
+
+export default function LibrarianOverview({ 
+  stats = { totalBooks: 142, totalEarnings: 3450.50, pendingRequests: 12 },
+  earningTrends = [
+    { name: 'Jan', earnings: 400, requests: 24 },
+    { name: 'Feb', earnings: 800, requests: 45 },
+    { name: 'Mar', earnings: 600, requests: 30 },
+    { name: 'Apr', earnings: 1100, requests: 68 },
+    { name: 'May', earnings: 950, requests: 55 },
+    { name: 'Jun', earnings: 1400, requests: 90 },
+  ],
+  topRequestedBooks = [
+    { id: 1, title: "Echoes of Renaissance", author: "Julian Fairchild", requests: 48, image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=500", price: 45 },
+    { id: 2, title: "The Silent Alchemist", author: "Sarah Jenkins", requests: 36, image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600", price: 32 },
+    { id: 3, title: "Midnight in Kyoto", author: "Kenji Sato", requests: 29, image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600", price: 28 },
+  ]
+}) {
+  return (
+    <div className="w-full space-y-8 p-1">
+      {/* হেডার সেকশন */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
+        <div>
+          <h1 className="text-3xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2.5">
+            <MdDashboard className="text-[#775a19]" /> Librarian Dashboard
+          </h1>
+          <p className="text-[#45474c] text-sm">
+            Monitor inventory health, platform earnings, and processing cycles.
+          </p>
+        </div>
+      </div>
+
+      {/* ==================== ১. কুইক স্ট্যাটস কার্ডস ==================== */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* ক) Total Books Listed */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Total Books Listed</span>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">{stats.totalBooks}</h3>
+            <p className="text-[11px] text-emerald-600 flex items-center gap-0.5 font-medium">
+              <MdTrendingUp className="text-sm" /> Live in Inventory
+            </p>
+          </div>
+          <div className="w-12 h-12 bg-slate-50 text-[#040d1b] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#040d1b] group-hover:text-white transition-all duration-300 shadow-sm">
+            <MdMenuBook className="text-xl" />
+          </div>
+        </div>
+
+        {/* খ) Total Earnings */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Total Earnings</span>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">${stats.totalEarnings.toFixed(2)}</h3>
+            <p className="text-[11px] text-slate-400 font-medium">Platform revenue generated</p>
+          </div>
+          <div className="w-12 h-12 bg-slate-50 text-emerald-700 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm">
+            <MdAttachMoney className="text-xl" />
+          </div>
+        </div>
+
+        {/* গ) Active Pending Requests */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Active Pending Requests</span>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">{stats.pendingRequests}</h3>
+            <p className="text-[11px] text-amber-600 font-medium">Awaiting delivery approvals</p>
+          </div>
+          <div className="w-12 h-12 bg-slate-50 text-[#775a19] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm">
+            <MdHourglassTop className="text-xl" />
+          </div>
+        </div>
+      </div>
+
+      {/* ==================== ২. চার্ট এবং গ্রাফ সেকশন ==================== */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* আর্নিং চার্ট (Area Chart) */}
+        <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold font-serif text-[#040d1b]">Revenue Overview</h3>
+            <p className="text-xs text-[#45474c]">Analytical performance of monthly institutional revenue.</p>
+          </div>
+          <div className="h-72 w-full text-xs">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={earningTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#775a19" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#775a19" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="#94a3b8" />
+                <YAxis axisLine={false} tickLine={false} stroke="#94a3b8" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#040d1b', borderRadius: '12px', color: '#fff', border: 'none' }}
+                  itemStyle={{ color: '#fed488' }}
+                />
+                <Area type="monotone" dataKey="earnings" name="Earnings ($)" stroke="#775a19" strokeWidth={2} fillOpacity={1} fill="url(#colorEarnings)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* রিকোয়েস্ট ভলিউম চার্ট (Bar Chart) */}
+        <div className="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div className="mb-4">
+            <h3 className="text-lg font-bold font-serif text-[#040d1b]">Order Volume</h3>
+            <p className="text-xs text-[#45474c]">Total monthly processed deliveries.</p>
+          </div>
+          <div className="h-64 w-full text-xs">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={earningTrends} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="#94a3b8" />
+                <YAxis axisLine={false} tickLine={false} stroke="#94a3b8" />
+                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                <Bar dataKey="requests" name="Requests" fill="#040d1b" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* ==================== ৩. মোস্ট রিকোয়েস্টেড মিনি-লিস্ট ==================== */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm max-w-full">
+        <div className="mb-6">
+          <h3 className="text-lg font-bold font-serif text-[#040d1b]">Most Requested Volumes</h3>
+          <p className="text-xs text-[#45474c]">Your highly demanded catalog items prioritized by subscriber tier.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {topRequestedBooks.map((book) => (
+            <div 
+              key={book.id} 
+              className="flex items-center gap-4 p-3 border border-slate-50 rounded-xl hover:border-slate-100 hover:bg-slate-50/50 transition-all group"
+            >
+              <div className="w-12 h-16 bg-slate-100 rounded-md overflow-hidden shadow-sm flex-shrink-0 border border-slate-100">
+                <img src={book.image} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              </div>
+              <div className="min-w-0 flex-grow">
+                <h4 className="text-sm font-bold text-[#040d1b] truncate group-hover:text-[#775a19] transition-colors" title={book.title}>
+                  {book.title}
+                </h4>
+                <p className="text-[11px] text-[#45474c] truncate">by {book.author}</p>
+                
+                {/* রিকোয়েস্ট কাউন্ট ব্যাজ */}
+                <div className="flex items-center gap-1 mt-1 text-amber-600 font-medium text-[11px]">
+                  <MdStar className="text-xs text-[#775a19]" />
+                  <span>{book.requests} Requests</span>
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0 pl-2">
+                <span className="text-sm font-bold font-mono text-[#040d1b]">${book.price.toFixed(2)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

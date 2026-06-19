@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { Link, Button } from "@heroui/react";
-import { usePathname } from "next/navigation"; // 💡 কারেন্ট পাথ ট্র্যাক করার জন্য হুক
+import { usePathname } from "next/navigation";
 import { 
   FaCircleUser, 
   FaBars, 
@@ -13,39 +13,45 @@ import {
 } from "react-icons/fa6";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { authClient, useSession } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 
 const MENU_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Books", href: "/books" },
-  { label: "Dashboard", href: "/dashboard" }, // 💡 স্ট্যাটিক অ্যাকসেন্ট বাদ দেওয়া হয়েছে
   { label: "About Us", href: "/about" },
 ];
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const currentPath = usePathname(); // 💡 কারেন্ট ইউআরএল (যেমন: '/books') বের করবে
+  const currentPath = usePathname();
 
-  const  { data: session, isPending, error } = authClient.useSession();
-
+  const { data: session } = authClient.useSession();
   const { user } = session || {};
-  
+  const role = user?.role; // 'user', 'librarian', অথবা 'admin'
 
-  // const [user, setUser] = useState({
-  //   name: "Mohiuddin",
-  //   email: "shanto@example.com",
-  // });
+  // 💡 ডাইনামিক ড্যাশবোর্ড পাথ ক্যালকুলেশন লজিক
+  const getDashboardPath = () => {
+    if (role === "admin") return "/dashboard/admin";
+    if (role === "librarian") return "/dashboard/librarian";
+    return "/dashboard/user"; 
+  };
+
+  const dashboardPath = getDashboardPath();
+
+  // 💡 মেনু আইটেমগুলোর সাথে ডাইনামিক ড্যাশবোর্ড রুট পুশ করা হচ্ছে
+  const dynamicMenuItems = user 
+    ? [...MENU_ITEMS.slice(0, 2), { label: "Dashboard", href: dashboardPath }, ...MENU_ITEMS.slice(2)]
+    : MENU_ITEMS;
 
   const closeMenu = () => {
     setIsMenuOpen(false);
     setIsProfileOpen(false);
   };
 
-  const handleLogout =async () => {
+  const handleLogout = async () => {
     closeMenu();
     await authClient.signOut();
-    
   };
 
   return (
@@ -64,8 +70,8 @@ export default function Navbar() {
           <Logo />
         </div>
 
-        {/* Desktop Menu (💡 কারেন্ট পাথ পাস করা হচ্ছে) */}
-        <DesktopMenu items={MENU_ITEMS} currentPath={currentPath} />
+        {/* Desktop Menu */}
+        <DesktopMenu items={dynamicMenuItems} currentPath={currentPath} />
 
         {/* Right Section */}
         <div className="flex items-center gap-5">
@@ -75,6 +81,7 @@ export default function Navbar() {
               isOpen={isProfileOpen}
               setIsOpen={setIsProfileOpen}
               onLogout={handleLogout}
+              dashboardPath={dashboardPath} // 💡 ডাইনামিক পাথ ড্রপডাউনে পাঠানো হলো
             />
           ) : (
             <AuthLinks />
@@ -86,11 +93,12 @@ export default function Navbar() {
       <AnimatePresence>
         {isMenuOpen && (
           <MobileMenu
-            items={MENU_ITEMS}
+            items={dynamicMenuItems}
             user={user}
             currentPath={currentPath}
             onClose={closeMenu}
             onLogout={handleLogout}
+            dashboardPath={dashboardPath} // 💡 ডাইনামিক পাথ মোবাইল মেনুতে পাঠানো হলো
           />
         )}
       </AnimatePresence>
@@ -122,8 +130,10 @@ function DesktopMenu({ items, currentPath }) {
   return (
     <ul className="hidden md:flex items-center gap-10 lg:gap-12 list-none m-0 p-0">
       {items.map((item) => {
-        // 💡 চেক করা হচ্ছে ইউজার বর্তমানে এই পেজে আছে কিনা
-        const isActive = currentPath === item.href;
+        // ড্যাশবোর্ডের সাব-রাউটে থাকলেও যেন 'Dashboard' লিংকটি অ্যাক্টিভ দেখায় (যেমন: /dashboard/user/overview)
+        const isActive = item.href === "/" 
+          ? currentPath === "/" 
+          : currentPath.startsWith(item.href);
 
         return (
           <li key={item.href}>
@@ -131,13 +141,12 @@ function DesktopMenu({ items, currentPath }) {
               href={item.href}
               className={`relative text-[15.5px] font-bold tracking-wide transition-all duration-300 no-underline ${
                 isActive
-                  ? "text-[#D4AF37]" // একটিভ থাকলে গোল্ডেন কালার
+                  ? "text-[#D4AF37]" 
                   : "text-[#334155] hover:text-[#0F172A]"
               }`}
             >
               {item.label}
               
-              {/* 💡 একটিভ পেজের নিচে ফ্রেমার মোশনের স্মুথ আন্ডারলাইন ম্যাজিক */}
               {isActive && (
                 <motion.span
                   layoutId="underline"
@@ -153,7 +162,7 @@ function DesktopMenu({ items, currentPath }) {
   );
 }
 
-function UserDropdown({ user, isOpen, setIsOpen, onLogout }) {
+function UserDropdown({ user, isOpen, setIsOpen, onLogout, dashboardPath }) {
   return (
     <div className="relative">
       <button
@@ -163,7 +172,7 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout }) {
         <FaCircleUser className="text-2xl text-[#D4AF37]" />
         <div className="hidden sm:block text-left pr-2">
           <p className="text-sm font-bold text-[#0F172A]">{user.name}</p>
-          <p className="text-xs text-[#334155] -mt-0.5">{user.email}</p>
+          <p className="text-xs text-[#334155] -mt-0.5 capitalize">{user.role || "user"}</p>
         </div>
         <FaChevronDown className={`text-xs text-[#334155] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
@@ -185,9 +194,10 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout }) {
               </div>
             </div>
             <div className="p-1.5 flex flex-col gap-0.5">
-             {/* 📊 Dashboard Link */}
+              {/* 📊 💡 এখানে ডাইনামিক ড্যাশবোর্ড পাথ ব্যবহার করা হয়েছে */}
               <Link
-                href="/dashboard/user"
+                href={dashboardPath}
+                onClick={() => setIsOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold text-[#334155] hover:text-[#0F172A] hover:bg-slate-50 transition-colors no-underline"
               >
                 <FaGaugeHigh className="text-lg text-[#D4AF37]" />
@@ -220,8 +230,7 @@ function AuthLinks() {
       <Link
         href="/signup"
         style={{ backgroundColor: "#0F172A" }}
-        className="text-white font-bold px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-md"
-        size="sm"
+        className="text-white font-bold px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-md no-underline"
       >
         Sign Up
       </Link>
@@ -229,7 +238,7 @@ function AuthLinks() {
   );
 }
 
-function MobileMenu({ items, user, currentPath, onClose, onLogout }) {
+function MobileMenu({ items, user, currentPath, onClose, onLogout, dashboardPath }) {
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
@@ -240,7 +249,9 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout }) {
     >
       <div className="px-6 py-8 flex flex-col gap-2">
         {items.map((item, index) => {
-          const isActive = currentPath === item.href;
+          const isActive = item.href === "/" 
+            ? currentPath === "/" 
+            : currentPath.startsWith(item.href);
 
           return (
             <motion.div
@@ -254,7 +265,7 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout }) {
                 onClick={onClose}
                 className={`block px-5 py-4 rounded-2xl text-[16px] font-bold transition-all no-underline ${
                   isActive
-                    ? "bg-[#D4AF37]/10 text-[#D4AF37]" // মোবাইল মেনুতে অ্যাক্টিভ ব্যাকগ্রাউন্ড হাইলাইট
+                    ? "bg-[#D4AF37]/10 text-[#D4AF37]" 
                     : "text-[#0F172A] hover:bg-slate-50"
                 }`}
               >
@@ -274,9 +285,20 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout }) {
                   <p className="text-sm text-[#334155]">{user.email}</p>
                 </div>
               </div>
+              
+              {/* 💡 মোবাইল ইউজারের সুবিধার জন্য ড্রপডাউন ছাড়াও সরাসরি একটি ড্যাশবোর্ড শর্টকাট বাটন */}
+              <Button
+                as={Link}
+                href={dashboardPath}
+                onClick={onClose}
+                className="w-full bg-[#0F172A] hover:bg-slate-800 text-white py-3.5 rounded-xl font-bold mb-3 block text-center no-underline"
+              >
+                Go To Dashboard
+              </Button>
+
               <Button
                 onClick={onLogout}
-                className="w-full bg-red-600 hover:bg-red-700 text-white py-3.5 rounded-xl font-bold"
+                className="w-full bg-red-50 text-red-600 hover:bg-red-100 py-3.5 rounded-xl font-bold"
               >
                 Logout
               </Button>
@@ -290,15 +312,14 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout }) {
               >
                 Login
               </Link>
-              <Button
-                as={Link}
-                href="/register"
+              <Link
+                href="/signup"
                 onClick={onClose}
                 style={{ backgroundColor: "#0F172A" }}
-                className="w-full py-4 text-white font-bold rounded-xl text-base"
+                className="w-full py-4 text-white font-bold rounded-xl text-base text-center no-underline"
               >
                 Sign Up
-              </Button>
+              </Link>
             </div>
           )}
         </div>
