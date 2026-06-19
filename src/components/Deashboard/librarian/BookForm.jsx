@@ -3,18 +3,32 @@
 import React, { useState } from "react";
 import { MdMenuBook, MdCloudUpload, MdHourglassEmpty, MdAttachMoney } from "react-icons/md";
 
-// ক্যাটাগরি লিস্ট (আপনার প্রয়োজন অনুযায়ী পরিবর্তন করতে পারেন)
+// ক্যাটাগরি লিস্ট
 const CATEGORIES = [
-  "Fiction", "Non-Fiction", "Mystery", "Sci-Fi", 
-  "Biography", "History", "Poetry", "Academic"
+  "Philosophy",
+  "Architecture",
+  "History",
+  "Science",
+  "Cartography",
+  "Technology",
+  "Non-Fiction",
 ];
 
 export default function BookForm({ onSubmit, initialData = null, isSubmitting = false }) {
+  // ডিফল্ট ব্ল্যাঙ্ক স্টেটের অবজেক্ট
+  const defaultFields = {
+    title: "",
+    author: "",
+    description: "",
+    price: "",
+    category: "",
+  };
+
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     author: initialData?.author || "",
     description: initialData?.description || "",
-    deliveryFee: initialData?.deliveryFee || "",
+    price: initialData?.price || "", 
     category: initialData?.category || "",
   });
 
@@ -33,13 +47,12 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setImagePreview(URL.createObjectURL(file)); // লোকাল প্রিভিউ জেনারেট করা
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
   // imgBB-তে ইমেজ আপলোড করার মেইন লজিক
   const uploadToImgBB = async (file) => {
-    // 💡 আপনার .env.local ফাইলে NEXT_PUBLIC_IMGBB_API_KEY নামে কি-টি রাখবেন
     const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
     if (!apiKey) {
       console.error("imgBB API Key is missing!");
@@ -57,7 +70,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
       });
       const data = await res.json();
       if (data.success) {
-        return data.data.url; // আপলোড হওয়া ডাইরেক্ট ইমেজ ইউআরএল
+        return data.data.url;
       }
       return null;
     } catch (error) {
@@ -69,11 +82,11 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
   // ফর্ম সাবমিট হ্যান্ডলার
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formTarget = e.target; // ফর্ম এলিমেন্ট রেফারেন্স রাখা হলো রিসেট করার জন্য
     setUploadingImage(true);
 
-    let finalImageUrl = imagePreview; // এডিট মোডের জন্য আগের ইউআরএল ধরে রাখা
+    let finalImageUrl = imagePreview;
 
-    // নতুন ইমেজ সিলেক্ট করা থাকলে সেটা আপলোড হবে
     if (imageFile) {
       const uploadedUrl = await uploadToImgBB(imageFile);
       if (uploadedUrl) {
@@ -93,13 +106,25 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
 
     setUploadingImage(false);
 
-    // মেইন সাবমিট ফাংশনে ডাটা পাঠানো ( strictly 'Pending Approval' স্ট্যাটাসসহ)
-    onSubmit({
-      ...formData,
-      deliveryFee: Number(formData.deliveryFee),
-      image: finalImageUrl,
-      status: "Pending Approval", // কন্ডিশন অনুযায়ী ইনিশিয়াল স্ট্যাটাস ফিক্সড
-    });
+    try {
+      // মেইন সাবমিট ফাংশনে ডাটা পাঠানো এবং এর রেসপন্সের জন্য অপেক্ষা করা
+      await onSubmit({
+        ...formData,
+        price: Number(formData.price), 
+        image: finalImageUrl,
+        status: "Pending Approval", 
+      });
+
+      // 💡 সফলভাবে সাবমিট হওয়ার পর যদি এটি নতুন এন্ট্রি হয় (initialData না থাকে), তবে ফিল্ড ক্লিয়ার হবে
+      if (!initialData) {
+        setFormData(defaultFields); // টেক্সট ফিল্ড স্টেট রিসেট
+        setImageFile(null); // ফাইল স্টেট রিসেট
+        setImagePreview(null); // ইমেজ প্রিভিউ বক্স রিসেট
+        formTarget.reset(); // HTML ডম ইনপুট রিসেট (ফাইল সিলেক্টরের ভেতরের ভ্যালু ক্লিনের জন্য)
+      }
+    } catch (error) {
+      console.error("Submission handler error:", error);
+    }
   };
 
   return (
@@ -134,7 +159,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
       </div>
 
-      {/* দুই কলামের গ্রিড (Category & Delivery Fee) */}
+      {/* dua কলামের গ্রিড (Category & Price) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
           <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Category</label>
@@ -153,18 +178,18 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Delivery Fee ($)</label>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Book Price ($)</label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
               <MdAttachMoney />
             </span>
             <input
               type="number"
-              name="deliveryFee"
+              name="price"
               required
               min="0"
               step="0.01"
-              value={formData.deliveryFee}
+              value={formData.price}
               onChange={handleChange}
               placeholder="0.00"
               className="w-full pl-9 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] transition-colors"
@@ -204,7 +229,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
             )}
           </div>
 
-          {/* ফাইল আপলোডার এরিয়া */}
+          {/* ফাইল আপলোডার এরিয়া */}
           <div className="sm:col-span-9 relative w-full">
             <input
               type="file"
@@ -225,7 +250,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
       </div>
 
-      {/* ইনফো নোট: Strictly Pending Approval মেসেজ */}
+      {/* ইনফো নোট */}
       <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-4 flex items-start gap-3">
         <MdHourglassEmpty className="text-lg text-[#775a19] mt-0.5 flex-shrink-0" />
         <p className="text-xs text-[#775a19] font-medium leading-relaxed">

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useMemo } from "react";
 
 export default function BookGridClient({ initialBooks }) {
-    // সার্ভার থেকে আসা ডাটাকে স্টেটের ডিফল্ট ভ্যালু বানিয়ে দিলাম
+    // সার্ভার থেকে আসা ডাটাকে স্টেটের ডিফল্ট ভ্যালু বানিয়ে দিলাম
     const [books] = useState(initialBooks);
 
     // ফিল্টারিং ও সর্টিং এর স্টেটসমূহ
@@ -27,16 +27,28 @@ export default function BookGridClient({ initialBooks }) {
         setSortBy("Popularity");
     };
 
-    // সার্ভার থেকে পাওয়া books-এর ওপর ফিল্টারিং চলবে
+    // 💡 ফিল্টারিং লজিক - যেখানে শুধুমাত্র Published বইগুলো ফিল্টার করা হবে
     const filteredAndSortedBooks = useMemo(() => {
-        let result = [...books];
+        // ১. প্রথম লেয়ারেই শুধুমাত্র "published" স্ট্যাটাসের বইগুলোকে আলাদা করা হলো
+        let result = books.filter((book) => {
+  // status object নাকি string সেটা চেক করা হচ্ছে
+  const status =
+    typeof book?.status === "object"
+      ? book?.status?.status
+      : book?.status;
 
+  return status?.toLowerCase() === "published";
+});
+
+        // ২. ক্যাটাগরি ফিল্টার
         if (selectedCategories.length > 0) {
             result = result.filter((book) => selectedCategories.includes(book.category));
         }
 
+        // ৩. প্রাইস রেঞ্জ ফিল্টার
         result = result.filter((book) => book.price <= maxPrice);
 
+        // ৪. সর্টিং কন্ডিশন
         if (sortBy === "Price: Low to High") {
             result.sort((a, b) => a.price - b.price);
         } else if (sortBy === "Price: High to Low") {
@@ -60,7 +72,7 @@ export default function BookGridClient({ initialBooks }) {
 
                     <div className="flex flex-col gap-3">
                         <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Category</span>
-                        {["Philosophy", "Architecture", "History", "Science", "Cartography", "Technology"].map((cat) => (
+                        {["Philosophy", "Architecture", "History", "Science", "Cartography", "Technology", "Non-Fiction"].map((cat) => (
                             <label key={cat} className="flex items-center gap-3 text-sm font-bold text-slate-700 cursor-pointer">
                                 <input
                                     type="checkbox"
@@ -121,14 +133,12 @@ export default function BookGridClient({ initialBooks }) {
                         </div>
                     </div>
 
-
                     {filteredAndSortedBooks.length > 0 ? (
                         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
                             {filteredAndSortedBooks.map((book) => {
-                                
+                                const bookId = book._id?.$oid || book._id;
                                 return (
-                                    // ফিক্সড: প্রত্যেকটি কার্ডকে আলাদা ডাইনামিক লিঙ্কে র‍্যাপ করা হয়েছে
-                                    <Link href={`/books/${book._id}`} key={book._id} className="block">
+                                    <Link href={`/books/${bookId}`} key={bookId} className="block">
                                         <BookCard book={book} />
                                     </Link>
                                 );
@@ -136,11 +146,10 @@ export default function BookGridClient({ initialBooks }) {
                         </div>
                     ) : (
                         <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                            <p className="text-lg font-bold text-slate-700">No books match your filters.</p>
+                            <p className="text-lg font-bold text-slate-700">No books available at the moment.</p>
                             <button onClick={handleClearFilters} className="mt-3 text-sm text-[#D4AF37] font-extrabold underline">Reset Filters</button>
                         </div>
                     )}
-
 
                 </div>
             </div>

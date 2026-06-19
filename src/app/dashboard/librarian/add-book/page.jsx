@@ -2,6 +2,7 @@
 
 import BookForm from "@/components/Deashboard/librarian/BookForm";
 import { createBooks } from "@/lib/actions/books";
+import { authClient } from "@/lib/auth-client";
 import React, { useState } from "react";
 
 import { MdBookmarkAdd } from "react-icons/md";
@@ -9,13 +10,22 @@ import { MdBookmarkAdd } from "react-icons/md";
 export default function AddBookPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+   const { data: session } = authClient.useSession();
+    const { user } = session || {};
+
   // এই ফাংশনটি চাইল্ড ফর্ম থেকে সম্পূর্ণ রেডি ডাটা (imgBB লিঙ্কসহ) রিসিভ করবে
   const handleBookSubmit = async (bookData) => {
     setIsSubmitting(true);
 
-   
+   const finalBookData = {
+      ...bookData,
+      userId: user?.id,
+    };
     
-    console.log("Verified Final Book Data:", bookData);
+    console.log("Verified Final Book Data:", finalBookData);
+
+    
+
     /* 
        💡 bookData-এর ভেতর এখন যা যা আছে:
        {
@@ -30,7 +40,7 @@ export default function AddBookPage() {
     */
 
     try {
-       const newBooks = createBooks(bookData);
+       const newBooks = createBooks(finalBookData);
        if(newBooks.insertedId){
         alert("Book submitted successfully! Status set to 'Pending Approval'.");
        }

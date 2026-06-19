@@ -1,34 +1,23 @@
 "use client";
 
 import React from 'react';
-import { 
+import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend
 } from 'recharts';
-import { 
-  MdDashboard, 
-  MdMenuBook, 
-  MdAttachMoney, 
-  MdHourglassTop, 
+import {
+  MdDashboard,
+  MdMenuBook,
+  MdAttachMoney,
+  MdHourglassTop,
   MdTrendingUp,
   MdStar
 } from 'react-icons/md';
 
-export default function LibrarianOverview({ 
-  stats = { totalBooks: 142, totalEarnings: 3450.50, pendingRequests: 12 },
-  earningTrends = [
-    { name: 'Jan', earnings: 400, requests: 24 },
-    { name: 'Feb', earnings: 800, requests: 45 },
-    { name: 'Mar', earnings: 600, requests: 30 },
-    { name: 'Apr', earnings: 1100, requests: 68 },
-    { name: 'May', earnings: 950, requests: 55 },
-    { name: 'Jun', earnings: 1400, requests: 90 },
-  ],
-  topRequestedBooks = [
-    { id: 1, title: "Echoes of Renaissance", author: "Julian Fairchild", requests: 48, image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=500", price: 45 },
-    { id: 2, title: "The Silent Alchemist", author: "Sarah Jenkins", requests: 36, image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600", price: 32 },
-    { id: 3, title: "Midnight in Kyoto", author: "Kenji Sato", requests: 29, image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600", price: 28 },
-  ]
+export default function LibrarianOverview({
+  stats ,
+  earningTrends,
+  topRequestedBooks,
 }) {
   return (
     <div className="w-full space-y-8 p-1">
@@ -87,26 +76,28 @@ export default function LibrarianOverview({
 
       {/* ==================== ২. চার্ট এবং গ্রাফ সেকশন ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         {/* আর্নিং চার্ট (Area Chart) */}
         <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="mb-6">
             <h3 className="text-lg font-bold font-serif text-[#040d1b]">Revenue Overview</h3>
             <p className="text-xs text-[#45474c]">Analytical performance of monthly institutional revenue.</p>
           </div>
-          <div className="h-72 w-full text-xs">
+
+          {/* 💡 এখানে h-72 এর সাথে relative এবং min-w-0 যোগ করা হয়েছে */}
+          <div className="h-72 w-full relative min-w-0 text-xs">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={earningTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#775a19" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#775a19" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#775a19" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#775a19" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="#94a3b8" />
                 <YAxis axisLine={false} tickLine={false} stroke="#94a3b8" />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#040d1b', borderRadius: '12px', color: '#fff', border: 'none' }}
                   itemStyle={{ color: '#fed488' }}
                 />
@@ -145,8 +136,8 @@ export default function LibrarianOverview({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {topRequestedBooks.map((book) => (
-            <div 
-              key={book.id} 
+            <div
+              key={book.id}
               className="flex items-center gap-4 p-3 border border-slate-50 rounded-xl hover:border-slate-100 hover:bg-slate-50/50 transition-all group"
             >
               <div className="w-12 h-16 bg-slate-100 rounded-md overflow-hidden shadow-sm flex-shrink-0 border border-slate-100">
@@ -157,7 +148,7 @@ export default function LibrarianOverview({
                   {book.title}
                 </h4>
                 <p className="text-[11px] text-[#45474c] truncate">by {book.author}</p>
-                
+
                 {/* রিকোয়েস্ট কাউন্ট ব্যাজ */}
                 <div className="flex items-center gap-1 mt-1 text-amber-600 font-medium text-[11px]">
                   <MdStar className="text-xs text-[#775a19]" />

@@ -3,17 +3,17 @@
 import React from "react";
 import { Button, Modal } from "@heroui/react";
 import { MdEdit } from "react-icons/md";
-import BookForm from "./BookForm"; // আপনার আগের তৈরি করা রিইউজেবল ফর্ম
+import BookForm from "./BookForm";
 
 export default function EditBookModal({ isOpen, onOpenChange, bookData, onUpdate, isUpdating }) {
-  
+
   const handleFormSubmit = (updatedFields) => {
-    // 💡 এখানে সেফটি চেক অ্যাড করা হয়েছে যেন bookData null হলে ক্র্যাশ না করে
     if (!bookData) return;
 
+    // শুধু onUpdate call করো — InventoryClientContainer বাকি সব সামলাবে
     onUpdate({
       ...updatedFields,
-      _id: bookData?._id, // 💡 অপশনাল চেইনিং করা হলো নিরাপত্তা নিশ্চিত করতে
+      _id: bookData._id,
     });
   };
 
@@ -23,7 +23,7 @@ export default function EditBookModal({ isOpen, onOpenChange, bookData, onUpdate
         <Modal.Container placement="auto">
           <Modal.Dialog className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-100 bg-white">
             <Modal.CloseTrigger />
-            
+
             <Modal.Header className="pt-6 px-6 md:px-8 border-b border-slate-50 pb-4">
               <Modal.Icon className="bg-amber-50 text-[#775a19] rounded-xl p-2.5">
                 <MdEdit className="size-5" />
@@ -37,12 +37,11 @@ export default function EditBookModal({ isOpen, onOpenChange, bookData, onUpdate
             </Modal.Header>
 
             <Modal.Body className="p-6 md:p-8">
-              {/* 💡 ডাটা থাকলেই কেবল ফর্ম দেখাবে, null থাকলে দেখাবে না */}
               {bookData ? (
-                <BookForm 
-                  initialData={bookData} 
-                  onSubmit={handleFormSubmit} 
-                  isSubmitting={isUpdating} 
+                <BookForm
+                  initialData={bookData}
+                  onSubmit={handleFormSubmit}
+                  isSubmitting={isUpdating}
                 />
               ) : (
                 <div className="py-8 text-center text-sm text-slate-400 font-medium">
@@ -52,15 +51,14 @@ export default function EditBookModal({ isOpen, onOpenChange, bookData, onUpdate
             </Modal.Body>
 
             <Modal.Footer className="border-t border-slate-50 bg-slate-50/50 px-6 py-4 flex justify-end gap-3">
-              <Button 
-                onClick={() => onOpenChange(false)} 
+              <Button
+                onClick={() => onOpenChange(false)}
                 variant="secondary"
                 className="font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl border border-slate-200"
               >
                 Close Editor
               </Button>
             </Modal.Footer>
-
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>

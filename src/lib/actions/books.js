@@ -1,8 +1,23 @@
-'use server';
 
+
+
+
+'use server';
 import { serverMuatation } from "../core/server";
 
-
-export const createBooks = async(orderBooks)=>{
+export const createBooks = async (orderBooks) => {
     return serverMuatation('/api/books', orderBooks);
-}
+};
+
+// স্ট্যাটাস টগলের জন্য (Published / Unpublished)
+export const booksUpdate = async (bookId, status) => {
+    const payload = { status };
+    console.log("Sending status payload:", payload);
+    return serverMuatation(`/api/books/${bookId}`, payload, "PATCH");
+};
+
+// বইয়ের details এডিটের জন্য (title, author, price ইত্যাদি)
+export const bookDetailsUpdate = async (bookId, fields) => {
+    console.log("Sending details payload:", fields);
+    return serverMuatation(`/api/books/${bookId}`, fields, "PATCH");
+};

@@ -1,110 +1,160 @@
-"use client";
+import { MdInventory, MdMenuBook, MdAdd } from "react-icons/md";
+import InventoryClientContainer from "@/components/Deashboard/librarian/InventoryClientContainer";
+import { getUserSession } from "@/lib/core/session";
+import { getBooksByUserId } from "@/lib/api/books";
+import Link from "next/link";
 
-import EditBookModal from "@/components/Deashboard/librarian/EditBookModal";
-import InventoryTable from "@/components/Deashboard/librarian/InventoryTable";
-import React, { useState } from "react";
+export default async function ManageInventoryPage() {
+  const user = await getUserSession();
+  console.log("🚀 Logged In User:", user);
 
+  let fetchedBooks = null;
 
-import { MdInventory } from "react-icons/md";
-
-const DUMMY_INVENTORY = [
-  {
-    _id: "6a3522bbbd84aadb80dc33b0",
-    title: "Echoes of Renaissance",
-    author: "Julian Fairchild",
-    category: "History",
-    deliveryFee: 4.50,
-    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=500",
-    status: "Pending Approval",
-    description: "An archival take on cultural shifts."
-  },
-  {
-    _id: "6a3522bbbd84aadb80dc33b1",
-    title: "The Silent Alchemist",
-    author: "Sarah Jenkins",
-    category: "Fiction",
-    deliveryFee: 5.00,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600",
-    status: "Published",
-    description: "A thrilling tale of chemistry and magic."
+  if (user?.id) {
+    fetchedBooks = await getBooksByUserId(user.id);
   }
-];
 
-export default function ManageInventoryPage() {
-  const [books, setBooks] = useState(DUMMY_INVENTORY);
-  const [isUpdating, setIsUpdating] = useState(false);
-  
-  // 💡 HeroUI এর হুক বাদ দিয়ে রিয়েক্টের স্ট্রেটফরোয়ার্ড স্টেট ব্যবহার করা হলো
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState(null);
+  console.log("🚀 Database Response (Raw):", fetchedBooks);
 
-  // ১. টেবিলে এডিট বাটনে চাপ দিলে এই ফাংশন ফায়ার হবে
-  const handleEditClick = (book) => {
-    setSelectedBook(book); 
-    setIsModalOpen(true); // মডাল ওপেন হবে
-  };
+  // ==================== 🛡️ বুলেটপ্রুফ স্যানিটাইজেশন গার্ড ====================
+  let sanitizedBooks = [];
 
-  // ২. মডাল ফর্ম থেকে এডিটেড ডাটা রিসিভ ও ব্যাকএন্ডে পাঠানোর ফাংশন
-  const handleBookUpdate = async (updatedBookData) => {
-    setIsUpdating(true);
-    console.log("Pushing Updated Book to Server Actions:", updatedBookData);
+  if (fetchedBooks) {
+    if (Array.isArray(fetchedBooks)) {
+      // ১. ডাটা সরাসরি অ্যারে হলে
+      sanitizedBooks = fetchedBooks.map((book) => ({
+        ...book,
 
-    setBooks((prevBooks) =>
-      prevBooks.map((book) =>
-        book._id === updatedBookData._id ? { ...book, ...updatedBookData } : book
-      )
-    );
+        // status যদি object হয়ে corrupt থাকে, ভেতর থেকে status বের করো
+        status:
+          typeof book.status === "object"
+            ? (book.status?.status ?? "Pending Approval")
+            : (book.status ?? "Pending Approval"),
+      }));
+    } else if (typeof fetchedBooks === "object") {
+      // ২. ডাটা যদি কোনো object wrapper এর ভেতরে আসে
 
-    try {
-      // 🚀 আপনার সার্ভার অ্যাকশন কল করুন:
-      // await updateBookAction(updatedBookData);
-      
-      setIsModalOpen(false); // কাজ সফল হলে মডাল ক্লোজ
-      alert("Archival data synced and updated successfully!");
-    } catch (error) {
-      console.error("Update failed:", error);
-    } finally {
-      setIsUpdating(false);
+      if (fetchedBooks.books && Array.isArray(fetchedBooks.books)) {
+        sanitizedBooks = fetchedBooks.books.map((book) => ({
+          ...book,
+          status:
+            typeof book.status === "object"
+              ? (book.status?.status ?? "Pending Approval")
+              : (book.status ?? "Pending Approval"),
+        }));
+      } else if (fetchedBooks.data && Array.isArray(fetchedBooks.data)) {
+        sanitizedBooks = fetchedBooks.data.map((book) => ({
+          ...book,
+          status:
+            typeof book.status === "object"
+              ? (book.status?.status ?? "Pending Approval")
+              : (book.status ?? "Pending Approval"),
+        }));
+      } else if (
+        fetchedBooks.result &&
+        Array.isArray(fetchedBooks.result)
+      ) {
+        // Express থেকে { success: true, result: [...] } আসতে পারে
+        sanitizedBooks = fetchedBooks.result.map((book) => ({
+          ...book,
+          status:
+            typeof book.status === "object"
+              ? (book.status?.status ?? "Pending Approval")
+              : (book.status ?? "Pending Approval"),
+        }));
+      } else if (fetchedBooks.title) {
+        // ৩. যদি সরাসরি একটি single book object আসে
+        sanitizedBooks = [
+          {
+            ...fetchedBooks,
+            status:
+              typeof fetchedBooks.status === "object"
+                ? (fetchedBooks.status?.status ?? "Pending Approval")
+                : (fetchedBooks.status ?? "Pending Approval"),
+          },
+        ];
+      } else if (
+        fetchedBooks.data &&
+        typeof fetchedBooks.data === "object" &&
+        fetchedBooks.data.title
+      ) {
+        // ৪. যদি data এর ভিতরে single book object থাকে
+        sanitizedBooks = [
+          {
+            ...fetchedBooks.data,
+            status:
+              typeof fetchedBooks.data.status === "object"
+                ? (fetchedBooks.data.status?.status ?? "Pending Approval")
+                : (fetchedBooks.data.status ?? "Pending Approval"),
+          },
+        ];
+      }
     }
-  };
+  }
 
-  const handleStatusToggle = (id, nextStatus) => {
-    setBooks((prev) => prev.map((b) => b._id === id ? { ...b, status: nextStatus } : b));
-  };
+  console.log("📊 Cleaned Sanitized Books Array:", sanitizedBooks);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Delete book?")) {
-      setBooks((prev) => prev.filter((b) => b._id !== id));
-    }
-  };
+  // ডাটা ভ্যালিডেশন চেক
+  const hasBooks =
+    Array.isArray(sanitizedBooks) && sanitizedBooks.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-      
-      <div className="border-b border-slate-100 pb-4">
-        <h1 className="text-2xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2">
-          <MdInventory className="text-[#775a19]" /> Manage Book Inventory
-        </h1>
+      {/* হেডার সেকশন */}
+      <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2">
+            <MdInventory className="text-[#775a19]" />
+            Manage Book Inventory
+          </h1>
+
+          <p className="text-xs text-slate-400 mt-0.5">
+            Logged in as:{" "}
+            <span className="font-semibold text-[#040d1b]">
+              {user?.email || "Archivist"}
+            </span>
+          </p>
+        </div>
+
+        {hasBooks && (
+          <Link
+            href="/dashboard/librarian/add-book"
+            className="inline-flex items-center gap-1.5 bg-[#040d1b] hover:bg-slate-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-sm self-start sm:self-auto"
+          >
+            <MdAdd className="text-sm" />
+            Add New Book
+          </Link>
+        )}
       </div>
 
-      {/* ইনভেন্টরি টেবিল */}
-      <InventoryTable 
-        books={books}
-        onEdit={handleEditClick} 
-        onDelete={handleDelete}
-        onStatusToggle={handleStatusToggle}
-        isUpdating={isUpdating}
-      />
+      {/* Conditional Rendering */}
+      {hasBooks ? (
+        <InventoryClientContainer initialBooks={sanitizedBooks} />
+      ) : (
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-dashed border-slate-200">
+            <MdMenuBook className="text-4xl text-slate-300" />
+          </div>
 
-      {/* 💡 ডাইনামিক এডিট মডাল */}
-      <EditBookModal 
-        isOpen={isModalOpen}
-        onOpenChange={setIsModalOpen} // রিয়েক্টের নরমাল সেট-স্টেট ফাংশন পাস করে দেওয়া হলো
-        bookData={selectedBook}
-        onUpdate={handleBookUpdate}
-        isUpdating={isUpdating}
-      />
+          <h3 className="text-lg font-bold text-[#040d1b] mb-1.5">
+            Your Inventory is Empty
+          </h3>
 
+          <p className="text-sm text-[#45474c] max-w-sm leading-relaxed mb-6">
+            It looks like you haven't cataloged any volumes yet. Start
+            building your repository by adding your first institutional
+            book.
+          </p>
+
+          <Link
+            href="/dashboard/librarian/add-book"
+            className="inline-flex items-center gap-2 bg-[#040d1b] hover:bg-slate-900 text-white font-semibold text-sm px-5 py-3 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+          >
+            <MdAdd className="text-lg" />
+            Add Your First Book
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

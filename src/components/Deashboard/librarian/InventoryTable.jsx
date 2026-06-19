@@ -4,7 +4,7 @@ import React from "react";
 import { MdEdit, MdDeleteOutline, MdOutlineToggleOn, MdOutlineToggleOff, MdHourglassEmpty, MdCheckCircle, MdDoNotDisturbOn } from "react-icons/md";
 
 export default function InventoryTable({ books = [], onEdit, onDelete, onStatusToggle, isUpdating = false }) {
-  
+
   // স্ট্যাটাসের ওপর বেস করে ব্যাজ ডিজাইন জেনারেটর
   const getStatusBadge = (status) => {
     switch (status) {
@@ -35,7 +35,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
     <div className="w-full bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px] text-left border-collapse">
-          
+
           {/* টেবিল হেডার */}
           <thead>
             <tr className="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-[#45474c]">
@@ -64,7 +64,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
 
                 return (
                   <tr key={bookId} className="hover:bg-slate-50/40 transition-colors">
-                    
+
                     {/* বইয়ের বিবরণ এবং ইমেজ */}
                     <td className="py-4 px-6 flex items-center gap-4">
                       <div className="w-10 h-14 bg-slate-100 rounded-md overflow-hidden border border-slate-100 flex-shrink-0 shadow-sm">
@@ -82,7 +82,9 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
                     <td className="py-4 px-6 font-medium text-slate-600">{book.category}</td>
 
                     {/* ডেলিভারি ফি */}
-                    <td className="py-4 px-6 font-mono font-bold text-[#775a19]">${book.deliveryFee.toFixed(2)}</td>
+                    <td className="py-4 px-6 font-mono font-bold text-[#775a19]">
+                      ${(typeof book.price === 'number' ? book.price : parseFloat(book.price || 0)).toFixed(2)}
+                    </td>
 
                     {/* কারেন্ট স্ট্যাটাস ব্যাজ */}
                     <td className="py-4 px-6">{getStatusBadge(book.status)}</td>
@@ -92,13 +94,12 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
                       <button
                         disabled={isPending || isUpdating}
                         onClick={() => onStatusToggle?.(bookId, isPublished ? "Unpublished" : "Published")}
-                        className={`inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border transition-all ${
-                          isPending
+                        className={`inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border transition-all ${isPending
                             ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed"
                             : isPublished
-                            ? "bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-100"
-                            : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-100"
-                        }`}
+                              ? "bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-100"
+                              : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-100"
+                          }`}
                         title={isPending ? "Cannot publish until approved by admin" : `Click to make ${isPublished ? 'Unpublished' : 'Published'}`}
                       >
                         {isPublished ? (
@@ -124,7 +125,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
                         >
                           <MdEdit className="text-lg" />
                         </button>
-                        
+
                         {/* ডিলিট বাটন */}
                         <button
                           onClick={() => onDelete?.(bookId)}

@@ -27,7 +27,7 @@ export default function BookDetailsContent({ book, reviewsData = [], isLoadingRe
   //  console.log(session?.user?.id, 'login user');
 
   // মঙ্গোডিবির অবজেক্ট থেকে ডেস্ট্রাকচারিং
-  const { _id, title, author, category, price, image, rating, reviews, badge } = book;
+  const { _id, title, author, category, price, image, rating, reviews, badge,userId } = book;
   const fallbackImage = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600";
 
 
@@ -41,7 +41,10 @@ export default function BookDetailsContent({ book, reviewsData = [], isLoadingRe
     image,
     userId: session?.user?.id,
     status: "pending",
+    authorId: userId
   };
+
+
 
   if(deliveryData && deliveryData.userId) {
     alert("অর্ডার করা হয়েছে");
