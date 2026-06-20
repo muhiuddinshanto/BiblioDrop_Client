@@ -21,3 +21,16 @@ export const bookDetailsUpdate = async (bookId, fields) => {
     console.log("Sending details payload:", fields);
     return serverMuatation(`/api/books/${bookId}`, fields, "PATCH");
 };
+
+
+
+export const bookApprove = async (bookId, fields) => {
+    console.log("Sending details payload:", fields);
+    return serverMuatation(`/api/books/approve/${bookId}`, fields, "PATCH");
+};
+
+
+export const bookDelete = async (bookId, fields) => {
+    console.log("Sending details payload:", fields);
+    return serverMuatation(`/api/books/${bookId}`, fields, "DELETE");
+};

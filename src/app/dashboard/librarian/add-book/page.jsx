@@ -12,6 +12,7 @@ export default function AddBookPage() {
 
    const { data: session } = authClient.useSession();
     const { user } = session || {};
+    console.log("User Data:", user);
 
   // এই ফাংশনটি চাইল্ড ফর্ম থেকে সম্পূর্ণ রেডি ডাটা (imgBB লিঙ্কসহ) রিসিভ করবে
   const handleBookSubmit = async (bookData) => {

@@ -14,4 +14,7 @@ export const getBooksByUserId = async (userId) => {
 };
 
 
+export const getBooksByStatus = async () => {
+    return serverFetch(`/api/books?status=Pending Approval`);
+};
 
