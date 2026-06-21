@@ -42,7 +42,7 @@ export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
 
     } catch (error) {
       console.error("Failed to sync delivery status with server:", error);
-      alert("Could not update shipment status. Please try again.");
+      toast.error("Could not update shipment status. Please try again.");
       
       // 🔄 এপিআই এরর খাইলো, তাই UI-তে আগের ডাটা ফিরিয়ে আনা (Rollback)
       setDeliveries(previousDeliveries);

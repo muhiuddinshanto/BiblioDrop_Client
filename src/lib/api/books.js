@@ -1,20 +1,20 @@
-import { serverFetch } from "../core/server";
+import { protectedFetch, serverFetch } from "../core/server";
 
-export const getBooks = async () => {
-    return serverFetch('/api/books');
+export const getBooks = async (params) => {
+    return serverFetch(`/api/books?${params}`);
 };
 
 
 export const getBooksById = async (booksId) => {
-    return serverFetch(`/api/books/${booksId}`);
+    return protectedFetch(`/api/books/${booksId}`);
 };
 
 export const getBooksByUserId = async (userId) => {
-    return serverFetch(`/api/books/user/${userId}`);
+    return protectedFetch(`/api/books/user/${userId}`);
 };
 
 
 export const getBooksByStatus = async () => {
-    return serverFetch(`/api/books?status=Pending Approval`);
+    return protectedFetch(`/api/books?status=${encodeURIComponent('Pending Approval')}`);
 };
 

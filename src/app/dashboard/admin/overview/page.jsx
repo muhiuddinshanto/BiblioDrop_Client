@@ -1,50 +1,63 @@
 import React from "react";
-import { 
-  MdGroup, MdLibraryBooks, MdLocalShipping, MdPayments, 
-  MdEdit, MdDelete
-} from "react-icons/md";
+import { MdGroup, MdLibraryBooks, MdLocalShipping, MdPayments, MdPendingActions, MdArrowForward } from "react-icons/md";
+import Link from "next/link";
 
+import { adminStats } from "@/lib/api/order";
+import CategoryPieChart from "@/components/Deashboard/admin/CategoryPieChart";
 import StatCard from "@/components/Deashboard/admin/StatCard";
-import ApprovalRow from "@/components/Deashboard/admin/ApprovalRow";
 import ActivityTrend from "@/components/Deashboard/admin/ActivityTrend";
-import GlobalInventory from "@/components/Deashboard/admin/GlobalInventory";
 
 export default async function AdminDashboardPage() {
+  // ব্যাকএন্ড এপিআই থেকে ডাটা ফেচ করা
+  const statsResponse = await adminStats();
+  console.log("Stats Response:", statsResponse);
+  const pendingApprovalQueue = statsResponse?.approvalQueue || [];
+
+  // সেফটি চেইনিং বা ফলব্যাক ডিফল্ট ভ্যালু ডিফাইন করা
+  const systemStats = statsResponse?.stats || { totalUsers: 0, totalBooks: 0, totalDeliveries: 0, totalRevenue: 0 };
+
   const statsData = [
-    { title: "Total Users", value: "12,482", icon: MdGroup, trend: "+12% ↗", trendType: "up", bg: "bg-blue-50 text-blue-600" },
-    { title: "Total Books", value: "48,291", icon: MdLibraryBooks, trend: "+5% ↗", trendType: "up", bg: "bg-amber-50 text-[#775a19]" },
-    { title: "Total Deliveries", value: "852", icon: MdLocalShipping, trend: "Active Now", trendType: "up", bg: "bg-slate-900 text-white" },
-    { title: "Total Revenue", value: "$142,390", icon: MdPayments, trend: "+24% ↗", trendType: "up", bg: "bg-emerald-50 text-emerald-600" },
-  ];
-
-  const approvalQueue = [
-    { id: 1, title: "The Silent Archive", author: "Elias Thorne", librarian: "Dr. Sarah Jenkins" },
-    { id: 2, title: "Mechanized Lore", author: "Ava Mercer", librarian: "Johnathan Aris" },
-  ];
-
-  const usersData = [
-    { name: "Julianne Doe", email: "j.doe@university.edu", role: "Librarian", badgeBg: "bg-blue-50 text-blue-700", initial: "JD" },
-    { name: "Marcus Kane", email: "m.kane@biblio.com", role: "Admin", badgeBg: "bg-amber-50 text-amber-700", initial: "MK" },
-  ];
-
-  const initialBooks = [
-    { id: 1, title: "Echoes of the Void", status: "Published", bgClass: "bg-[#040d1b]" },
-    { id: 2, title: "The Golden Ledger", status: "Published", bgClass: "bg-[#775a19]" },
-  ];
-
-  const transactions = [
-    { id: "TX-9921-004", email: "c.winter@mail.com", librarian: "Sarah J.", amount: "$12.50", date: "Oct 24, 2024", status: "Completed", statusClass: "text-green-600" },
-    { id: "TX-9921-003", email: "r.black@domain.net", librarian: "System", amount: "$24.99", date: "Oct 23, 2024", status: "Completed", statusClass: "text-green-600" },
-    { id: "TX-9921-002", email: "m.luther@web.com", librarian: "Ava M.", amount: "$8.00", date: "Oct 23, 2024", status: "Pending", statusClass: "text-amber-500" },
+    { 
+      title: "Total Users", 
+      value: systemStats.totalUsers.toLocaleString(), 
+      icon: MdGroup, 
+      trend: "+12% ↗", 
+      trendType: "up", 
+      bg: "bg-blue-50 text-blue-600" 
+    },
+    { 
+      title: "Total Books", 
+      value: systemStats.totalBooks.toLocaleString(), 
+      icon: MdLibraryBooks, 
+      trend: "+5% ↗", 
+      trendType: "up", 
+      bg: "bg-amber-50 text-[#775a19]" 
+    },
+    { 
+      title: "Total Deliveries", 
+      value: systemStats.totalDeliveries.toLocaleString(), 
+      icon: MdLocalShipping, 
+      trend: "Active Now", 
+      trendType: "up", 
+      bg: "bg-slate-955 text-white" 
+    },
+    { 
+      title: "Total Revenue", 
+      value: `$${systemStats.totalRevenue.toLocaleString()}`, 
+      icon: MdPayments, 
+      trend: "+24% ↗", 
+      trendType: "up", 
+      bg: "bg-emerald-50 text-emerald-600" 
+    },
   ];
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
       
       {/* ─── HEADER ─── */}
-      <header>
+      <header className="border-b border-slate-100 pb-4">
         <h1 className="text-2xl font-bold font-serif text-[#040d1b] tracking-tight">Platform Overview</h1>
-        <p className="text-sm text-[#45474c] mt-0.5">Real-time metrics and system administrative control for BiblioDrop Logistics.</p>
+        <p className="text-xs text-[#45474c] mt-0.5">Real-time holistic performance indexes, operational metrics, and structural data visualization.</p>
       </header>
 
       {/* ─── STATS GRID ─── */}
@@ -62,136 +75,115 @@ export default async function AdminDashboardPage() {
         ))}
       </section>
 
-      {/* ─── CHARTS ROW ─── */}
+      {/* ─── VISUAL DATA CHARTS ROW ─── */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <ActivityTrend />
-
-        {/* Books by Category Pie Representation */}
-        <div className="bg-white/80 backdrop-blur-md border border-slate-200/50 p-6 rounded-2xl flex flex-col shadow-sm">
-          <h4 className="text-base font-bold text-[#040d1b] mb-4">Books by Category</h4>
-          <div className="flex-grow flex items-center justify-center py-4">
-            <div className="relative w-40 h-40 rounded-full border-[14px] border-slate-100" style={{ background: "conic-gradient(#040d1b 0% 35%, #775a19 35% 60%, #bec7db 60% 85%, #fed488 85% 100%)" }}>
-              <div className="absolute inset-0 flex items-center justify-center flex-col bg-white rounded-full m-3 shadow-inner">
-                <span className="text-lg font-bold text-[#040d1b]">48k+</span>
-                <span className="text-[10px] text-slate-400 font-medium">Total</span>
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-xs font-medium text-[#45474c]">
-            <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#040d1b]" /> Fiction (35%)</span>
-            <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#775a19]" /> Non-Fiction (25%)</span>
-          </div>
-        </div>
+        <CategoryPieChart totalBooks={systemStats.totalBooks} />
       </section>
 
-      {/* ─── BOOK APPROVAL QUEUE ─── */}
-      <section className="space-y-3">
-        <div className="flex justify-between items-end">
+      {/* ─── 📝 PENDING APPROVAL OVERVIEW CARD (নতুন ছিমছাম ডিজাইন) ─── */}
+      <section className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4 text-center sm:text-left">
+          <div className="p-3 bg-amber-50 text-[#775a19] rounded-xl">
+            <MdPendingActions size={32} />
+          </div>
           <div>
-            <h4 className="text-base font-bold text-[#040d1b]">Book Approval Queue</h4>
-            <p className="text-xs text-slate-400">Books awaiting system verification</p>
-          </div>
-          <button className="text-[#775a19] text-xs font-bold hover:underline">View All Requests</button>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-[#45474c] uppercase tracking-wider">
-              <tr>
-                <th className="p-4">Book Title</th>
-                <th className="p-4">Author</th>
-                <th className="p-4">Librarian</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {approvalQueue.map((item) => (
-                <ApprovalRow key={item.id} title={item.title} author={item.author} librarian={item.librarian} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* ─── USER MANAGEMENT & GLOBAL INVENTORY ─── */}
-      <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* User Management */}
-        <div className="space-y-3">
-          <h4 className="text-base font-bold text-[#040d1b]">User Management</h4>
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm h-fit">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-[#45474c] uppercase tracking-wider">
-                <tr>
-                  <th className="p-4">Name</th>
-                  <th className="p-4">Role</th>
-                  <th className="p-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm">
-                {usersData.map((user, idx) => (
-                  <tr key={idx}>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 text-[#040d1b] flex items-center justify-center font-bold text-xs">{user.initial}</div>
-                        <div>
-                          <p className="font-bold text-[#040d1b]">{user.name}</p>
-                          <p className="text-xs text-slate-400">{user.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${user.badgeBg}`}>{user.role}</span>
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="flex justify-end gap-1 text-slate-500">
-                        <button className="p-2 hover:text-[#040d1b] hover:bg-slate-50 rounded-lg"><MdEdit /></button>
-                        <button className="p-2 hover:text-red-600 hover:bg-red-50 rounded-lg"><MdDelete /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <h4 className="text-base font-bold text-[#040d1b]">Pending Book Approvals</h4>
+            <p className="text-xs text-slate-400 mt-0.5">
+              There are currently <span className="font-bold text-[#775a19]">{pendingApprovalQueue.length} books</span> awaiting administrator verification.
+            </p>
           </div>
         </div>
-
-        {/* Global Inventory */}
-        <div className="space-y-3">
-          <h4 className="text-base font-bold text-[#040d1b]">Global Inventory</h4>
-          <GlobalInventory initialBooks={initialBooks} />
-        </div>
+        
+        {/* মেইন অ্যাপ্রুভাল পেজে যাওয়ার বাটন (আপনার রাউট অনুযায়ী লিংকটি চেঞ্জ করে নিতে পারেন) */}
+        <Link 
+          href="/dashboard/admin/queue" 
+          className="flex items-center gap-1.5 text-xs font-bold text-white bg-[#040d1b] hover:bg-[#040d1b]/90 px-4 py-2.5 rounded-xl transition shadow-sm whitespace-nowrap"
+        >
+          Review Requests <MdArrowForward size={14} />
+        </Link>
       </section>
 
-      {/* ─── TRANSACTION HISTORY ─── */}
-      <section className="space-y-3">
-        <h4 className="text-base font-bold text-[#040d1b]">Recent Transaction History</h4>
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-[#45474c] uppercase tracking-wider">
-              <tr>
-                <th className="p-4">TX ID</th>
-                <th className="p-4">User Email</th>
-                <th className="p-4">Librarian</th>
-                <th className="p-4">Amount</th>
-                <th className="p-4">Date</th>
-                <th className="p-4 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
-              {transactions.map((tx) => (
-                <tr key={tx.id}>
-                  <td className="p-4 font-mono text-xs text-[#45474c]">{tx.id}</td>
-                  <td className="p-4">{tx.email}</td>
-                  <td className="p-4 text-[#45474c]">{tx.librarian}</td>
-                  <td className="p-4 font-bold text-[#040d1b]">{tx.amount}</td>
-                  <td className="p-4 text-[#45474c]">{tx.date}</td>
-                  <td className={`p-4 text-right font-bold ${tx.statusClass}`}>{tx.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+     {/* ─── SYSTEM STATUS OVERVIEW (ডাইনামিক মনিটর) ─── */}
+    {/* ─── SYSTEM STATUS OVERVIEW (এখন ১০০% লাইভ ও ডাইনামিক) ─── */}
+      <section className="space-y-4">
+        <div>
+          <h4 className="text-base font-bold text-[#040d1b] flex items-center gap-2">
+            System Status Overview
+            {/* যদি statsResponse ডাটাসহ আসে তাহলে Live Operational দেখাবে, নাহলে Warning দেখাবে */}
+            {statsResponse?.success ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Operational
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span> System Degraded
+              </span>
+            )}
+          </h4>
+          <p className="text-xs text-slate-400">Snapshot of active global platform instances and database engines</p>
+        </div>
+
+        {/* গ্রিড কার্ডস */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          {/* ১. রিয়েল ডাটাবেজ স্ট্যাটাস */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Database Link</span>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="text-lg font-bold text-slate-800">MongoDB</span>
+              {statsResponse?.success ? (
+                <span className="text-xs font-semibold text-emerald-500">Connected</span>
+              ) : (
+                <span className="text-xs font-semibold text-rose-500">Disconnected</span>
+              )}
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1">
+              {statsResponse?.success ? "Cluster: Cluster0 (Primary)" : "Engine Status: Offline"}
+            </p>
+          </div>
+
+          {/* ২. ডাটাবেজ সামারি স্ট্যাটাস (ডামি MS এর জায়গায় আমরা রিয়াল টোটাল বুকস কাউন্ট বা ইউজার দেখাবো) */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Indexed Content</span>
+            <div className="mt-2 flex items-baseline gap-1">
+              <span className="text-lg font-bold text-slate-800">{systemStats.totalBooks}</span>
+              <span className="text-xs font-medium text-slate-500">items</span>
+            </div>
+            <p className="text-[10px] text-emerald-500 mt-1 font-medium">● Sync Completed</p>
+          </div>
+
+          {/* ৩. একটিভ হোস্টিং এনভায়রনমেন্ট */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Runtime</span>
+            <div className="mt-2 flex items-baseline gap-1">
+              <span className="text-lg font-bold text-slate-800">Next.js</span>
+              <span className="text-xs font-semibold text-blue-500">Node.js</span>
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1">Environment: {process.env.NODE_ENV || "production"}</p>
+          </div>
+
+          {/* ৪. রিয়েল ইউজার অডিট কাউন্ট */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Registry</span>
+            <div className="mt-2 flex items-baseline gap-1">
+              <span className="text-lg font-bold text-slate-800">{systemStats.totalUsers}</span>
+              <span className="text-xs font-medium text-slate-500">Users</span>
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1">Access Control: RBAC</p>
+          </div>
+
+        </div>
+
+        {/* বটম ফুটার মেসেজ */}
+        <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3 text-center">
+          <p className="text-[11px] text-slate-500 font-medium tracking-wide">
+            {statsResponse?.success 
+              ? "All platform core engines operating within nominal boundaries. API handshake completed successfully."
+              : "Warning: Unable to establish core infrastructure handshakes. Please check backend server status."}
+          </p>
         </div>
       </section>
-
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import ApprovalQueueTable from "./ApprovalQueueTable";
 import { bookApprove, bookDelete } from "@/lib/actions/books";
+import toast from "react-hot-toast";
 
 
 export default function QueueClientWrapper({ initialBooks }) {
@@ -16,7 +17,7 @@ export default function QueueClientWrapper({ initialBooks }) {
       const approvedBook = await bookApprove(id, { status: "Approved" });
 
       if(approvedBook?.success) {
-        alert("Book approved successfully!");
+        toast.success("Book approved successfully!");
       }
      console.log("Approved Book:", approvedBook);
       console.log("Approving book with ID:", id);
@@ -41,7 +42,7 @@ export default function QueueClientWrapper({ initialBooks }) {
         console.log("Deleted Book:", deletedBook);
 
         if(deletedBook.success){
-          alert("Book deleted successfully!");
+          toast.success("Book deleted successfully!");
         }
         
         setBooks(prev => prev.filter(b => (b._id || b.id) !== id));

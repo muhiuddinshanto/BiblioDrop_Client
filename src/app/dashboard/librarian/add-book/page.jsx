@@ -4,6 +4,7 @@ import BookForm from "@/components/Deashboard/librarian/BookForm";
 import { createBooks } from "@/lib/actions/books";
 import { authClient } from "@/lib/auth-client";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 import { MdBookmarkAdd } from "react-icons/md";
 
@@ -43,9 +44,9 @@ export default function AddBookPage() {
     try {
        const newBooks = createBooks(finalBookData);
        if(newBooks.insertedId){
-        alert("Book submitted successfully! Status set to 'Pending Approval'.");
+        toast.success("Book submitted successfully! Status set to 'Pending Approval'.");
        }
-      alert("Book submitted successfully! Status set to 'Pending Approval'.");
+      toast.success("Book submitted successfully! Status set to 'Pending Approval'.");
       
     } catch (error) {
       console.error("Database submission error:", error);

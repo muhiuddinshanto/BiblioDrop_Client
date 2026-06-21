@@ -1,11 +1,26 @@
 'use server';
 
+import { db } from "../auth";
 import { serverMuatation } from "../core/server";
 
 
-export const orderBooks = async(orderBooks)=>{
-    return serverMuatation('/api/orders', orderBooks);
-}
+export const orderBooks = async ({ bookId, totalPrice }) => {
+  try {
+    const res = await serverMuatation('/api/create-checkout-session', {
+      bookId,
+      totalPrice,
+    });
+
+    if (res?.url) return { success: true, url: res.url };
+    return { success: false, message: "Checkout session failed" };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
+// export const orderBooks = async(orderBooks)=>{
+//     return serverMuatation('/api/orders', orderBooks);
+// }
 
 
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { MdMenuBook, MdCloudUpload, MdHourglassEmpty, MdAttachMoney } from "react-icons/md";
 
 // ক্যাটাগরি লিস্ট
@@ -56,7 +57,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
     if (!apiKey) {
       console.error("imgBB API Key is missing!");
-      alert("Image upload failed: API key not configured.");
+      toast.error("Image upload failed: API key not configured.");
       return null;
     }
 
@@ -92,14 +93,14 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
       if (uploadedUrl) {
         finalImageUrl = uploadedUrl;
       } else {
-        alert("Failed to upload image. Please try again.");
+        toast.error("Failed to upload image. Please try again.");
         setUploadingImage(false);
         return;
       }
     }
 
     if (!finalImageUrl) {
-      alert("Please upload a book cover image.");
+      toast.error("Please upload a book cover image.");
       setUploadingImage(false);
       return;
     }

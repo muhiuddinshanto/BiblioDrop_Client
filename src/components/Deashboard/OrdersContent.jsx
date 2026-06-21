@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 import {
     MdLocalShipping,
@@ -84,9 +85,10 @@ export default function OrdersContent({ orders = [] }) {
                     <p className="text-sm text-[#45474c] max-w-sm leading-relaxed mb-6">
                         It looks like your order history is empty. Head back to the main catalog to request your first archival volume.
                     </p>
-                    <button className="bg-[#040d1b] text-white hover:bg-[#1a2332] font-semibold text-sm px-5 py-2.5 rounded-lg transition-all shadow-sm">
+                    <Link
+                    href="/books" className="bg-[#040d1b] text-white hover:bg-[#1a2332] font-semibold text-sm px-5 py-2.5 rounded-lg transition-all shadow-sm">
                         Browse Catalog
-                    </button>
+                    </Link>
                 </div>
             ) : (
                 <div className="bg-white rounded-xl border border-[#c5c6cc]/20 shadow-sm overflow-hidden">
@@ -101,7 +103,7 @@ export default function OrdersContent({ orders = [] }) {
                                     <th className="py-4 px-6">Status</th>
                                     <th className="py-4 px-6 text-center">Action</th>
                                 </tr>
-                              </thead>
+                            </thead>
                             <tbody className="divide-y divide-[#c5c6cc]/10 text-sm text-[#040d1b]">
                                 {safeOrders.map((order) => {
                                     const orderId = order._id?.$oid || order._id || "";

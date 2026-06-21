@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import WishlistCard from "./WishlistCard";
+import toast from 'react-hot-toast';
 
 export default function WishlistClientContainer({ initialItems }) {
   // উইশলিস্ট আইটেমগুলোকে স্টেটে রাখা, যাতে ডিলিট করলে ইনস্ট্যান্ট স্ক্রিন থেকে হাওয়া হয়ে যায়!
@@ -10,7 +11,7 @@ export default function WishlistClientContainer({ initialItems }) {
   const handleAddToCart = (book) => {
     console.log("Adding to Cart:", book);
     // এখানে আপনার কার্ট কন্টেক্সট বা রিডাক্সের অ্যাকশন ট্রিগার করুন
-    alert(`${book.title} added to cart!`);
+    toast.success(`${book.title} added to cart!`);
   };
 
   const handleDelete = async (id) => {

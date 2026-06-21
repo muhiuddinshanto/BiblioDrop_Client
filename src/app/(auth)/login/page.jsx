@@ -1,4 +1,4 @@
-// src/app/(auth)/login/page.jsx
+
 "use client";
 import React, { useState } from "react";
 import {
@@ -20,12 +20,13 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const searchParams = useSearchParams();
-  const redirectParam = searchParams.get("redirect"); 
+  const redirectParam = searchParams.get("redirect");
   const redirectTo = redirectParam && redirectParam !== "null" ? redirectParam : null;
   const router = useRouter();
 
@@ -41,30 +42,39 @@ export default function LoginPage() {
 
     try {
       const { data: authData, error } = await authClient.signIn.email({
-        email: formData.get("email"), 
-        password: formData.get("password"), 
+        email: formData.get("email"),
+        password: formData.get("password"),
         rememberMe: true,
       });
 
       if (error) {
-        alert(`❌ Login Failed: ${error.message || "Invalid credentials"}`);
+        toast.error(`❌ Login Failed: ${error.message || "Invalid credentials"}`);
         console.error("Login Failed:", error);
         return;
       }
 
       if (authData) {
         // 🚀 ফিক্সড: নাম সরাসরি 'authData.user' থেকে নেওয়া হচ্ছে
-        alert(`🎉 Login Successful for ${authData.user?.name || "User"}!`);
+        toast.success(`🎉 Login Successful for ${authData.user?.name || "User"}!`);
         router.push(redirectTo || "/");
       }
-      
+
     } catch (error) {
       console.error("Login Failed:", error);
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Initiating Google Social Login...");
+  const handleGoogleLogin = async () => {
+      const data = await authClient.signIn.social({
+        provider: "google",
+      });
+
+      if (data) {
+        toast.success(`🎉 Login Successful for ${data.user?.name || "User"}!`);
+        router.push(redirectTo || "/");
+      }
+    
+    
   };
 
   return (
@@ -144,8 +154,8 @@ export default function LoginPage() {
         <p className="text-center text-sm text-slate-500 mt-2 sm:mt-4">
           Don't have an account?{" "}
           {/* 🚀 ফিক্সড: টেমপ্লেট লিটারেল দিয়ে ডাইনামিক রিডাইরেক্ট প্যারামিটার */}
-          <Link 
-            href={`/signup${redirectTo ? `?redirect=${redirectTo}` : ""}`} 
+          <Link
+            href={`/signup${redirectTo ? `?redirect=${redirectTo}` : ""}`}
             className="font-bold text-[#0F172A] hover:underline focus:outline-none"
           >
             Create one now

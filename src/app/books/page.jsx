@@ -5,11 +5,8 @@ import { getBooks } from "@/lib/api/books";
 
 
 
-
-
 export default async function BooksPage() {
 
-  
 
   const booksData = await getBooks();
  

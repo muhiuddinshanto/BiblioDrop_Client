@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import InventoryTable from "./InventoryTable";
 import EditBookModal from "./EditBookModal";
-import { booksUpdate, bookDetailsUpdate } from "@/lib/actions/books";
+import { booksUpdate, bookDetailsUpdate, bookDelete } from "@/lib/actions/books";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function InventoryClientContainer({ initialBooks = [] }) {
     const [books, setBooks] = useState(initialBooks);
@@ -46,11 +47,11 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
             if (!result?.success) throw new Error(result?.message || "Update failed");
 
             setIsModalOpen(false);
-            alert("Book updated successfully!");
+            toast.success("Book updated successfully!");
             router.refresh();
         } catch (error) {
             console.error("Update failed:", error);
-            alert("Failed to update. Rolling back...");
+            toast.error("Failed to update. Rolling back...");
             setBooks(oldBooks);
         } finally {
             setIsUpdating(false);
@@ -73,7 +74,7 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         } catch (error) {
             console.error("Status toggle failed:", error);
             setBooks(oldBooks);
-            alert("Could not update status.");
+            toast.error("Could not update status.");
         } finally {
             setIsUpdating(false);
         }
@@ -90,11 +91,8 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         setBooks((prev) => prev.filter((b) => b._id !== id));
 
         try {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000"}/api/books/${id}`,
-                { method: "DELETE" }
-            );
-            const data = await res.json();
+            
+            const data = await bookDelete(id, { status: "Deleted" });
 
             if (!data.success) throw new Error(data.message || "Delete failed");
 
@@ -102,7 +100,7 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         } catch (error) {
             console.error("Delete failed:", error);
             setBooks(oldBooks);
-            alert("Failed to delete the book.");
+            toast.error("Failed to delete the book.");
         } finally {
             setIsUpdating(false);
         }

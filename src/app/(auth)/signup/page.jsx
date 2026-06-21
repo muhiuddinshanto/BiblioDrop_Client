@@ -16,6 +16,7 @@ import {
 import { FaGoogle, FaCheck, FaRotateLeft, FaEye, FaEyeSlash, FaUser, FaEnvelope, FaImage } from "react-icons/fa6";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function RegisterForm() {
 
@@ -40,7 +41,7 @@ export default function RegisterForm() {
     });
     formValues.role = role;
 
-    console.log("Registration Data Sent Local:", formValues);
+   
 
     try {
       // 💡 Better-Auth অফিশিয়াল সাইন-আপ মেথড (ফিক্সড)
@@ -54,12 +55,12 @@ export default function RegisterForm() {
 
       if (error) {
         // Better Auth এরর মেসেজ হ্যান্ডলিং
-        alert(`❌ Error: ${error.message || "Something went wrong!"}`);
+        toast.error(`❌ Error: ${error.message || "Something went wrong!"}`);
         return;
       }
 
       if (authData) {
-        alert(`🎉 Registration Successful for ${formData.get("name")}!`);
+        toast.success(`🎉 Registration Successful for ${formData.get("name")}!`);
         router.push(redirectTo || "/");
       }
 
@@ -72,6 +73,17 @@ export default function RegisterForm() {
   const handlePhotoChange = (e) => {
     const url = e.target.value;
     setPhotoPreview(url);
+  };
+
+  const handleGoogleLogin = async () => {
+    const data = await authClient.signIn.social({
+        provider: "google",
+      });
+
+      if (data) {
+        toast.success(`🎉 Login Successful for ${data.user?.name || "User"}!`);
+        router.push(redirectTo || "/");
+      }
   };
 
   return (
@@ -88,7 +100,7 @@ export default function RegisterForm() {
 
       {/* Google Button */}
       <Button
-        onPress={() => console.log("Initiating Google Login...")}
+        onClick={handleGoogleLogin}
         variant="ghost"
         className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 hover:border-[#0F172A] hover:bg-slate-50 text-[#0F172A] font-semibold rounded-2xl py-5 sm:py-6 text-sm sm:text-base transition-all active:scale-[0.985]"
       >

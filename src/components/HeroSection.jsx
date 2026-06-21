@@ -30,6 +30,9 @@ const itemVariants = {
 };
 
 export default function HeroSection() {
+
+
+  
   return (
     <section className="relative min-h-[92vh] w-full overflow-hidden bg-white flex items-center">
       

@@ -1,17 +1,52 @@
 "use client";
 
 import BookCard from "@/components/Books/BookCard";
+import { getBooks } from "@/lib/api/books";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useRef } from "react"; // 👈 useRef ইম্পোর্ট করলাম
 
 export default function BookGridClient({ initialBooks }) {
-    // সার্ভার থেকে আসা ডাটাকে স্টেটের ডিফল্ট ভ্যালু বানিয়ে দিলাম
-    const [books] = useState(initialBooks);
+    const [books, setBooks] = useState(initialBooks);
+    const [loading, setLoading] = useState(false);
 
     // ফিল্টারিং ও সর্টিং এর স্টেটসমূহ
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [maxPrice, setMaxPrice] = useState(100);
     const [sortBy, setSortBy] = useState("Popularity");
+
+    // 🛡️ প্রথমবার পেজ লোডের অতিরিক্ত API কল বন্ধ করার জন্য ট্র্যাকার
+    const isFirstRender = useRef(true);
+
+    // 🔄 ফিল্টার বা সর্ট চেঞ্জ হলে ব্যাকএন্ড API কল করার লজিক
+    useEffect(() => {
+        // যদি প্রথমবার পেজ রেন্ডার হয়, তবে API কল না করে স্কিপ করবে (কারণ initialBooks অলরেডি আছে)
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const fetchFilteredBooks = async () => {
+            setLoading(true);
+            try {
+                const params = new URLSearchParams();
+                
+                if (selectedCategories.length > 0) {
+                    params.append("category", selectedCategories.join(","));
+                }
+                params.append("maxPrice", maxPrice.toString());
+                params.append("sortBy", sortBy);
+                const data = await getBooks( params.toString() );
+                
+                setBooks(data);
+            } catch (error) {
+                console.error("Error fetching filtered books:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFilteredBooks();
+    }, [selectedCategories, maxPrice, sortBy]); 
 
     const handleCategoryChange = (category) => {
         if (selectedCategories.includes(category)) {
@@ -27,41 +62,8 @@ export default function BookGridClient({ initialBooks }) {
         setSortBy("Popularity");
     };
 
-    // 💡 ফিল্টারিং লজিক - যেখানে শুধুমাত্র Published বইগুলো ফিল্টার করা হবে
-    const filteredAndSortedBooks = useMemo(() => {
-        // ১. প্রথম লেয়ারেই শুধুমাত্র "published" স্ট্যাটাসের বইগুলোকে আলাদা করা হলো
-        let result = books.filter((book) => {
-  // status object নাকি string সেটা চেক করা হচ্ছে
-  const status =
-    typeof book?.status === "object"
-      ? book?.status?.status
-      : book?.status;
-
-  return status?.toLowerCase() === "published";
-});
-
-        // ২. ক্যাটাগরি ফিল্টার
-        if (selectedCategories.length > 0) {
-            result = result.filter((book) => selectedCategories.includes(book.category));
-        }
-
-        // ৩. প্রাইস রেঞ্জ ফিল্টার
-        result = result.filter((book) => book.price <= maxPrice);
-
-        // ৪. সর্টিং কন্ডিশন
-        if (sortBy === "Price: Low to High") {
-            result.sort((a, b) => a.price - b.price);
-        } else if (sortBy === "Price: High to Low") {
-            result.sort((a, b) => b.price - a.price);
-        }
-
-        return result;
-    }, [books, selectedCategories, maxPrice, sortBy]);
-
-
     return (
         <section className="w-full bg-white px-6 py-16 lg:px-8">
-
             <div className="mx-auto max-w-7xl grid grid-cols-1 gap-10 lg:grid-cols-12">
 
                 {/* === সাইডবার ফিল্টার === */}
@@ -115,7 +117,7 @@ export default function BookGridClient({ initialBooks }) {
                         <div>
                             <h2 className="text-2xl font-black text-[#0F172A] tracking-tight sm:text-3xl">Scholarly Collections</h2>
                             <p className="mt-1 text-sm font-medium text-slate-500">
-                                Found {filteredAndSortedBooks.length} volumes curated for you.
+                                {loading ? "Updating library..." : `Found ${books.length} volumes curated for you.`}
                             </p>
                         </div>
 
@@ -133,9 +135,14 @@ export default function BookGridClient({ initialBooks }) {
                         </div>
                     </div>
 
-                    {filteredAndSortedBooks.length > 0 ? (
+                    {/* লোডিং বা ব্ল্যাঙ্ক স্টেট হ্যান্ডলিং */}
+                    {loading ? (
+                        <div className="text-center py-20">
+                            <p className="text-lg font-bold text-slate-400 animate-pulse">Loading items from server...</p>
+                        </div>
+                    ) : books.length > 0 ? (
                         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-                            {filteredAndSortedBooks.map((book) => {
+                            {books.map((book) => {
                                 const bookId = book._id?.$oid || book._id;
                                 return (
                                     <Link href={`/books/${bookId}`} key={bookId} className="block">
@@ -146,14 +153,12 @@ export default function BookGridClient({ initialBooks }) {
                         </div>
                     ) : (
                         <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                            <p className="text-lg font-bold text-slate-700">No books available at the moment.</p>
+                            <p className="text-lg font-bold text-slate-700">No books available for this filter.</p>
                             <button onClick={handleClearFilters} className="mt-3 text-sm text-[#D4AF37] font-extrabold underline">Reset Filters</button>
                         </div>
                     )}
-
                 </div>
             </div>
-
         </section>
     );
 }

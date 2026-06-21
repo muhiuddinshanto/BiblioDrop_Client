@@ -58,7 +58,7 @@ export default function Sidebar() {
     admin: adminNavLink,
   };
 
-  const navItems = navLinkMap[role || 'user'];
+  const navItems = navLinkMap[role] || userNavLink;;
 
   return (
     <aside className="hidden lg:flex flex-col h-screen w-64 sticky top-0 py-6 bg-[#f6f3f4] border-r border-[#c5c6cc]/20">

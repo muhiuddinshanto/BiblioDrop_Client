@@ -20,55 +20,69 @@ import {
   MdPending
 } from 'react-icons/md';
 
-export default function OverviewContent({ orders = [], safeWishlist = [] }) {
+export default function OverviewContent({ 
+  orders = [], 
+  safeWishlist = [],
+  serverStats = null,
+  serverTrendData = null,
+  serverPieData = null
+}) {
   const safeOrders = orders ?? [];
 
-  // ==================== ১. কুইক স্ট্যাটস (Quick Stats) ক্যালকুলেশন ====================
-  const totalBooksRead = safeOrders.filter(o => o.status?.toLowerCase() === 'delivered').length;
-  const pendingDeliveries = safeOrders.filter(o => o.status?.toLowerCase() === 'pending').length;
+  // ==================== ১. কুইক স্ট্যাটস ক্যালকুলেশন (রিয়েল ডাটা ব্যাকআপসহ) ====================
+  const totalBooksRead = serverStats?.totalBooksRead ?? safeOrders.filter(o => o.status?.toLowerCase() === 'delivered').length;
+  const pendingDeliveries = serverStats?.pendingDeliveries ?? safeOrders.filter(o => o.status?.toLowerCase() === 'pending').length;
 
-  const totalSpent = safeOrders.reduce((acc, curr) => {
+  const totalSpent = serverStats?.totalSpent ?? safeOrders.reduce((acc, curr) => {
     const price = typeof curr.price === 'number' ? curr.price : parseFloat(curr.price || 0);
     return acc + price;
   }, 0);
 
-  // ==================== ২. চার্ট ডাটা প্রিপারেশন (Chart Data) ====================
-  const monthlyDataMap = {};
-  safeOrders.forEach(order => {
-    const rawDate = order.date?.$date || order.date || order.createdAt;
-    if (rawDate) {
-      const month = new Date(rawDate).toLocaleDateString('en-US', { month: 'short' });
-      const price = typeof order.price === 'number' ? order.price : parseFloat(order.price || 0);
+  // ==================== ২. চার্ট ডাটা প্রিপারেশন (ব্যাকএন্ড ডাটাকে ফার্স্ট প্রায়োরিটি দিয়ে) ====================
+  let trendChartData = serverTrendData;
+  
+  if (!trendChartData || trendChartData.length === 0) {
+    const monthlyDataMap = {};
+    safeOrders.forEach(order => {
+      const rawDate = order.date?.$date || order.date || order.createdAt;
+      if (rawDate) {
+        const month = new Date(rawDate).toLocaleDateString('en-US', { month: 'short' });
+        const price = typeof order.price === 'number' ? order.price : parseFloat(order.price || 0);
 
-      if (!monthlyDataMap[month]) monthlyDataMap[month] = { name: month, spent: 0, volumes: 0 };
-      monthlyDataMap[month].spent += price;
-      monthlyDataMap[month].volumes += 1;
-    }
-  });
+        if (!monthlyDataMap[month]) monthlyDataMap[month] = { name: month, spent: 0, volumes: 0 };
+        monthlyDataMap[month].spent += price;
+        monthlyDataMap[month].volumes += 1;
+      }
+    });
 
-  const trendChartData = Object.keys(monthlyDataMap).length > 0
-    ? Object.values(monthlyDataMap)
-    : [
-      { name: 'Jan', spent: 30, volumes: 1 },
-      { name: 'Feb', spent: 58, volumes: 2 },
-      { name: 'Mar', spent: 45, volumes: 1 },
-      { name: 'Apr', spent: 85, volumes: 3 },
-    ];
+    trendChartData = Object.keys(monthlyDataMap).length > 0
+      ? Object.values(monthlyDataMap)
+      : [
+        { name: 'Jan', spent: 30, volumes: 1 },
+        { name: 'Feb', spent: 58, volumes: 2 },
+        { name: 'Mar', spent: 45, volumes: 1 },
+        { name: 'Apr', spent: 85, volumes: 3 },
+      ];
+  }
 
-  const categoryMap = {};
-  safeOrders.forEach(order => {
-    const cat = order.category || 'General';
-    categoryMap[cat] = (categoryMap[cat] || 0) + 1;
-  });
+  let pieChartData = serverPieData;
 
-  const pieChartData = Object.keys(categoryMap).length > 0
-    ? Object.keys(categoryMap).map(key => ({ name: key, value: categoryMap[key] }))
-    : [
-      { name: 'Science', value: 40 },
-      { name: 'Fiction', value: 30 },
-      { name: 'History', value: 20 },
-      { name: 'General', value: 10 },
-    ];
+  if (!pieChartData || pieChartData.length === 0) {
+    const categoryMap = {};
+    safeOrders.forEach(order => {
+      const cat = order.category || 'General';
+      categoryMap[cat] = (categoryMap[cat] || 0) + 1;
+    });
+
+    pieChartData = Object.keys(categoryMap).length > 0
+      ? Object.keys(categoryMap).map(key => ({ name: key, value: categoryMap[key] }))
+      : [
+        { name: 'Science', value: 40 },
+        { name: 'Fiction', value: 30 },
+        { name: 'History', value: 20 },
+        { name: 'General', value: 10 },
+      ];
+  }
 
   const COLORS = ['#040d1b', '#775a19', '#9ba3b0', '#fed488', '#e2e8f0'];
 
@@ -127,17 +141,19 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
         </div>
       </div>
 
-      {/* ==================== চার্ট সেকশন (Recharts) ==================== */}
+      {/* ==================== চার্ট সেকশন ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* ক) খরচ ও ভলিউমের গ্রাফ (Area Chart) */}
-        <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        {/* 🛠️ এখানে min-w-0 যোগ করা হয়েছে Recharts এরর ফিক্স করার জন্য */}
+        <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm min-w-0">
           <div className="mb-6">
             <h3 className="text-lg font-bold font-serif text-[#040d1b]">Acquisition Trend</h3>
             <p className="text-xs text-[#45474c]">Monthly breakdown of platform expenses.</p>
           </div>
           <div className="h-72 w-full text-xs">
-            <ResponsiveContainer width="100%" height="100%">
+            {/* 🛠️ minHeight={288} ডিফাইন করা হয়েছে প্রাথমিক রেন্ডারিং এরর এড়াতে */}
+            <ResponsiveContainer width="100%" height="100%" minHeight={288}>
               <AreaChart data={trendChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
@@ -159,13 +175,15 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
         </div>
 
         {/* খ) ক্যাটাগরি ডিস্ট্রিবিউশন (Pie Chart) */}
-        <div className="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+        {/* 🛠️ এখানেও min-w-0 যোগ করা হয়েছে */}
+        <div className="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between min-w-0">
           <div className="mb-2">
             <h3 className="text-lg font-bold font-serif text-[#040d1b]">Genre Distribution</h3>
             <p className="text-xs text-[#45474c]">Classification of requested books.</p>
           </div>
           <div className="h-60 w-full text-xs flex items-center justify-center relative">
-            <ResponsiveContainer width="100%" height="100%">
+            {/* 🛠️ minHeight={240} ডিফাইন করা হয়েছে */}
+            <ResponsiveContainer width="100%" height="100%" minHeight={240}>
               <PieChart>
                 <Pie
                   data={pieChartData}
@@ -204,7 +222,7 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
         </div>
       </div>
 
-      {/* ==================== নিচের লেয়ারে উইশলিস্ট ও রিসেন্ট অর্ডারস ==================== */}
+      {/* ==================== উইশলিস্ট ও রিসেন্ট অর্ডারস ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* উইশলিস্ট সেকশন */}
@@ -252,7 +270,6 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
         {/* রিসেন্ট অর্ডারস সেকশন */}
         <div className="col-span-12 lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
           <div>
-            {/* সেকশন হেডার */}
             <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-3">
               <div>
                 <h2 className="text-xl font-bold font-serif text-[#040d1b]">Recent Delivery</h2>
@@ -261,7 +278,6 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
               <MdFilterList className="text-[#45474c] text-xl cursor-pointer hover:text-[#775a19] hover:scale-110 transition-all" />
             </div>
 
-            {/* অর্ডার লিস্ট কন্টেইনার - ফিক্সড হাইট এবং কাস্টম স্ক্রোল লজিক */}
             <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
               {safeOrders.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 p-6">
@@ -274,7 +290,6 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
                   </p>
                 </div>
               ) : (
-                // slice(0, 5) এর মাধ্যমে সর্বোচ্চ ৫টি অর্ডার রেণ্ডার হবে, যা ড্যাশবোর্ডের জন্য স্ট্যান্ডার্ড
                 safeOrders.slice(0, 5).map((order) => {
                   const rawDate = order.date?.$date || order.date || order.createdAt;
                   const currentStatus = order.status?.toLowerCase() || 'pending';
@@ -314,7 +329,6 @@ export default function OverviewContent({ orders = [], safeWishlist = [] }) {
                           ${typeof order.price === 'number' ? order.price.toFixed(2) : parseFloat(order.price || 0).toFixed(2)}
                         </p>
 
-                        {/* ডাইনামিক স্ট্যাটাস ব্যাজ ম্যাপিং */}
                         {currentStatus === 'delivered' ? (
                           <span className="inline-flex items-center gap-1 text-[9px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-black uppercase tracking-wider mt-1 border border-emerald-200 shadow-sm">
                             <MdCheckCircle className="text-[11px]" /> Delivered

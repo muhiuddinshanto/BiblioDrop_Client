@@ -1,6 +1,20 @@
 // lib/core/session.js
+import { redirect } from "next/navigation";
 import { auth } from "../auth";
 import { headers } from "next/headers";
+
+
+
+
+export const authHeader = async () => {
+    const token = await getUserToken();
+    const header = token ? {
+        authorization: `Bearer ${token}`
+    } : {}
+    return header;
+}
+
+
 
 export const getUserSession = async () => {
   try {
@@ -14,3 +28,29 @@ export const getUserSession = async () => {
     return null;
   }
 }
+
+
+
+export const getUserToken = async () => {
+    const session = await auth.api.getSession({
+        headers: await headers() 
+    })
+    console.log(session);
+    return session?.session?.token || null;
+}
+
+
+export const requireRole = async (role) => {
+    const user = await getUserSession()
+    if(!user) {
+        return redirect('/login')
+    }
+    if (user.role !== role) {
+        return redirect('/unauthorized')
+    }
+    return user;
+}
+
+
+
+
