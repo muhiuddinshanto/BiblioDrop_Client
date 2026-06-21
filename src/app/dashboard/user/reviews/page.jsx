@@ -52,14 +52,14 @@ export default function UserReviewsPage() {
       {/* ─── Header ─── */}
       <div className="mb-8">
         <p className="text-xs font-black uppercase tracking-widest text-amber-500 mb-1">
-          আপনার মতামত
+          Your opinion
         </p>
         <h1 className="text-2xl font-black text-[#0F172A] tracking-tight flex items-center gap-2">
           <FaRegCommentDots className="text-slate-300" />
           My Reviews
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          আপনি এখন পর্যন্ত <span className="font-bold text-[#0F172A]">{reviews.length}টি</span> বইয়ে রিভিউ দিয়েছেন।
+          You have reviewed <span className="font-bold text-[#0F172A]">{reviews.length}</span> books so far.
         </p>
       </div>
 
@@ -67,13 +67,13 @@ export default function UserReviewsPage() {
       {reviews.length === 0 ? (
         <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
           <FaBook className="text-4xl text-slate-200 mx-auto mb-3" />
-          <p className="text-sm font-bold text-slate-500">এখনো কোনো রিভিউ দেননি।</p>
-          <p className="text-xs text-slate-400 mt-1">বই কিনুন এবং আপনার মতামত শেয়ার করুন।</p>
+          <p className="text-sm font-bold text-slate-500">No reviews yet.</p>
+          <p className="text-xs text-slate-400 mt-1">Buy the book and share your opinion.</p>
           <Link
             href="/books"
             className="mt-4 inline-block bg-[#0F172A] text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-[#1E293B] transition"
           >
-            বই দেখুন
+            View book
           </Link>
         </div>
       ) : (
