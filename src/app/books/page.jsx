@@ -1,19 +1,18 @@
-
-
 import BookGridClient from "@/components/Books/BookGridClient";
 import { getBooks } from "@/lib/api/books";
 
-
-
-export default async function BooksPage() {
-
-
-  const booksData = await getBooks();
- 
+// Next.js-এ searchParams এখন একটি Promise, তাই এর আগে async রাখতে হবে
+export default async function BooksPage({ searchParams }) {
+  
+  // ১. প্রথমে searchParams প্রমিজটিকে await করে প্লেইন অবজেক্ট বানিয়ে নিতে হবে
+  const resolvedSearchParams = await searchParams;
+  
+  // ২. এবার URLSearchParams-এ পাস করলে আর কোনো এরর আসবে না
+  const params = new URLSearchParams(resolvedSearchParams);
+  const booksData = await getBooks(params.toString());
 
   return (
     <main className="w-full bg-white">
-      {/* ২. ক্লায়েন্ট কম্পোনেন্টে রিয়েল ডাটা প্রপ্স হিসেবে পাস করে দিচ্ছি */}
       <BookGridClient initialBooks={booksData || []} />
     </main>
   );

@@ -3,50 +3,63 @@
 import BookCard from "@/components/Books/BookCard";
 import { getBooks } from "@/lib/api/books";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react"; // 👈 useRef ইম্পোর্ট করলাম
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 
 export default function BookGridClient({ initialBooks }) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // ১. শুরুতে URL-এ কোনো ফিল্টার থাকলে সেটা স্টেটে বসবে, না থাকলে ডিফল্ট ভ্যালু পাবে
     const [books, setBooks] = useState(initialBooks);
     const [loading, setLoading] = useState(false);
 
-    // ফিল্টারিং ও সর্টিং এর স্টেটসমূহ
-    const [selectedCategories, setSelectedCategories] = useState([]);
-    const [maxPrice, setMaxPrice] = useState(100);
-    const [sortBy, setSortBy] = useState("Popularity");
+    const [selectedCategories, setSelectedCategories] = useState(
+        searchParams.get("category") ? searchParams.get("category").split(",") : []
+    );
+    const [maxPrice, setMaxPrice] = useState(
+        Number(searchParams.get("maxPrice")) || 100
+    );
+    const [sortBy, setSortBy] = useState(
+        searchParams.get("sortBy") || "Popularity"
+    );
 
-    // 🛡️ প্রথমবার পেজ লোডের অতিরিক্ত API কল বন্ধ করার জন্য ট্র্যাকার
+    // প্রথমবার পেজ লোডের অতিরিক্ত রান স্কিপ করার জন্য ট্র্যাকার
     const isFirstRender = useRef(true);
 
-    // 🔄 ফিল্টার বা সর্ট চেঞ্জ হলে ব্যাকএন্ড API কল করার লজিক
+    // ২. সার্ভার থেকে আসা initialBooks যখনই চেঞ্জ হবে (URL চেঞ্জের কারণে), তখনই স্টেট আপডেট হবে
     useEffect(() => {
-        // যদি প্রথমবার পেজ রেন্ডার হয়, তবে API কল না করে স্কিপ করবে (কারণ initialBooks অলরেডি আছে)
+        setBooks(initialBooks);
+        setLoading(false); // ডেটা চলে আসলে লোডিং ফলস হবে
+    }, [initialBooks]);
+
+    // ৩. ফিল্টার বা সর্ট স্টেট চেঞ্জ হলে ব্রাউজারের URL আপডেট করার লজিক
+    useEffect(() => {
+        // প্রথমবার পেজ রেন্ডারে URL পুশ করা স্কিপ করবে
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
 
-        const fetchFilteredBooks = async () => {
+        const updateURLAndFetch = async () => {
             setLoading(true);
-            try {
-                const params = new URLSearchParams();
-                
-                if (selectedCategories.length > 0) {
-                    params.append("category", selectedCategories.join(","));
-                }
-                params.append("maxPrice", maxPrice.toString());
-                params.append("sortBy", sortBy);
-                const data = await getBooks( params.toString() );
-                
-                setBooks(data);
-            } catch (error) {
-                console.error("Error fetching filtered books:", error);
-            } finally {
-                setLoading(false);
+            const params = new URLSearchParams();
+            
+            if (selectedCategories.length > 0) {
+                params.append("category", selectedCategories.join(","));
             }
+            params.append("maxPrice", maxPrice.toString());
+            params.append("sortBy", sortBy);
+
+            // ব্রাউজারের URL পরিবর্তন করা হচ্ছে (যেমন: /books?category=Philosophy&maxPrice=100)
+            // scroll: false দেওয়ার কারণে পেজ লাফ দিয়ে একদম উপরে উঠে যাবে না
+            router.push(`?${params.toString()}`, { scroll: false });
         };
 
-        fetchFilteredBooks();
-    }, [selectedCategories, maxPrice, sortBy]); 
+        // ইউজারের ক্লিক করার পর সামান্য ডিলে বা সরাসরি কল
+        updateURLAndFetch();
+        
+    }, [selectedCategories, maxPrice, sortBy, router]); 
 
     const handleCategoryChange = (category) => {
         if (selectedCategories.includes(category)) {
@@ -60,6 +73,7 @@ export default function BookGridClient({ initialBooks }) {
         setSelectedCategories([]);
         setMaxPrice(100);
         setSortBy("Popularity");
+        router.push("?", { scroll: false }); // URL রিমোভ করে একদম ক্লিন করে দেবে
     };
 
     return (
