@@ -1,43 +1,59 @@
-app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
+import Stripe from "stripe";
+import { db } from "@/lib/auth";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const ordersCollection = db.collection("orders");
+
+export async function POST(request) {
+  const signature = request.headers.get("stripe-signature");
+  const rawBody = await request.text();
+
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    console.log("❌ Webhook signature error:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    event = stripe.webhooks.constructEvent(
+      rawBody,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (error) {
+    console.error("Stripe webhook signature error:", error.message);
+    return new Response(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
+  if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    console.log("💰 PAYMENT SUCCESS, processing order...");
 
     try {
-      if (!session.metadata) throw new Error("Missing metadata");
+      if (!session.metadata) {
+        throw new Error("Missing checkout metadata");
+      }
 
-      // ✅ আপনার চাওয়া অবিকল ফরম্যাট অনুযায়ী মঙ্গোডিবি অবজেক্ট রেডি
       const orderData = {
         BookId: session.metadata.bookid,
         title: session.metadata.title,
         author: session.metadata.author,
         category: session.metadata.category,
-        price: parseFloat(session.metadata.price || 0), // স্ট্রিং প্রাইসকে নাম্বারে কনভার্ট করা হলো
+        price: Number.parseFloat(session.metadata.price || "0"),
         image: session.metadata.image,
         userId: session.metadata.userid,
-        PaymentStatus: "completed", // আগের ফরম্যাট অনুযায়ী "status"
+        PaymentStatus: "completed",
+        status: "Pending",
         authorId: session.metadata.authorid,
+        stripeSessionId: session.id,
         date: new Date(),
       };
 
-      const result = await orderCollection.insertOne(orderData);
-      console.log("🎉 Order saved to MongoDB successfully! ID:", result.insertedId);
-
+      await ordersCollection.updateOne(
+        { stripeSessionId: session.id },
+        { $setOnInsert: orderData },
+        { upsert: true }
+      );
     } catch (error) {
-      console.error("❌ Database Insert Error:", error);
-      return res.status(500).send("Internal Server Error");
+      console.error("Webhook order save failed:", error);
+      return Response.json({ received: false, error: error.message }, { status: 500 });
     }
   }
 
-  res.json({ received: true });
-});
+  return Response.json({ received: true });
+}

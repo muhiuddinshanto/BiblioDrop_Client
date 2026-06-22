@@ -4,14 +4,16 @@ import { authClient } from '@/lib/auth-client';
 import { useEffect, useState } from 'react';
 import { FaStar, FaRegCommentDots, FaBook, FaTrashCan, FaPenToSquare, FaCheck, FaXmark } from 'react-icons/fa6';
 import Link from 'next/link';
-import toast, { Toaster } from 'react-hot-toast'; // ✅ টোস্ট ইমপোর্ট করা হয়েছে
+import toast, { Toaster } from 'react-hot-toast';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
 export default function UserReviewsPage() {
   const { data: session } = authClient.useSession();
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // এডিট স্টেটস ট্র্যাক করার জন্য
+  // à¦à¦¡à¦¿à¦Ÿ à¦¸à§à¦Ÿà§‡à¦Ÿà¦¸ à¦Ÿà§à¦°à§à¦¯à¦¾à¦• à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯
   const [editingId, setEditingId] = useState(null);
   const [editComment, setEditComment] = useState("");
   const [editRating, setEditRating] = useState(5);
@@ -23,7 +25,7 @@ export default function UserReviewsPage() {
     const fetchMyReviews = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/reviews/user/${session.user.id}`,
+          `${API_BASE_URL}/api/reviews/user/${session.user.id}`,
           {
             headers: {
               Authorization: `Bearer ${session.session?.token}`
@@ -34,7 +36,7 @@ export default function UserReviewsPage() {
         setReviews(data?.data || []);
       } catch {
         setReviews([]);
-        toast.error("Failed to load your reviews."); // ✅ এরর টোস্ট
+        toast.error("Failed to load your reviews."); // âœ… à¦à¦°à¦° à¦Ÿà§‹à¦¸à§à¦Ÿ
       } finally {
         setIsLoading(false);
       }
@@ -43,15 +45,15 @@ export default function UserReviewsPage() {
     fetchMyReviews();
   }, [session]);
 
-  // ─── 🗑️ DELETE REVIEW HANDLER ───
+  // â”€â”€â”€ ðŸ—‘ï¸ DELETE REVIEW HANDLER â”€â”€â”€
   const handleDelete = async (reviewId) => {
     if (!window.confirm("Are you sure you want to delete this review?")) return;
 
-    // টোস্ট লোডিং স্টেট
+    // à¦Ÿà§‹à¦¸à§à¦Ÿ à¦²à§‹à¦¡à¦¿à¦‚ à¦¸à§à¦Ÿà§‡à¦Ÿ
     const loadingToast = toast.loading("Deleting your review...");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${session?.session?.token}`
@@ -60,10 +62,10 @@ export default function UserReviewsPage() {
 
       if (res.ok) {
         setReviews(prev => prev.filter(item => item._id !== reviewId));
-        toast.success("Review deleted successfully!", { id: loadingToast }); // ✅ সাকসেস টোস্ট
+        toast.success("Review deleted successfully!", { id: loadingToast }); // âœ… à¦¸à¦¾à¦•à¦¸à§‡à¦¸ à¦Ÿà§‹à¦¸à§à¦Ÿ
       } else {
         const errData = await res.json();
-        toast.error(errData.message || "Failed to delete review.", { id: loadingToast }); // ✅ ফেইল টোস্ট
+        toast.error(errData.message || "Failed to delete review.", { id: loadingToast }); // âœ… à¦«à§‡à¦‡à¦² à¦Ÿà§‹à¦¸à§à¦Ÿ
       }
     } catch (err) {
       console.error("Delete error:", err);
@@ -71,21 +73,21 @@ export default function UserReviewsPage() {
     }
   };
 
-  // ─── 📝 START EDIT MODE ───
+  // â”€â”€â”€ ðŸ“ START EDIT MODE â”€â”€â”€
   const startEdit = (review) => {
     setEditingId(review._id);
     setEditComment(review.comment);
     setEditRating(review.rating || 5);
   };
 
-  // ─── 💾 SAVE/UPDATE REVIEW HANDLER ───
+  // â”€â”€â”€ ðŸ’¾ SAVE/UPDATE REVIEW HANDLER â”€â”€â”€
   const handleUpdate = async (reviewId) => {
     if (!editComment.trim()) return;
     setIsUpdating(true);
     const loadingToast = toast.loading("Saving changes...");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -104,10 +106,10 @@ export default function UserReviewsPage() {
             : item
         ));
         setEditingId(null);
-        toast.success("Review updated successfully!", { id: loadingToast }); // ✅ সাকসেস টোস্ট
+        toast.success("Review updated successfully!", { id: loadingToast }); // âœ… à¦¸à¦¾à¦•à¦¸à§‡à¦¸ à¦Ÿà§‹à¦¸à§à¦Ÿ
       } else {
         const errData = await res.json();
-        toast.error(errData.message || "Failed to update review.", { id: loadingToast }); // ✅ ফেইল টোস্ট
+        toast.error(errData.message || "Failed to update review.", { id: loadingToast }); // âœ… à¦«à§‡à¦‡à¦² à¦Ÿà§‹à¦¸à§à¦Ÿ
       }
     } catch (err) {
       console.error("Update error:", err);
@@ -117,7 +119,7 @@ export default function UserReviewsPage() {
     }
   };
 
-  // ─── Loading Skeleton ───
+  // â”€â”€â”€ Loading Skeleton â”€â”€â”€
   if (isLoading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-10 space-y-4">
@@ -131,10 +133,10 @@ export default function UserReviewsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       
-      {/* 👑 টোস্ট কন্টেইনার কম্পোনেন্ট */}
+      {/* ðŸ‘‘ à¦Ÿà§‹à¦¸à§à¦Ÿ à¦•à¦¨à§à¦Ÿà§‡à¦‡à¦¨à¦¾à¦° à¦•à¦®à§à¦ªà§‹à¦¨à§‡à¦¨à§à¦Ÿ */}
       <Toaster position="top-center" reverseOrder={false} />
 
-      {/* ─── Header ─── */}
+      {/* â”€â”€â”€ Header â”€â”€â”€ */}
       <div className="mb-8">
         <p className="text-xs font-black uppercase tracking-widest text-[#C5A059] mb-1">
           Your Analytics
@@ -148,7 +150,7 @@ export default function UserReviewsPage() {
         </p>
       </div>
 
-      {/* ─── Empty State ─── */}
+      {/* â”€â”€â”€ Empty State â”€â”€â”€ */}
       {reviews.length === 0 ? (
         <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
           <FaBook className="text-4xl text-slate-200 mx-auto mb-3" />
@@ -185,7 +187,7 @@ export default function UserReviewsPage() {
                         ? new Date(review.createdAt).toLocaleDateString('en-US', {
                             year: 'numeric', month: 'short', day: 'numeric'
                           })
-                        : "—"}
+                        : "â€”"}
                     </span>
                   </div>
 

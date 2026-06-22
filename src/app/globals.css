@@ -1,2 +1,43 @@
 @import "tailwindcss";
-@import "@heroui/styles"; 
+@import "@heroui/styles";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+body {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.dark body {
+  background: #0b1120;
+  color: #e5e7eb;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  min-width: 0;
+}

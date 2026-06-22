@@ -14,6 +14,7 @@ import {
 
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient } from "@/lib/auth-client";
+import ThemeToggle from "./ThemeToggle";
 
 const MENU_ITEMS = [
   { label: "Home", href: "/" },
@@ -28,9 +29,9 @@ export default function Navbar() {
 
   const { data: session } = authClient.useSession();
   const { user } = session || {};
-  const role = user?.role; // 'user', 'librarian', অথবা 'admin'
+  const role = user?.role;
 
-  // 💡 ডাইনামিক ড্যাশবোর্ড পাথ ক্যালকুলেশন লজিক
+  // ðŸ’¡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡ à¦ªà¦¾à¦¥ à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦¶à¦¨ à¦²à¦œà¦¿à¦•
   const getDashboardPath = () => {
     if (role === "admin") return "/dashboard/admin";
     if (role === "librarian") return "/dashboard/librarian";
@@ -39,7 +40,7 @@ export default function Navbar() {
 
   const dashboardPath = getDashboardPath();
 
-  // 💡 মেনু আইটেমগুলোর সাথে ডাইনামিক ড্যাশবোর্ড রুট পুশ করা হচ্ছে
+  // ðŸ’¡ à¦®à§‡à¦¨à§ à¦†à¦‡à¦Ÿà§‡à¦®à¦—à§à¦²à§‹à¦° à¦¸à¦¾à¦¥à§‡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡ à¦°à§à¦Ÿ à¦ªà§à¦¶ à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡
   const dynamicMenuItems = user 
     ? [...MENU_ITEMS.slice(0, 2), { label: "Dashboard", href: dashboardPath }, ...MENU_ITEMS.slice(2)]
     : MENU_ITEMS;
@@ -55,14 +56,15 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         
         {/* Left Section */}
         <div className="flex items-center gap-6">
           <button
             onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="md:hidden p-3 -ml-3 rounded-2xl hover:bg-slate-100 active:scale-95 transition-all text-[#0F172A]"
+            className="md:hidden p-3 -ml-3 rounded-2xl hover:bg-slate-100 active:scale-95 transition-all text-[#0F172A] dark:text-slate-100 dark:hover:bg-slate-800"
+            aria-label="Toggle navigation"
           >
             {isMenuOpen ? <FaXmark size={24} /> : <FaBars size={24} />}
           </button>
@@ -74,14 +76,15 @@ export default function Navbar() {
         <DesktopMenu items={dynamicMenuItems} currentPath={currentPath} />
 
         {/* Right Section */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <ThemeToggle />
           {user ? (
             <UserDropdown
               user={user}
               isOpen={isProfileOpen}
               setIsOpen={setIsProfileOpen}
               onLogout={handleLogout}
-              dashboardPath={dashboardPath} // 💡 ডাইনামিক পাথ ড্রপডাউনে পাঠানো হলো
+              dashboardPath={dashboardPath} // ðŸ’¡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦ªà¦¾à¦¥ à¦¡à§à¦°à¦ªà¦¡à¦¾à¦‰à¦¨à§‡ à¦ªà¦¾à¦ à¦¾à¦¨à§‹ à¦¹à¦²à§‹
             />
           ) : (
             <AuthLinks />
@@ -98,7 +101,7 @@ export default function Navbar() {
             currentPath={currentPath}
             onClose={closeMenu}
             onLogout={handleLogout}
-            dashboardPath={dashboardPath} // 💡 ডাইনামিক পাথ মোবাইল মেনুতে পাঠানো হলো
+            dashboardPath={dashboardPath} // ðŸ’¡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦ªà¦¾à¦¥ à¦®à§‹à¦¬à¦¾à¦‡à¦² à¦®à§‡à¦¨à§à¦¤à§‡ à¦ªà¦¾à¦ à¦¾à¦¨à§‹ à¦¹à¦²à§‹
           />
         )}
       </AnimatePresence>
@@ -114,12 +117,12 @@ function Logo() {
       <motion.div
         whileHover={{ scale: 1.1, rotate: 8 }}
         whileTap={{ scale: 0.95 }}
-        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0F172A] via-slate-900 to-[#0F172A] text-2xl font-black text-white shadow-lg border border-[#D4AF37]/30"
+        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0F172A] via-slate-900 to-[#0F172A] text-2xl font-black text-white shadow-lg border border-[#D4AF37]/30 dark:from-[#D4AF37] dark:via-amber-500 dark:to-[#D4AF37] dark:text-slate-950"
       >
         B
       </motion.div>
       <div className="font-bold tracking-tighter flex items-center gap-1">
-        <span className="text-2xl font-extrabold text-[#0F172A]">Biblio</span>
+        <span className="text-2xl font-extrabold text-[#0F172A] dark:text-white">Biblio</span>
         <span className="text-2xl font-extrabold text-[#D4AF37]">Drop</span>
       </div>
     </Link>
@@ -130,7 +133,7 @@ function DesktopMenu({ items, currentPath }) {
   return (
     <ul className="hidden md:flex items-center gap-10 lg:gap-12 list-none m-0 p-0">
       {items.map((item) => {
-        // ড্যাশবোর্ডের সাব-রাউটে থাকলেও যেন 'Dashboard' লিংকটি অ্যাক্টিভ দেখায় (যেমন: /dashboard/user/overview)
+        // à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡à§‡à¦° à¦¸à¦¾à¦¬-à¦°à¦¾à¦‰à¦Ÿà§‡ à¦¥à¦¾à¦•à¦²à§‡à¦“ à¦¯à§‡à¦¨ 'Dashboard' à¦²à¦¿à¦‚à¦•à¦Ÿà¦¿ à¦…à§à¦¯à¦¾à¦•à§à¦Ÿà¦¿à¦­ à¦¦à§‡à¦–à¦¾à§Ÿ (à¦¯à§‡à¦®à¦¨: /dashboard/user/overview)
         const isActive = item.href === "/" 
           ? currentPath === "/" 
           : currentPath.startsWith(item.href);
@@ -142,7 +145,7 @@ function DesktopMenu({ items, currentPath }) {
               className={`relative text-[15.5px] font-bold tracking-wide transition-all duration-300 no-underline ${
                 isActive
                   ? "text-[#D4AF37]" 
-                  : "text-[#334155] hover:text-[#0F172A]"
+                  : "text-[#334155] hover:text-[#0F172A] dark:text-slate-300 dark:hover:text-white"
               }`}
             >
               {item.label}
@@ -167,14 +170,14 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout, dashboardPath }) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 rounded-3xl border border-[#D4AF37]/30 bg-white px-5 py-2.5 hover:shadow-md hover:border-[#D4AF37]/60 transition-all duration-200"
+        className="flex items-center gap-3 rounded-3xl border border-[#D4AF37]/30 bg-white px-3 py-2.5 hover:shadow-md hover:border-[#D4AF37]/60 transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 sm:px-5"
       >
         <FaCircleUser className="text-2xl text-[#D4AF37]" />
         <div className="hidden sm:block text-left pr-2">
-          <p className="text-sm font-bold text-[#0F172A]">{user.name}</p>
-          <p className="text-xs text-[#334155] -mt-0.5 capitalize">{user.role || "user"}</p>
+          <p className="text-sm font-bold text-[#0F172A] dark:text-white">{user.name}</p>
+          <p className="text-xs text-[#334155] -mt-0.5 capitalize dark:text-slate-400">{user.role || "user"}</p>
         </div>
-        <FaChevronDown className={`text-xs text-[#334155] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <FaChevronDown className={`text-xs text-[#334155] transition-transform duration-300 dark:text-slate-400 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
@@ -184,21 +187,21 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout, dashboardPath }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="absolute right-0 mt-3 w-72 origin-top-right bg-white rounded-3xl shadow-2xl border border-slate-100 py-2 z-50 overflow-hidden"
+            className="absolute right-0 mt-3 w-72 origin-top-right bg-white rounded-3xl shadow-2xl border border-slate-100 py-2 z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-800"
           >
-            <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-4 bg-slate-50/50">
+            <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-4 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-800/60">
               <FaCircleUser className="text-4xl text-[#D4AF37]" />
               <div>
-                <p className="font-bold text-base text-[#0F172A]">{user.name}</p>
-                <p className="text-xs text-[#334155] truncate max-w-[160px]">{user.email}</p>
+                <p className="font-bold text-base text-[#0F172A] dark:text-white">{user.name}</p>
+                <p className="text-xs text-[#334155] truncate max-w-[160px] dark:text-slate-400">{user.email}</p>
               </div>
             </div>
             <div className="p-1.5 flex flex-col gap-0.5">
-              {/* 📊 💡 এখানে ডাইনামিক ড্যাশবোর্ড পাথ ব্যবহার করা হয়েছে */}
+              {/* ðŸ“Š ðŸ’¡ à¦à¦–à¦¾à¦¨à§‡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡ à¦ªà¦¾à¦¥ à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡ */}
               <Link
                 href={dashboardPath}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold text-[#334155] hover:text-[#0F172A] hover:bg-slate-50 transition-colors no-underline"
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold text-[#334155] hover:text-[#0F172A] hover:bg-slate-50 transition-colors no-underline dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
               >
                 <FaGaugeHigh className="text-lg text-[#D4AF37]" />
                 Dashboard
@@ -207,7 +210,7 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout, dashboardPath }) {
 
             <button
               onClick={onLogout}
-              className="w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 font-semibold transition-colors"
+              className="w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 font-semibold transition-colors dark:hover:bg-red-950/40"
             >
               Logout
             </button>
@@ -223,7 +226,7 @@ function AuthLinks() {
     <div className="flex items-center gap-4">
       <Link
         href="/login"
-        className="font-bold text-[#334155] hover:text-[#0F172A] px-4 py-2.5 transition-colors no-underline"
+        className="font-bold text-[#334155] hover:text-[#0F172A] px-4 py-2.5 transition-colors no-underline dark:text-slate-300 dark:hover:text-white"
       >
         Login
       </Link>
@@ -245,7 +248,7 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout, dashboardPath
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
       transition={{ duration: 0.45, ease: "easeInOut" }}
-      className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-inner"
+      className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-inner dark:border-slate-800 dark:bg-slate-950"
     >
       <div className="px-6 py-8 flex flex-col gap-2">
         {items.map((item, index) => {
@@ -266,7 +269,7 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout, dashboardPath
                 className={`block px-5 py-4 rounded-2xl text-[16px] font-bold transition-all no-underline ${
                   isActive
                     ? "bg-[#D4AF37]/10 text-[#D4AF37]" 
-                    : "text-[#0F172A] hover:bg-slate-50"
+                    : "text-[#0F172A] hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
                 {item.label}
@@ -275,18 +278,18 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout, dashboardPath
           );
         })}
 
-        <div className="mt-6 pt-6 border-t border-gray-100">
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-800">
           {user ? (
-            <div className="bg-slate-50 rounded-2xl p-5">
+            <div className="bg-slate-50 rounded-2xl p-5 dark:bg-slate-900">
               <div className="flex items-center gap-4 mb-6">
                 <FaCircleUser className="text-5xl text-[#D4AF37]" />
                 <div>
                   <p className="font-bold text-lg text-[#0F172A]">{user.name}</p>
-                  <p className="text-sm text-[#334155]">{user.email}</p>
+                  <p className="text-sm text-[#334155] break-all dark:text-slate-400">{user.email}</p>
                 </div>
               </div>
               
-              {/* 💡 মোবাইল ইউজারের সুবিধার জন্য ড্রপডাউন ছাড়াও সরাসরি একটি ড্যাশবোর্ড শর্টকাট বাটন */}
+              {/* ðŸ’¡ à¦®à§‹à¦¬à¦¾à¦‡à¦² à¦‡à¦‰à¦œà¦¾à¦°à§‡à¦° à¦¸à§à¦¬à¦¿à¦§à¦¾à¦° à¦œà¦¨à§à¦¯ à¦¡à§à¦°à¦ªà¦¡à¦¾à¦‰à¦¨ à¦›à¦¾à§œà¦¾à¦“ à¦¸à¦°à¦¾à¦¸à¦°à¦¿ à¦à¦•à¦Ÿà¦¿ à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡ à¦¶à¦°à§à¦Ÿà¦•à¦¾à¦Ÿ à¦¬à¦¾à¦Ÿà¦¨ */}
               <Button
                 as={Link}
                 href={dashboardPath}
