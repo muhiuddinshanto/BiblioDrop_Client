@@ -1,6 +1,7 @@
 import BookDetailsContent from '@/components/Books/BookDetailsContent';
 import { getBooksById } from '@/lib/api/books';
 import React from 'react';
+import { reviewsByUserId } from '@/lib/api/reviews';
 
 const BookDetailPage = async ({ params }) => {
     const { id } = await params;
@@ -17,21 +18,17 @@ const BookDetailPage = async ({ params }) => {
         };
     }
 
-    // ✅ Reviews আলাদাভাবে fetch করো
+    //  Reviews আলাদাভাবে fetch 
     let reviewsData = [];
     try {
-        const reviewRes = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/reviews/${id}`,
-            { cache: "no-store" }
-        );
-        const reviewJson = await reviewRes.json();
-        reviewsData = reviewJson?.data || [];
+        const reviewJson = await reviewsByUserId(rawBook._id);
+        reviewsData = reviewJson || [];
     } catch {
         reviewsData = [];
     }
 
     return (
-        <main className="w-full bg-white min-h-screen">
+        <main className="w-full bg-white dark:bg-slate-900 min-h-screen dark:bg-slate-950">
             <BookDetailsContent 
                 book={book} 
                 reviewsData={reviewsData}

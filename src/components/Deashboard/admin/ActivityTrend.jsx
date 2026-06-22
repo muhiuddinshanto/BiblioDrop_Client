@@ -17,9 +17,9 @@ export default function ActivityTrend() {
   const [timeRange, setTimeRange] = useState("Last 6 Months");
 
   return (
-    <div className="bg-white border border-slate-200 p-6 rounded-2xl flex flex-col shadow-sm lg:col-span-2">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 p-6 rounded-2xl flex flex-col shadow-sm lg:col-span-2">
       <div className="flex justify-between items-center mb-6">
-        <h4 className="text-base font-bold text-[#040d1b]">Platform Activity Trends</h4>
+        <h4 className="text-base font-bold text-[#040d1b] dark:text-slate-100">Platform Activity Trends</h4>
         <select 
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}

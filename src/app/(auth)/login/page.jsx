@@ -1,4 +1,4 @@
-
+﻿
 "use client";
 import React, { useState } from "react";
 import {
@@ -23,6 +23,8 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
+  
+
   const [showPassword, setShowPassword] = useState(false);
 
   const searchParams = useSearchParams();
@@ -48,14 +50,14 @@ export default function LoginPage() {
       });
 
       if (error) {
-        toast.error(`❌ Login Failed: ${error.message || "Invalid credentials"}`);
+        toast.error(`âŒ Login Failed: ${error.message || "Invalid credentials"}`);
         console.error("Login Failed:", error);
         return;
       }
 
       if (authData) {
-        // 🚀 ফিক্সড: নাম সরাসরি 'authData.user' থেকে নেওয়া হচ্ছে
-        toast.success(`🎉 Login Successful for ${authData.user?.name || "User"}!`);
+        // ðŸš€ à¦«à¦¿à¦•à§à¦¸à¦¡: à¦¨à¦¾à¦® à¦¸à¦°à¦¾à¦¸à¦°à¦¿ 'authData.user' à¦¥à§‡à¦•à§‡ à¦¨à§‡à¦“à§Ÿà¦¾ à¦¹à¦šà§à¦›à§‡
+        toast.success(`ðŸŽ‰ Login Successful for ${authData.user?.name || "User"}!`);
         router.push(redirectTo || "/");
       }
 
@@ -70,23 +72,26 @@ export default function LoginPage() {
       });
 
       if (data) {
-        toast.success(`🎉 Login Successful for ${data.user?.name || "User"}!`);
+        toast.success(`ðŸŽ‰ Login Successful for ${data.user?.name || "User"}!`);
         router.push(redirectTo || "/");
       }
+
+
+      
     
     
   };
 
   return (
-    <div className="mx-auto w-full max-w-md p-5 sm:p-8 bg-white rounded-3xl border border-slate-100 shadow-2xl my-6 sm:my-10">
+    <div className="mx-auto w-full max-w-md p-5 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 shadow-2xl my-6 sm:my-10">
 
       {/* Header */}
       <div className="text-center mb-6 sm:mb-8">
         <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#0F172A] to-slate-800 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 shadow-inner text-2xl sm:text-4xl">
-          🔐
+          ðŸ”
         </div>
         <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">Welcome Back</h2>
-        <p className="text-sm text-slate-500 mt-1.5 sm:mt-2">Sign in to your BiblioDrop account</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5 sm:mt-2">Sign in to your BiblioDrop account</p>
       </div>
 
       {/* Google Button */}
@@ -122,7 +127,7 @@ export default function LoginPage() {
         <TextField isRequired name="password" type={showPassword ? "text" : "password"}>
           <div className="flex justify-between items-center mb-1">
             <Label className="text-sm font-semibold text-[#0F172A]">Password</Label>
-            <a href="#" className="text-xs font-semibold text-slate-500 hover:text-[#0F172A] transition-colors focus:outline-none">
+            <a href="#" className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-[#0F172A] transition-colors focus:outline-none">
               Forgot Password?
             </a>
           </div>
@@ -132,7 +137,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300 transition-colors focus:outline-none"
             >
               {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
             </button>
@@ -151,9 +156,9 @@ export default function LoginPage() {
         </Button>
 
         {/* Sign Up Link */}
-        <p className="text-center text-sm text-slate-500 mt-2 sm:mt-4">
-          Don't have an account?{" "}
-          {/* 🚀 ফিক্সড: টেমপ্লেট লিটারেল দিয়ে ডাইনামিক রিডাইরেক্ট প্যারামিটার */}
+        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-2 sm:mt-4">
+          Don&apos;t have an account?{" "}
+          {/* ðŸš€ à¦«à¦¿à¦•à§à¦¸à¦¡: à¦Ÿà§‡à¦®à¦ªà§à¦²à§‡à¦Ÿ à¦²à¦¿à¦Ÿà¦¾à¦°à§‡à¦² à¦¦à¦¿à§Ÿà§‡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦°à¦¿à¦¡à¦¾à¦‡à¦°à§‡à¦•à§à¦Ÿ à¦ªà§à¦¯à¦¾à¦°à¦¾à¦®à¦¿à¦Ÿà¦¾à¦° */}
           <Link
             href={`/signup${redirectTo ? `?redirect=${redirectTo}` : ""}`}
             className="font-bold text-[#0F172A] hover:underline focus:outline-none"
@@ -165,3 +170,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

@@ -21,7 +21,7 @@ export default function ReadingListContent({ orders = [] }) {
       {/* ১. হেডার সেকশন */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2">
+          <h1 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2">
             <MdMenuBook className="text-[#775a19]" /> My Reading List
           </h1>
           <p className="text-[#45474c] text-sm">
@@ -30,19 +30,19 @@ export default function ReadingListContent({ orders = [] }) {
         </div>
         
         {/* কাউন্টার ব্যাজ */}
-        <div className="bg-slate-100 border border-slate-200 text-[#040d1b] px-4 py-2 rounded-xl text-sm font-semibold self-start sm:self-auto">
-          Books Collected: <span className="font-serif font-bold text-[#775a19] ml-1">{completedBooks.length}</span>
+        <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#040d1b] dark:text-slate-100 px-4 py-2 rounded-xl text-sm font-semibold self-start sm:self-auto">
+          Books Collected: <span className="font-serif font-bold text-[#775a19] dark:text-amber-500 ml-1">{completedBooks.length}</span>
         </div>
       </div>
 
       {/* ২. গ্যালারি গ্রিড (Gallery View) */}
       {completedBooks.length === 0 ? (
         /* রিডিং লিস্ট খালি থাকলে এই সুন্দর UI-টি দেখাবে */
-        <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-xl border border-[#c5c6cc]/20 p-6 shadow-sm">
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-white dark:bg-slate-900 rounded-xl border border-[#c5c6cc]/20 p-6 shadow-sm">
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-dashed border-slate-200">
             <MdLayersClear className="text-4xl text-slate-300" />
           </div>
-          <h3 className="text-lg font-bold text-[#040d1b] mb-1">Your Reading List is Empty</h3>
+          <h3 className="text-lg font-bold text-[#040d1b] dark:text-slate-100 mb-1">Your Reading List is Empty</h3>
           <p className="text-sm text-[#45474c] max-w-sm leading-relaxed">
             Books will appear here once their delivery is successfully completed or processed through the archive.
           </p>
@@ -62,7 +62,7 @@ export default function ReadingListContent({ orders = [] }) {
             return (
               <div 
                 key={order._id} 
-                className="bg-white rounded-xl border border-[#c5c6cc]/20 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md hover:border-[#775a19]/30 transition-all duration-300 relative"
+                className="bg-white dark:bg-slate-900 rounded-xl border border-[#c5c6cc]/20 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md hover:border-[#775a19]/30 transition-all duration-300 relative"
               >
                 {/* স্ট্যাটাস ব্যাজ (ইমেজের ওপর ভাসমান) */}
                 <div className="absolute top-3 right-3 z-10">
@@ -97,7 +97,7 @@ export default function ReadingListContent({ orders = [] }) {
                     </span>
 
                     {/* বইয়ের নাম */}
-                    <h3 className="font-serif font-bold text-base text-[#040d1b] leading-tight mt-2 line-clamp-1 group-hover:text-[#775a19] transition-colors" title={order.title}>
+                    <h3 className="font-serif font-bold text-base text-[#040d1b] dark:text-slate-100 leading-tight mt-2 line-clamp-1 group-hover:text-[#775a19] transition-colors" title={order.title}>
                       {order.title || "Untitled Masterpiece"}
                     </h3>
 
@@ -113,7 +113,7 @@ export default function ReadingListContent({ orders = [] }) {
                       <MdBookmark className="text-slate-300" /> 
                       {isReturned ? 'Returned On' : 'Delivered On'}
                     </span>
-                    <span className="font-mono text-[#040d1b] font-semibold">
+                    <span className="font-mono text-[#040d1b] dark:text-slate-100 font-semibold">
                       {formattedDate}
                     </span>
                   </div>

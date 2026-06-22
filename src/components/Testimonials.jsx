@@ -19,7 +19,7 @@ const containerVariants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.15, // একটি কার্ডের পর আরেকটি কার্ড আসার ব্যবধান
+            staggerChildren: 0.15, // à¦à¦•à¦Ÿà¦¿ à¦•à¦¾à¦°à§à¦¡à§‡à¦° à¦ªà¦° à¦†à¦°à§‡à¦•à¦Ÿà¦¿ à¦•à¦¾à¦°à§à¦¡ à¦†à¦¸à¦¾à¦° à¦¬à§à¦¯à¦¬à¦§à¦¾à¦¨
         }
     }
 };
@@ -34,7 +34,7 @@ const cardVariants = {
 };
 
 export default function Testimonials() {
-    // প্রফেশনাল ৩টি স্ট্যাটিক রিভিউ ডাটা
+    // à¦ªà§à¦°à¦«à§‡à¦¶à¦¨à¦¾à¦² à§©à¦Ÿà¦¿ à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¿à¦• à¦°à¦¿à¦­à¦¿à¦‰ à¦¡à¦¾à¦Ÿà¦¾
     const reviews = [
         {
             id: 1,
@@ -63,10 +63,10 @@ export default function Testimonials() {
     ];
 
     return (
-        <section className="w-full bg-slate-50/50 py-20 px-6 lg:px-8 border-t border-slate-100 overflow-hidden">
+        <section className="w-full bg-slate-50/50 dark:bg-slate-950 py-20 px-6 lg:px-8 border-t border-slate-100 dark:border-slate-800 overflow-hidden">
             <div className="mx-auto max-w-6xl">
                 
-                {/* 🎯 Section Header (Scroll Animated) */}
+                {/* ðŸŽ¯ Section Header (Scroll Animated) */}
                 <motion.div 
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -77,20 +77,20 @@ export default function Testimonials() {
                     <span className="text-xs font-black uppercase tracking-widest text-[#C5A059] flex items-center justify-center gap-1.5">
                         <FaHeart className="animate-pulse" /> Reader Feedback
                     </span>
-                    <h2 className="mt-2 text-2xl font-black text-[#1A2332] tracking-tight sm:text-4xl">
+                    <h2 className="mt-2 text-2xl font-black text-[#1A2332] dark:text-slate-100 tracking-tight sm:text-4xl">
                         Voices of Our Community
                     </h2>
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                         Discover how scholars, researchers, and book collectors experience our premium local delivery ecosystem.
                     </p>
                 </motion.div>
 
-                {/* 🎛️ Testimonials Grid (Framer Motion Container) */}
+                {/* ðŸŽ›ï¸ Testimonials Grid (Framer Motion Container) */}
                 <motion.div 
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, margin: "-50px" }} // স্ক্রিনে আসার সাথে সাথে এনিমেশন রান হবে একবারই
+                    viewport={{ once: true, margin: "-50px" }} // à¦¸à§à¦•à§à¦°à¦¿à¦¨à§‡ à¦†à¦¸à¦¾à¦° à¦¸à¦¾à¦¥à§‡ à¦¸à¦¾à¦¥à§‡ à¦à¦¨à¦¿à¦®à§‡à¦¶à¦¨ à¦°à¦¾à¦¨ à¦¹à¦¬à§‡ à¦à¦•à¦¬à¦¾à¦°à¦‡
                     className="grid grid-cols-1 gap-8 md:grid-cols-3"
                 >
                     {reviews.map((review) => {
@@ -100,15 +100,15 @@ export default function Testimonials() {
                             <motion.div 
                                 key={id}
                                 variants={cardVariants}
-                                whileHover={{ y: -6, transition: { duration: 0.2 } }} // হোভার করলে হালকা উপরে উঠবে
-                                className="group relative flex flex-col bg-white border border-slate-100 rounded-2xl p-8 shadow-sm hover:shadow-xl hover:border-slate-200/80 transition-shadow duration-300"
+                                whileHover={{ y: -6, transition: { duration: 0.2 } }} // à¦¹à§‹à¦­à¦¾à¦° à¦•à¦°à¦²à§‡ à¦¹à¦¾à¦²à¦•à¦¾ à¦‰à¦ªà¦°à§‡ à¦‰à¦ à¦¬à§‡
+                                className="group relative flex flex-col bg-white dark:bg-slate-900 border border-slate-100 rounded-2xl p-8 shadow-sm hover:shadow-xl hover:border-slate-200/80 transition-shadow duration-300"
                             >
                                 {/* Quote Icon Decorative */}
                                 <div className="absolute top-6 right-8 text-slate-100 group-hover:text-[#C5A059]/10 text-4xl transition-colors duration-300">
                                     <FaQuoteLeft />
                                 </div>
 
-                                {/* ⭐ Star Ratings */}
+                                {/* â­ Star Ratings */}
                                 <div className="flex items-center gap-1 text-amber-400 text-xs mb-5">
                                     {[...Array(rating)].map((_, i) => (
                                         <FaStar key={i} />
@@ -116,8 +116,8 @@ export default function Testimonials() {
                                 </div>
 
                                 {/* Comment Body */}
-                                <blockquote className="flex-1 text-sm leading-relaxed text-slate-600 font-medium italic">
-                                    "{comment}"
+                                <blockquote className="flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300 font-medium italic">
+                                    &quot;{comment}&quot;
                                 </blockquote>
 
                                 {/* Divider Line */}
@@ -125,7 +125,7 @@ export default function Testimonials() {
 
                                 {/* User Bio Info */}
                                 <div className="flex items-center gap-4">
-                                    <div className="relative w-11 h-11 bg-slate-100 rounded-full overflow-hidden border border-slate-100">
+                                    <div className="relative w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700">
                                         <img 
                                             src={avatar} 
                                             alt={name} 
@@ -134,7 +134,7 @@ export default function Testimonials() {
                                         />
                                     </div>
                                     <div className="text-left">
-                                        <h4 className="text-sm font-black text-[#1A2332] tracking-tight group-hover:text-blue-600 transition-colors">
+                                        <h4 className="text-sm font-black text-[#1A2332] dark:text-slate-100 tracking-tight group-hover:text-blue-600 transition-colors">
                                             {name}
                                         </h4>
                                         <p className="text-[11px] text-slate-400 font-semibold tracking-wide uppercase mt-0.5">
@@ -152,3 +152,4 @@ export default function Testimonials() {
         </section>
     );
 }
+

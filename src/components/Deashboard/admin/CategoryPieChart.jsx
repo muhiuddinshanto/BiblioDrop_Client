@@ -13,13 +13,13 @@ export default function CategoryPieChart({ totalBooks = 0 }) {
   ];
 
   return (
-    <div className="bg-white border border-slate-200 p-6 rounded-2xl flex flex-col shadow-sm">
-      <h4 className="text-base font-bold text-[#040d1b] mb-2">Books by Category</h4>
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 p-6 rounded-2xl flex flex-col shadow-sm">
+      <h4 className="text-base font-bold text-[#040d1b] dark:text-slate-100 mb-2">Books by Category</h4>
       
       <div className="flex-grow flex items-center justify-center relative h-[200px]">
         {/* সেন্ট্রাল কাউন্টার টেক্সট ওভারলে */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-          <span className="text-xl font-bold text-[#040d1b]">
+          <span className="text-xl font-bold text-[#040d1b] dark:text-slate-100">
             {totalBooks > 1000 ? `${(totalBooks / 1000).toFixed(1)}k+` : totalBooks}
           </span>
           <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Total Books</span>

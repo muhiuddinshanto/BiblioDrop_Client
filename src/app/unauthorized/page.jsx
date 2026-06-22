@@ -8,8 +8,8 @@ export default function UnauthorizedPage() {
   const router = useRouter();
 
   return (
-    <main className="w-full min-h-screen bg-slate-50 flex items-center justify-center px-6 py-12">
-      <div className="max-w-md w-full text-center bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center">
+    <main className="w-full min-h-screen bg-slate-50 flex items-center justify-center px-6 py-12 dark:bg-slate-950">
+      <div className="max-w-md w-full text-center bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center dark:border-slate-800 dark:bg-slate-900">
         
         {/* 🔒 লক আইকন অ্যানিমেশন সহ */}
         <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center border border-rose-100 mb-6 animate-bounce">
@@ -25,7 +25,7 @@ export default function UnauthorizedPage() {
           Error 403 / Unauthorized
         </p>
 
-        <p className="mt-4 text-sm text-slate-500 leading-relaxed">
+        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
           দুঃখিত, এই পেজটি দেখার বা এই অ্যাকশনটি নেওয়ার অনুমতি আপনার অ্যাকাউন্টের নেই। দয়া করে সঠিক অ্যাকাউন্ট দিয়ে লগইন করুন অথবা এডমিনের সাথে যোগাযোগ করুন।
         </p>
 
@@ -40,7 +40,7 @@ export default function UnauthorizedPage() {
 
           <button
             onClick={() => router.back()}
-            className="w-full flex items-center justify-center gap-2 bg-transparent hover:bg-slate-50 border-2 border-slate-200 text-slate-700 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-2 bg-transparent hover:bg-slate-50 border-2 border-slate-200 text-slate-700 py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98] dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <FaArrowLeft className="text-xs" /> Go Back
           </button>

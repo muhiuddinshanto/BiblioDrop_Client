@@ -12,47 +12,38 @@ import {
 } from 'react-icons/fa6';
 import StatusToggleButton from './StatusToggleButton'; 
 import toast from 'react-hot-toast';
+import { purchaseChecker } from '@/lib/api/order';
+import { reviewSubmit } from '@/lib/actions/reviews';
 
 export default function BookDetailsContent({ book: initialBook, reviewsData = [], isLoadingReviews = false }) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  useEffect(() => {
-  if (session) {
-    console.log("SESSION DATA:", session); // এটা দেখো
-  }
-}, [session]);
   
+  // 💡 হাইড্রেশন এরর চিরতরে ফিক্স করার জন্য মাউন্টেড স্টেট
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [book, setBook] = useState(initialBook);
-  const [reviewsList, setReviewsList] = useState(reviewsData); // ✅ রিভিউজ লোকাল স্টেট
+  const reviewsList = Array.isArray(reviewsData?.data) ? reviewsData.data : [];
+  // 👈 এই লগটি সাময়িকভাবে যোগ করুন ডাটার চেহারা দেখার জন্য:
+console.log("REVIEWS DATA RECEIVED:", reviewsData);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [hasPurchased, setHasPurchased] = useState(false); 
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  // ✅ সার্ভার থেকে নতুন রিভিউ ডাটা আসলে লোকাল স্টেট আপডেট হবে (router.refresh() এর সাথে সিঙ্ক)
-  useEffect(() => {
-    if (reviewsData) {
-      setReviewsList(reviewsData);
-    }
-  }, [reviewsData]);
-
-  // ✅ পারচেজ স্ট্যাটাস চেক
+  // পারচেজ ভেরিফিকেশন চেক
   useEffect(() => {
     if (!session?.user || !book?._id) return;
 
     const checkPurchase = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/orders/check/${book._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${session.session?.token}` 
-            }
-          }
-        );
-        const data = await res.json();
-        setHasPurchased(data.hasPurchased);
+        const data = await purchaseChecker(book._id);
+        setHasPurchased(!!data?.hasPurchased);
       } catch {
         setHasPurchased(false);
       }
@@ -61,62 +52,49 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     checkPurchase();
   }, [session, book?._id]);
 
-  // ✅ রিভিউ সাবমিট হ্যান্ডলার
   const handleReviewSubmit = async () => {
     if (!reviewForm.comment.trim()) {
-      toast.error("রিভিউ লিখুন।");
+      toast.error("Please write a review");
       return;
     }
     setIsSubmittingReview(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.session?.token}`
-        },
-        body: JSON.stringify({
-          bookId: book._id,
-          rating: reviewForm.rating,
-          comment: reviewForm.comment,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("রিভিউ সাবমিট হয়েছে! ✅");
+      const reviewPayload = {
+        bookId: book._id,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment.trim(),
+      };
+
+      const data = await reviewSubmit(reviewPayload);
+
+      if (data?.success) {
+        toast.success("Review submitted successfully! 🎉");
         setReviewForm({ rating: 5, comment: "" });
-        router.refresh(); // সার্ভার কম্পোনেন্ট ডাটা রি-ফেচ করবে
+        router.refresh(); 
       } else {
-        toast.error(data.message || "রিভিউ দিতে ব্যর্থ হয়েছেন।");
+        toast.error(data?.message || "Review submission failed.");
       }
-    } catch {
-      toast.error("রিভিউ সাবমিট করতে সমস্যা হয়েছে।");
+    } catch (error) {
+      console.error(error);
+      toast.error("Review submission failed.");
     } finally {
       setIsSubmittingReview(false);
     }
   };
 
   const [formData, setFormData] = useState({
-    title: '', author: '', category: '', price: '', description: '', image: ''
+    title: initialBook?.title || '',
+    author: initialBook?.author || '',
+    category: initialBook?.category || '',
+    price: initialBook?.price || '',
+    description: initialBook?.description || '',
+    image: initialBook?.image || ''
   });
-
-  useEffect(() => {
-    if (book) {
-      setFormData({
-        title: book.title || '',
-        author: book.author || '',
-        category: book.category || '',
-        price: book.price || '',
-        description: book.description || '',
-        image: book.image || ''
-      });
-    }
-  }, [book]);
 
   if (!book) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-lg font-bold text-slate-500">Book data not found.</p>
+        <p className="text-lg font-bold text-slate-500 dark:text-slate-400">Book data not found.</p>
       </div>
     );
   }
@@ -200,7 +178,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
 
   const handleOrderBook = async () => {
     if (!session) {
-      toast.error("অর্ডার করতে দয়া করে প্রথমে লগইন করুন।");
+      toast.error("Please login to order.");
       return;
     }
     setIsProcessing(true);
@@ -209,7 +187,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
       if (res?.success && res?.url) {
         window.location.href = res.url; 
       } else {
-        toast.error(res?.message || "Stripe Checkout সেশন তৈরি করতে ব্যর্থ হয়েছে।");
+        toast.error(res?.message || "Failed to process order. Please try again.");
       }
     } catch (error) {
       console.error(error);
@@ -221,14 +199,22 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
 
   const handleAddToWishlist = async () => {
     if (!session) {
-      toast("উইশলিস্টে যুক্ত করতে প্রথমে লগইন করুন।");
+      toast("Please login to add to wishlist.");
       return;
     }
     setIsProcessing(true);
+
     try {
-      const res = await wishlistCreate(_id);
+      const wishlistPayload = {
+        ...book,
+        activeUserId: session?.user?.id
+      };
+
+      const res = await wishlistCreate(_id, wishlistPayload);
+      
       if (res?.success) {
-        toast.success("Added to wishlist! ❤️");
+        toast.success("Added to wishlist! 🎉");
+        router.refresh();
       } else {
         toast.error(res?.message || "Could not add to wishlist.");
       }
@@ -241,52 +227,55 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
   };
 
   return (
-    <section className="w-full bg-white px-6 py-12 lg:px-8 relative">
+    <section className="w-full bg-white dark:bg-slate-950 px-6 py-12 lg:px-8 relative">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 items-start">
           
-          <div className="md:col-span-5 flex flex-col items-center bg-slate-50 rounded-2xl p-8 border border-slate-100">
+          {/* ইমেজ সেকশন */}
+          <div className="md:col-span-5 flex flex-col items-center bg-slate-50 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 dark:bg-slate-900">
             <div className="relative w-full max-w-[320px] aspect-[3/4] shadow-2xl rounded-lg overflow-hidden">
               <img src={image || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600"} alt={title} className="h-full w-full object-cover" />
             </div>
           </div>
 
+          {/* ডিটেইলস সেকশন */}
           <div className="md:col-span-7 flex flex-col justify-center">
             <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37]">{category}</span>
-            <h1 className="mt-2 text-3xl font-black text-[#0F172A] tracking-tight sm:text-4xl">{title}</h1>
-            <p className="mt-2 text-lg font-medium text-slate-600">by <span className="font-bold text-[#0F172A]">{author}</span></p>
+            <h1 className="mt-2 text-3xl font-black text-[#0F172A] dark:text-slate-100 tracking-tight sm:text-4xl">{title}</h1>
+            <p className="mt-2 text-lg font-medium text-slate-600 dark:text-slate-300">by <span className="font-bold text-[#0F172A] dark:text-slate-100">{author}</span></p>
 
             <div className="mt-6">
               <div className="flex items-center gap-4">
-                <span className="text-3xl font-black text-[#0F172A]">${parseFloat(price || 0).toFixed(2)}</span>
+                <span className="text-3xl font-black text-[#0F172A] dark:text-slate-100">${parseFloat(price || 0).toFixed(2)}</span>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold ${status === 'Published' || status === 'Available' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
                   {status}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed bg-slate-50/60 border border-slate-100 p-4 rounded-xl">{description}</p>
+              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50/60 border border-slate-100 p-4 rounded-xl dark:border-slate-800 dark:bg-slate-900/70">{description}</p>
             </div>
 
-            {isLibrarianOwner ? (
-              <div className="mt-6 p-4 border border-amber-200 bg-amber-50/40 rounded-xl space-y-3">
+            {/* সেশন লোড হওয়া সাপেক্ষে অ্যাকশন বাটন ম্যানেজমেন্ট */}
+            {isMounted && session && isLibrarianOwner ? (
+              <div className="mt-6 p-4 border border-amber-200 bg-amber-50/40 rounded-xl space-y-3 dark:border-amber-900/60 dark:bg-amber-950/20">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-[#775a19]">⚙️ Librarian Management Panel</span>
+                  <span className="text-xs font-black uppercase tracking-wider text-[#775a19] dark:text-amber-500">⚙️ Librarian Management Panel</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2.5">
-                  <button onClick={() => setIsEditModalOpen(true)} className="flex items-center justify-center gap-2 bg-white border border-slate-200 rounded-lg py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-sm">
+                  <button onClick={() => setIsEditModalOpen(true)} className="flex items-center justify-center gap-2 bg-white border border-slate-200 rounded-lg py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                     <FaPenToSquare className="text-blue-500" /> Edit Catalog
                   </button>
                   <StatusToggleButton status={status} onStatusToggle={handleStatusToggle} isProcessing={isProcessing} />
-                  <button onClick={handleDeleteBook} disabled={isProcessing} className="flex items-center justify-center gap-2 bg-rose-50 border border-rose-100 rounded-lg py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-100 transition shadow-sm">
+                  <button onClick={handleDeleteBook} disabled={isProcessing} className="flex items-center justify-center gap-2 bg-rose-50 border border-rose-100 rounded-lg py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-100 transition shadow-sm dark:bg-rose-950/20 dark:border-rose-900/40 dark:text-rose-400">
                     <FaTrashCan /> Delete Item
                   </button>
                 </div>
               </div>
             ) : (
               <div className="mt-6 grid grid-cols-2 gap-4">
-                <button onClick={handleOrderBook} disabled={(status !== "Published" && status !== "Available") || isProcessing} className="flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white py-3.5 rounded-xl font-bold text-sm transition shadow-sm disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed">
+                <button onClick={handleOrderBook} disabled={(status !== "Published" && status !== "Available") || isProcessing} className="flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white py-3.5 rounded-xl font-bold text-sm transition shadow-sm disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">
                   <FaTruckMoving /> {(status === "Published" || status === "Available") ? "Borrow / Order Now" : "Not Available"}
                 </button>
-                <button onClick={handleAddToWishlist} disabled={isProcessing} className="flex items-center justify-center gap-2 bg-transparent hover:bg-slate-50 border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl font-bold text-sm transition">
+                <button onClick={handleAddToWishlist} disabled={isProcessing} className="flex items-center justify-center gap-2 bg-transparent hover:bg-slate-50 border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl font-bold text-sm transition dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900">
                   <FaHeart className="text-rose-500" /> Add to Wishlist
                 </button>
               </div>
@@ -295,70 +284,75 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
         </div>
 
         {/* 💬 রিভিউ সেকশন */}
-        <div className="mt-16 max-w-4xl border-t border-slate-100 pt-10">
-          <h2 className="text-xl font-black text-[#0F172A] tracking-tight flex items-center gap-2">
+        <div className="mt-16 max-w-4xl border-t border-slate-100 pt-10 dark:border-slate-800">
+          <h2 className="text-xl font-black text-[#0F172A] dark:text-slate-100 tracking-tight flex items-center gap-2">
             <FaRegCommentDots className="text-lg text-slate-400" /> Reader Reviews ({reviewsList?.length || 0})
           </h2>
 
-          {session && hasPurchased && !isLibrarianOwner && (
-            <div className="mt-6 p-5 rounded-2xl bg-amber-50/60 border border-amber-200 shadow-sm">
-              <p className="text-xs font-black uppercase tracking-wider text-amber-800 mb-3">✍️ আপনার রিভিউ লিখুন</p>
-              <div className="flex gap-1 mb-3">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <button type="button" key={star} onClick={() => setReviewForm(p => ({ ...p, rating: star }))}>
-                    <FaStar className={star <= reviewForm.rating ? "text-amber-500 fill-current text-xl" : "text-slate-200 text-xl"} />
+          {/* হাইড্রেশন সেফটি কন্ডিশনাল ইউআই ব্লক */}
+          {isMounted && (
+            <>
+              {session && hasPurchased && !isLibrarianOwner && (
+                <div className="mt-6 p-5 rounded-2xl bg-amber-50/60 border border-amber-200 shadow-sm dark:border-amber-900/60 dark:bg-amber-950/20">
+                  <p className="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-500 mb-3">✍️ আপনার রিভিউ লিখুন</p>
+                  <div className="flex gap-1 mb-3">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button type="button" key={star} onClick={() => setReviewForm(p => ({ ...p, rating: star }))}>
+                        <FaStar className={star <= reviewForm.rating ? "text-amber-500 fill-current text-xl" : "text-slate-200 text-xl"} />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea value={reviewForm.comment} onChange={e => setReviewForm(p => ({ ...p, comment: e.target.value }))} placeholder="আপনার মতামত লিখুন..." className="w-full border border-slate-200 bg-white dark:bg-slate-900 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-300 dark:border-slate-700 dark:text-slate-100" rows={3} />
+                  <button onClick={handleReviewSubmit} disabled={isSubmittingReview} className="mt-2 bg-[#0F172A] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#1E293B] transition disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900">
+                    {isSubmittingReview ? "সাবমিট হচ্ছে..." : "রিভিউ দিন"}
                   </button>
-                ))}
-              </div>
-              <textarea value={reviewForm.comment} onChange={e => setReviewForm(p => ({ ...p, comment: e.target.value }))} placeholder="আপনার মতামত লিখুন..." className="w-full border border-slate-200 bg-white rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-300" rows={3} />
-              <button onClick={handleReviewSubmit} disabled={isSubmittingReview} className="mt-2 bg-[#0F172A] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#1E293B] transition disabled:opacity-50">
-                {isSubmittingReview ? "সাবমিট হচ্ছে..." : "রিভিউ দিন"}
-              </button>
-            </div>
+                </div>
+              )}
+
+              {session && !hasPurchased && !isLibrarianOwner && (
+                <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center dark:border-slate-800 dark:bg-slate-900">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">🔒 শুধুমাত্র এই বইয়ের ভেরিফাইড ক্রেতারাই রিভিউ দিতে পারবেন।</p>
+                </div>
+              )}
+
+              {session && isLibrarianOwner && (
+                <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center dark:border-slate-800 dark:bg-slate-900">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">🔒 এটি আপনার আপলোড করা বই। ওনাররা নিজের বইতে রিভিউ দিতে পারবেন না।</p>
+                </div>
+              )}
+
+              {!session && (
+                <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center dark:border-slate-800 dark:bg-slate-900">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">🔒 রিভিউ বা কমেন্ট করতে দয়া করে প্রথমে লগইন করুন।</p>
+                </div>
+              )}
+            </>
           )}
 
-          {session && !hasPurchased && !isLibrarianOwner && (
-            <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center">
-              <p className="text-sm text-slate-500 font-medium">🔒 শুধুমাত্র এই বইয়ের ভেরিফাইড ক্রেতারাই রিভিউ দিতে পারবেন।</p>
-            </div>
-          )}
-
-          {session && isLibrarianOwner && (
-            <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center">
-              <p className="text-sm text-slate-500 font-medium">🔒 এটি আপনার আপলোড করা বই। ওনাররা নিজের বইতে রিভিউ দিতে পারবেন না।</p>
-            </div>
-          )}
-
-          {!session && (
-            <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center">
-              <p className="text-sm text-slate-500 font-medium">🔒 রিভিউ বা কমেন্ট করতে দয়া করে প্রথমে লগইন করুন।</p>
-            </div>
-          )}
-
-          {/* রিভিউজ ম্যাপ লুপ */}
+          {/* রিভিউ রেন্ডারিং লিস্ট */}
           <div className="mt-8 space-y-6">
             {isLoadingReviews ? (
               <p className="text-sm font-bold text-slate-400 animate-pulse">Loading reviews...</p>
-            ) : reviewsList && reviewsList.length > 0 ? (
+            ) : reviewsList.length > 0 ? (
               reviewsList.map((review, idx) => (
-                <div key={review._id || idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-100/80 flex flex-col gap-2">
+                <div key={review._id?.$oid || review._id || idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-100/80 flex flex-col gap-2 dark:border-slate-800 dark:bg-slate-900">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-slate-800">{review.userName || review.user?.name || "Anonymous Reader"}</span>
+                    <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{review.userName || "Anonymous Reader"}</span>
                     <div className="flex items-center gap-0.5 text-amber-500 text-xs">
                       {[...Array(5)].map((_, i) => (
                         <FaStar key={i} className={i < (review.rating || 5) ? "fill-current" : "text-slate-200"} />
                       ))}
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed">{review.comment}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{review.comment}</p>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "Recent Review"}
                   </span>
                 </div>
               ))
             ) : (
-              <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                <p className="text-sm font-bold text-slate-500">এই বইটিতে এখনো কোনো রিভিউ দেওয়া হয়নি।</p>
+              <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 dark:bg-slate-900">
+                <p className="text-sm font-bold text-slate-500 dark:text-slate-400">এই বইটিতে এখনো কোনো রিভিউ দেওয়া হয়নি।</p>
               </div>
             )}
           </div>
@@ -366,20 +360,20 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
 
       </div>
 
-      {/* এডিট মডাল */}
+      {/* এডিট ক্যাটালগ মোডাল */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between border-b pb-4">
-              <h3 className="text-lg font-black text-slate-900">Update Book</h3>
-              <button onClick={() => setIsEditModalOpen(false)}><FaXmark className="text-xl" /></button>
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl flex flex-col border dark:border-slate-800">
+            <div className="flex items-center justify-between border-b pb-4 dark:border-slate-800">
+              <h3 className="text-lg font-black text-slate-900 dark:text-slate-100">Update Book</h3>
+              <button onClick={() => setIsEditModalOpen(false)}><FaXmark className="text-xl dark:text-slate-400" /></button>
             </div>
             <form onSubmit={handleUpdateSubmit} className="space-y-4 py-4">
-              <input type="text" name="title" value={formData.title} onChange={handleInputChange} className="w-full border p-2.5 rounded-xl" placeholder="Title" required />
-              <input type="text" name="author" value={formData.author} onChange={handleInputChange} className="w-full border p-2.5 rounded-xl" placeholder="Author" required />
-              <input type="number" name="price" value={formData.price} onChange={handleInputChange} className="w-full border p-2.5 rounded-xl" placeholder="Price" required />
-              <textarea name="description" value={formData.description} onChange={handleInputChange} className="w-full border p-2.5 rounded-xl" placeholder="Description" required />
-              <button type="submit" disabled={isProcessing} className="w-full bg-[#0F172A] text-white py-3 rounded-xl font-bold">Save Changes</button>
+              <input type="text" name="title" value={formData.title} onChange={handleInputChange} className="w-full border border-slate-200 bg-white p-2.5 rounded-xl text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" placeholder="Title" required />
+              <input type="text" name="author" value={formData.author} onChange={handleInputChange} className="w-full border border-slate-200 bg-white p-2.5 rounded-xl text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" placeholder="Author" required />
+              <input type="number" name="price" value={formData.price} onChange={handleInputChange} className="w-full border border-slate-200 bg-white p-2.5 rounded-xl text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" placeholder="Price" required />
+              <textarea name="description" value={formData.description} onChange={handleInputChange} className="w-full border border-slate-200 bg-white p-2.5 rounded-xl text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" placeholder="Description" required />
+              <button type="submit" disabled={isProcessing} className="w-full bg-[#0F172A] text-white py-3 rounded-xl font-bold hover:bg-[#1E293B] transition disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900">Save Changes</button>
             </form>
           </div>
         </div>

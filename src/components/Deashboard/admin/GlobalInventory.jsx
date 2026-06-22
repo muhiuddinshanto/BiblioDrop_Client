@@ -12,7 +12,7 @@ export default function GlobalInventory({ initialBooks }) {
   );
 
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-slate-200/50 p-6 rounded-2xl h-fit shadow-sm">
+    <div className="bg-white dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/50 p-6 rounded-2xl h-fit shadow-sm">
       <div className="flex gap-4 items-center mb-4">
         <div className="relative flex-grow">
           <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#45474c] text-lg" />
@@ -37,12 +37,12 @@ export default function GlobalInventory({ initialBooks }) {
                 <MdBook className="text-xl text-white" />
               </div>
               <div>
-                <p className="font-bold text-[#040d1b] text-sm">{book.title}</p>
+                <p className="font-bold text-[#040d1b] dark:text-slate-100 text-sm">{book.title}</p>
                 <p className="text-xs text-slate-400">Status: {book.status}</p>
               </div>
             </div>
             <div className="flex gap-3 text-xs font-bold">
-              <button className="text-[#45474c] hover:text-[#040d1b]">Unpublish</button>
+              <button className="text-[#45474c] hover:text-[#040d1b] dark:text-slate-100">Unpublish</button>
               <button className="text-red-600 hover:underline">Delete</button>
             </div>
           </div>

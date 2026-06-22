@@ -21,14 +21,14 @@ export default function EditBookModal({ isOpen, onOpenChange, bookData, onUpdate
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <Modal.Backdrop>
         <Modal.Container placement="auto">
-          <Modal.Dialog className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-100 bg-white">
+          <Modal.Dialog className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-100 bg-white dark:bg-slate-900">
             <Modal.CloseTrigger />
 
             <Modal.Header className="pt-6 px-6 md:px-8 border-b border-slate-50 pb-4">
               <Modal.Icon className="bg-amber-50 text-[#775a19] rounded-xl p-2.5">
                 <MdEdit className="size-5" />
               </Modal.Icon>
-              <Modal.Heading className="text-xl font-bold font-serif text-[#040d1b] mt-2">
+              <Modal.Heading className="text-xl font-bold font-serif text-[#040d1b] dark:text-slate-100 mt-2">
                 Edit Book Masterpiece
               </Modal.Heading>
               <p className="mt-1 text-xs text-[#45474c]">

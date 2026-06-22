@@ -13,11 +13,11 @@ export default function BookCard({ book }) {
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-900 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 dark:border-slate-800 dark:bg-slate-900"
     >
       {/* === ইমেজ কন্টেইনার === */}
       {/* h-[280px] বা h-[300px] ফিক্সড করে দিলে সব কার্ডের সাইজ সমান থাকবে */}
-      <div className="relative h-[300px] w-full overflow-hidden bg-slate-100">
+      <div className="relative h-[300px] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         <img
           src={image || fallbackImage}
           alt={title}
@@ -46,24 +46,24 @@ export default function BookCard({ book }) {
         </span>
 
         {/* টাইটেল: line-clamp-2 দেওয়ার সুবিধা হলো টাইটেল ২ লাইনের হলেও নিচের ডিজাইন ভাঙবে না */}
-        <h3 className="mt-1.5 line-clamp-2 text-base font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors duration-200 min-h-[3rem]">
+        <h3 className="mt-1.5 line-clamp-2 text-base font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors duration-200 min-h-[3rem] dark:text-slate-100">
           {title}
         </h3>
 
         {/* লেখক */}
-        <p className="mt-0.5 line-clamp-1 text-xs font-medium text-slate-500">
+        <p className="mt-0.5 line-clamp-1 text-xs font-medium text-slate-500 dark:text-slate-400">
           {author}
         </p>
 
         {/* রেটিং এবং প্রাইস সেকশন */}
-        <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-100">
+        <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
           {/* রেটিং */}
           <div className="flex items-center gap-1">
             <div className="flex items-center text-xs text-[#D4AF37]">
               {[...Array(5)].map((_, i) => (
                 <FaStar 
                   key={i} 
-                  className={i < Math.floor(rating || 5) ? "text-[#D4AF37]" : "text-gray-200"} 
+                  className={i < Math.floor(rating || 5) ? "text-[#D4AF37]" : "text-gray-200 dark:text-slate-700"}
                 />
               ))}
             </div>
@@ -73,7 +73,7 @@ export default function BookCard({ book }) {
           </div>
 
           {/* মূল্য */}
-          <span className="text-base font-black text-[#0F172A]">
+          <span className="text-base font-black text-[#0F172A] dark:text-slate-100">
             ${typeof price === 'number' ? price.toFixed(2) : parseFloat(price).toFixed(2)}
           </span>
         </div>

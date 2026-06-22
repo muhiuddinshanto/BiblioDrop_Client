@@ -12,7 +12,7 @@ import {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#faf9fa] text-[#040d1b] font-sans">
+    <div className="min-h-screen bg-[#faf9fa] dark:bg-slate-950 text-[#040d1b] dark:text-slate-100 font-sans">
       
       {/* ==================== ১. হিরো সেকশন (Hero Section) ==================== */}
       <section className="relative py-20 px-4 md:px-10 max-w-7xl mx-auto flex flex-col items-center text-center space-y-6 border-b border-slate-100">
@@ -55,7 +55,7 @@ export default function AboutPage() {
       </section>
 
       {/* ==================== ৩. মূল বৈশিষ্ট্যসমূহ (Core Values) ==================== */}
-      <section className="bg-white py-20 border-y border-slate-100">
+      <section className="bg-white dark:bg-slate-950 py-20 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 md:px-10 space-y-12">
           <div className="text-center space-y-3">
             <h2 className="text-3xl font-bold font-serif">Why Choose BiblioDrop?</h2>
@@ -64,8 +64,8 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* ভ্যালু ১ */}
-            <div className="p-6 rounded-2xl bg-[#faf9fa] border border-slate-100 space-y-4 hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300 group">
-              <div className="w-12 h-12 bg-white text-[#040d1b] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#040d1b] group-hover:text-white transition-all duration-300 shadow-sm text-xl">
+            <div className="p-6 rounded-2xl bg-[#faf9fa] dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4 hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300 group">
+              <div className="w-12 h-12 bg-white dark:bg-slate-900 text-[#040d1b] dark:text-slate-100 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#040d1b] group-hover:text-white transition-all duration-300 shadow-sm text-xl">
                 <MdAutoStories />
               </div>
               <h3 className="text-lg font-bold font-serif">Curated Collections</h3>
@@ -75,8 +75,8 @@ export default function AboutPage() {
             </div>
 
             {/* ভ্যালু ২ */}
-            <div className="p-6 rounded-2xl bg-[#faf9fa] border border-slate-100 space-y-4 hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300 group">
-              <div className="w-12 h-12 bg-white text-[#775a19] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm text-xl">
+            <div className="p-6 rounded-2xl bg-[#faf9fa] dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4 hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300 group">
+              <div className="w-12 h-12 bg-white dark:bg-slate-900 text-[#775a19] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm text-xl">
                 <MdOutlineWorkspacePremium />
               </div>
               <h3 className="text-lg font-bold font-serif">Premium Experience</h3>
@@ -86,8 +86,8 @@ export default function AboutPage() {
             </div>
 
             {/* ভ্যালু ৩ */}
-            <div className="p-6 rounded-2xl bg-[#faf9fa] border border-slate-100 space-y-4 hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300 group">
-              <div className="w-12 h-12 bg-white text-emerald-700 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm text-xl">
+            <div className="p-6 rounded-2xl bg-[#faf9fa] dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4 hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300 group">
+              <div className="w-12 h-12 bg-white dark:bg-slate-900 text-emerald-700 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm text-xl">
                 <MdPeopleOutline />
               </div>
               <h3 className="text-lg font-bold font-serif">Community Focused</h3>
@@ -114,7 +114,7 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-1.5 px-6 py-3 border border-slate-200 text-[#45474c] hover:bg-slate-50 hover:text-[#040d1b] rounded-xl text-xs font-bold transition-all active:scale-95"
+            className="inline-flex items-center justify-center gap-1.5 px-6 py-3 border border-slate-200 text-[#45474c] hover:bg-slate-50 hover:text-[#040d1b] dark:text-slate-100 rounded-xl text-xs font-bold transition-all active:scale-95"
           >
             Browse Books
           </Link>

@@ -24,10 +24,10 @@ export default function LibrarianOverview({
       {/* হেডার সেকশন */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
-          <h1 className="text-3xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2.5">
+          <h1 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2.5">
             <MdDashboard className="text-[#775a19]" /> Librarian Dashboard
           </h1>
-          <p className="text-[#45474c] text-sm">
+          <p className="text-[#45474c] dark:text-slate-400 text-sm">
             Monitor inventory health, platform earnings, and processing cycles.
           </p>
         </div>
@@ -36,39 +36,39 @@ export default function LibrarianOverview({
       {/* ==================== ১. কুইক স্ট্যাটস কার্ডস ==================== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* ক) Total Books Listed */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
           <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Total Books Listed</span>
-            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">{stats.totalBooks}</h3>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Total Books Listed</span>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100">{stats.totalBooks}</h3>
             <p className="text-[11px] text-emerald-600 flex items-center gap-0.5 font-medium">
               <MdTrendingUp className="text-sm" /> Live in Inventory
             </p>
           </div>
-          <div className="w-12 h-12 bg-slate-50 text-[#040d1b] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#040d1b] group-hover:text-white transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-[#040d1b] dark:text-slate-100 rounded-xl flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-[#040d1b] group-hover:text-white transition-all duration-300 shadow-sm">
             <MdMenuBook className="text-xl" />
           </div>
         </div>
 
         {/* খ) Total Earnings */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
           <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Total Earnings</span>
-            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">${stats.totalEarnings.toFixed(2)}</h3>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Total Earnings</span>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100">${stats.totalEarnings.toFixed(2)}</h3>
             <p className="text-[11px] text-slate-400 font-medium">Platform revenue generated</p>
           </div>
-          <div className="w-12 h-12 bg-slate-50 text-emerald-700 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-emerald-700 rounded-xl flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm">
             <MdAttachMoney className="text-xl" />
           </div>
         </div>
 
         {/* গ) Active Pending Requests */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
           <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Active Pending Requests</span>
-            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">{stats.pendingRequests}</h3>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Active Pending Requests</span>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100">{stats.pendingRequests}</h3>
             <p className="text-[11px] text-amber-600 font-medium">Awaiting delivery approvals</p>
           </div>
-          <div className="w-12 h-12 bg-slate-50 text-[#775a19] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-[#775a19] rounded-xl flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm">
             <MdHourglassTop className="text-xl" />
           </div>
         </div>
@@ -78,10 +78,10 @@ export default function LibrarianOverview({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* আর্নিং চার্ট (Area Chart) */}
-        <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="col-span-12 lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="mb-6">
-            <h3 className="text-lg font-bold font-serif text-[#040d1b]">Revenue Overview</h3>
-            <p className="text-xs text-[#45474c]">Analytical performance of monthly institutional revenue.</p>
+            <h3 className="text-lg font-bold font-serif text-[#040d1b] dark:text-slate-100">Revenue Overview</h3>
+            <p className="text-xs text-[#45474c] dark:text-slate-400">Analytical performance of monthly institutional revenue.</p>
           </div>
 
           {/* 💡 এখানে h-72 এর সাথে relative এবং min-w-0 যোগ করা হয়েছে */}
@@ -108,10 +108,10 @@ export default function LibrarianOverview({
         </div>
 
         {/* রিকোয়েস্ট ভলিউম চার্ট (Bar Chart) */}
-        <div className="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+        <div className="col-span-12 lg:col-span-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
           <div className="mb-4">
-            <h3 className="text-lg font-bold font-serif text-[#040d1b]">Order Volume</h3>
-            <p className="text-xs text-[#45474c]">Total monthly processed deliveries.</p>
+            <h3 className="text-lg font-bold font-serif text-[#040d1b] dark:text-slate-100">Order Volume</h3>
+            <p className="text-xs text-[#45474c] dark:text-slate-400">Total monthly processed deliveries.</p>
           </div>
           <div className="h-64 w-full text-xs">
             <ResponsiveContainer width="100%" height="100%">
@@ -128,26 +128,26 @@ export default function LibrarianOverview({
       </div>
 
       {/* ==================== ৩. মোস্ট রিকোয়েস্টেড মিনি-লিস্ট ==================== */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm max-w-full">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm max-w-full">
         <div className="mb-6">
-          <h3 className="text-lg font-bold font-serif text-[#040d1b]">Most Requested Volumes</h3>
-          <p className="text-xs text-[#45474c]">Your highly demanded catalog items prioritized by subscriber tier.</p>
+          <h3 className="text-lg font-bold font-serif text-[#040d1b] dark:text-slate-100">Most Requested Volumes</h3>
+          <p className="text-xs text-[#45474c] dark:text-slate-400">Your highly demanded catalog items prioritized by subscriber tier.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {topRequestedBooks.map((book) => (
             <div
               key={book.id}
-              className="flex items-center gap-4 p-3 border border-slate-50 rounded-xl hover:border-slate-100 hover:bg-slate-50/50 transition-all group"
+              className="flex items-center gap-4 p-3 border border-slate-50 dark:border-slate-800 rounded-xl hover:border-slate-100 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all group"
             >
-              <div className="w-12 h-16 bg-slate-100 rounded-md overflow-hidden shadow-sm flex-shrink-0 border border-slate-100">
+              <div className="w-12 h-16 bg-slate-100 dark:bg-slate-800 rounded-md overflow-hidden shadow-sm flex-shrink-0 border border-slate-100 dark:border-slate-700">
                 <img src={book.image} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               </div>
               <div className="min-w-0 flex-grow">
-                <h4 className="text-sm font-bold text-[#040d1b] truncate group-hover:text-[#775a19] transition-colors" title={book.title}>
+                <h4 className="text-sm font-bold text-[#040d1b] dark:text-slate-100 truncate group-hover:text-[#775a19] transition-colors" title={book.title}>
                   {book.title}
                 </h4>
-                <p className="text-[11px] text-[#45474c] truncate">by {book.author}</p>
+                <p className="text-[11px] text-[#45474c] dark:text-slate-400 truncate">by {book.author}</p>
 
                 {/* রিকোয়েস্ট কাউন্ট ব্যাজ */}
                 <div className="flex items-center gap-1 mt-1 text-amber-600 font-medium text-[11px]">
@@ -156,7 +156,7 @@ export default function LibrarianOverview({
                 </div>
               </div>
               <div className="text-right flex-shrink-0 pl-2">
-                <span className="text-sm font-bold font-mono text-[#040d1b]">${book.price.toFixed(2)}</span>
+                <span className="text-sm font-bold font-mono text-[#040d1b] dark:text-slate-100">${book.price.toFixed(2)}</span>
               </div>
             </div>
           ))}

@@ -56,7 +56,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+    <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white dark:bg-slate-900/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         
         {/* Left Section */}
@@ -170,7 +170,7 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout, dashboardPath }) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 rounded-3xl border border-[#D4AF37]/30 bg-white px-3 py-2.5 hover:shadow-md hover:border-[#D4AF37]/60 transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 sm:px-5"
+        className="flex items-center gap-3 rounded-3xl border border-[#D4AF37]/30 bg-white dark:bg-slate-900 px-3 py-2.5 hover:shadow-md hover:border-[#D4AF37]/60 transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 sm:px-5"
       >
         <FaCircleUser className="text-2xl text-[#D4AF37]" />
         <div className="hidden sm:block text-left pr-2">
@@ -187,7 +187,7 @@ function UserDropdown({ user, isOpen, setIsOpen, onLogout, dashboardPath }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="absolute right-0 mt-3 w-72 origin-top-right bg-white rounded-3xl shadow-2xl border border-slate-100 py-2 z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-800"
+            className="absolute right-0 mt-3 w-72 origin-top-right bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 py-2 z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-800"
           >
             <div className="px-6 py-5 border-b border-gray-100 flex items-center gap-4 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-800/60">
               <FaCircleUser className="text-4xl text-[#D4AF37]" />
@@ -248,7 +248,7 @@ function MobileMenu({ items, user, currentPath, onClose, onLogout, dashboardPath
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
       transition={{ duration: 0.45, ease: "easeInOut" }}
-      className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-inner dark:border-slate-800 dark:bg-slate-950"
+      className="md:hidden overflow-hidden bg-white dark:bg-slate-900 border-t border-gray-100 shadow-inner dark:border-slate-800 dark:bg-slate-950"
     >
       <div className="px-6 py-8 flex flex-col gap-2">
         {items.map((item, index) => {

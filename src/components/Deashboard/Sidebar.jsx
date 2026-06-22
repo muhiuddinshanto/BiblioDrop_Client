@@ -52,6 +52,12 @@ export default function Sidebar() {
   const { data: session } = authClient.useSession();
   const role = session?.user?.role || 'user';
   const navItems = navLinkMap[role] || userNavLink;
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return <aside className="hidden h-[calc(100vh-5rem)] w-64 shrink-0 flex-col border-r border-[#c5c6cc]/20 bg-[#f6f3f4] py-6 dark:border-slate-800 dark:bg-slate-900 lg:sticky lg:top-20 lg:flex" />;
+  }
 
   return (
     <>
@@ -94,7 +100,7 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      <nav className="sticky top-20 z-40 flex gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-950 lg:hidden">
+      <nav className="sticky top-20 z-40 flex gap-2 overflow-x-auto border-b border-slate-200 bg-white dark:bg-slate-900 px-4 py-3 dark:border-slate-800 dark:bg-slate-950 lg:hidden">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

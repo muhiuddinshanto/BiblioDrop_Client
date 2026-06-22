@@ -72,7 +72,7 @@ export default function HowItWorks() {
     ];
 
     return (
-        <section className="w-full bg-white py-20 px-6 lg:px-8 border-t border-slate-100 overflow-hidden">
+        <section className="w-full bg-white dark:bg-slate-900 py-20 px-6 lg:px-8 border-t border-slate-100 overflow-hidden">
             <div className="mx-auto max-w-6xl">
                 
                 {/* 🎯 Section Header */}
@@ -86,10 +86,10 @@ export default function HowItWorks() {
                     <span className="text-xs font-black uppercase tracking-widest text-[#C5A059]">
                         Execution Model
                     </span>
-                    <h2 className="mt-2 text-2xl font-black text-[#1A2332] tracking-tight sm:text-4xl">
+                    <h2 className="mt-2 text-2xl font-black text-[#1A2332] dark:text-slate-100 tracking-tight sm:text-4xl">
                         How BiblioDrop Works
                     </h2>
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                         A seamless, four-step logistics pipeline designed to deliver world-class literature right to your workspace.
                     </p>
                 </motion.div>
@@ -110,7 +110,7 @@ export default function HowItWorks() {
                                 key={step.id}
                                 variants={stepVariants}
                                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                                className="group relative flex flex-col items-start bg-slate-50/60 border border-slate-100 rounded-2xl p-6 transition-all duration-300 hover:bg-white hover:shadow-xl hover:border-slate-200/80"
+                                className="group relative flex flex-col items-start bg-slate-50/60 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:border-slate-200/80"
                             >
                                 {/* Step Number Badge */}
                                 <span className="absolute top-6 right-6 text-2xl font-black text-slate-200/70 group-hover:text-[#C5A059]/20 transition-colors tracking-tight font-mono">
@@ -118,16 +118,16 @@ export default function HowItWorks() {
                                 </span>
 
                                 {/* Icon Container */}
-                                <div className={`p-3.5 border rounded-xl shadow-sm bg-white transition-transform duration-300 group-hover:scale-110 ${step.iconBg}`}>
+                                <div className={`p-3.5 border rounded-xl shadow-sm bg-white dark:bg-slate-900 transition-transform duration-300 group-hover:scale-110 ${step.iconBg}`}>
                                     <IconComponent className="text-xl" />
                                 </div>
 
                                 {/* Step Content */}
                                 <div className="mt-6">
-                                    <h3 className="text-base font-black text-[#1A2332] tracking-tight group-hover:text-blue-600 transition-colors">
+                                    <h3 className="text-base font-black text-[#1A2332] dark:text-slate-100 tracking-tight group-hover:text-blue-600 transition-colors">
                                         {step.title}
                                     </h3>
-                                    <p className="mt-2 text-xs leading-relaxed text-slate-500 font-medium">
+                                    <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400 font-medium">
                                         {step.description}
                                     </p>
                                 </div>

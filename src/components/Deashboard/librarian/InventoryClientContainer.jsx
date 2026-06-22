@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InventoryTable from "./InventoryTable";
 import EditBookModal from "./EditBookModal";
 import { booksUpdate, bookDetailsUpdate, bookDelete } from "@/lib/actions/books";
@@ -14,11 +14,7 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
     const [selectedBook, setSelectedBook] = useState(null);
     const router = useRouter();
 
-    useEffect(() => {
-        if (initialBooks) setBooks(initialBooks);
-    }, [initialBooks]);
-
-    // ১. এডিট বাটন — corrupt status normalize করে modal এ পাঠাও
+    // à§§. à¦à¦¡à¦¿à¦Ÿ à¦¬à¦¾à¦Ÿà¦¨ â€” corrupt status normalize à¦•à¦°à§‡ modal à¦ à¦ªà¦¾à¦ à¦¾à¦“
     const handleEditClick = (book) => {
         const safeBook = {
             ...book,
@@ -30,7 +26,7 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         setIsModalOpen(true);
     };
 
-    // ২. বই details আপডেট
+    // à§¨. à¦¬à¦‡ details à¦†à¦ªà¦¡à§‡à¦Ÿ
     const handleBookUpdate = async (updatedBookData) => {
         setIsUpdating(true);
         const oldBooks = [...books];
@@ -58,7 +54,7 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         }
     };
 
-    // ৩. স্ট্যাটাস টগল
+    // à§©. à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¾à¦¸ à¦Ÿà¦—à¦²
     const handleStatusToggle = async (id, nextStatus) => {
         setIsUpdating(true);
         const oldBooks = [...books];
@@ -80,7 +76,7 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         }
     };
 
-    // ৪. ডিলিট
+    // à§ª. à¦¡à¦¿à¦²à¦¿à¦Ÿ
     const handleDelete = async (id) => {
         const confirmed = window.confirm("Are you sure you want to delete this book?");
         if (!confirmed) return;
@@ -128,3 +124,4 @@ export default function InventoryClientContainer({ initialBooks = [] }) {
         </>
     );
 }
+

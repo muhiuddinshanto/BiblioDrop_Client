@@ -87,7 +87,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md p-5 sm:p-8 bg-white rounded-3xl border border-slate-100 shadow-2xl my-6 sm:my-10">
+    <div className="mx-auto w-full max-w-md p-5 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 shadow-2xl my-6 sm:my-10">
 
       {/* Header */}
       <div className="text-center mb-6 sm:mb-8">
@@ -95,7 +95,7 @@ export default function RegisterForm() {
           📚
         </div>
         <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">Create Account</h2>
-        <p className="text-sm text-slate-500 mt-1.5 sm:mt-2">Join the BiblioDrop community today</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5 sm:mt-2">Join the BiblioDrop community today</p>
       </div>
 
       {/* Google Button */}
@@ -190,7 +190,7 @@ export default function RegisterForm() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300 focus:outline-none"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -214,7 +214,7 @@ export default function RegisterForm() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300 focus:outline-none"
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -238,7 +238,7 @@ export default function RegisterForm() {
                 </Radio.Control>
                 <Radio.Content>
                   <Label className="text-sm font-medium cursor-pointer text-[#0F172A]">User (Reader)</Label>
-                  <p className="text-xs text-slate-500 mt-1">Browse, read & review books</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Browse, read & review books</p>
                 </Radio.Content>
               </div>
             </Radio>
@@ -250,7 +250,7 @@ export default function RegisterForm() {
                 </Radio.Control>
                 <Radio.Content>
                   <Label className="text-sm font-medium cursor-pointer text-[#0F172A]">Librarian</Label>
-                  <p className="text-xs text-slate-500 mt-1">Manage books & catalog</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage books & catalog</p>
                 </Radio.Content>
               </div>
             </Radio>
@@ -275,7 +275,7 @@ export default function RegisterForm() {
               setRole("user");
               setPhotoPreview("");
             }}
-            className="w-full sm:w-auto border border-slate-200 text-slate-600 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 hover:bg-slate-50"
+            className="w-full sm:w-auto border border-slate-200 text-slate-600 dark:text-slate-300 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 hover:bg-slate-50"
           >
             <FaRotateLeft size={17} />
             Reset
@@ -284,7 +284,7 @@ export default function RegisterForm() {
       </Form>
             {/* Signin Link */}
       <div className="text-center mt-6 pt-5 border-t border-slate-100 text-sm">
-        <p className="text-slate-500 font-medium">
+        <p className="text-slate-500 dark:text-slate-400 font-medium">
           Already have an account?{" "}
           <Link 
             href={`/login?redirect=${redirectTo}`} 

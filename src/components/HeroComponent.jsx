@@ -58,7 +58,7 @@ export default function HeroComponent({
   };
 
   return (
-    <section className="relative min-h-[92vh] w-full overflow-hidden bg-white flex items-center">
+    <section className="relative min-h-[92vh] w-full overflow-hidden bg-white dark:bg-slate-950 flex items-center">
       {/* Subtle Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1A2332_1px,transparent_1px),linear-gradient(to_bottom,#1A2332_1px,transparent_1px)] bg-[size:5rem_5rem] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_20%,#000_60%,transparent_100%)] opacity-[0.03]" />
 
@@ -80,7 +80,7 @@ export default function HeroComponent({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C5A059] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C5A059]"></span>
             </span>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-[#1A2332]">
+            <p className="text-xs font-bold tracking-[3px] uppercase text-[#1A2332] dark:text-slate-200">
               {badgeText}
             </p>
           </motion.div>
@@ -88,10 +88,10 @@ export default function HeroComponent({
           {/* Heading */}
           <motion.h1 
             variants={itemVariants}
-            className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-[#1A2332] leading-[1.05]"
+            className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-[#1A2332] dark:text-slate-100 leading-[1.05]"
           >
             {headingText} <br />
-            <span className="bg-gradient-to-r from-[#1A2332] via-[#C5A059] to-[#1A2332] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#1A2332] dark:from-slate-100 via-[#C5A059] to-[#1A2332] dark:to-slate-100 bg-clip-text text-transparent">
               {highlightedHeading}
             </span>
           </motion.h1>
@@ -99,7 +99,7 @@ export default function HeroComponent({
           {/* Description */}
           <motion.p 
             variants={itemVariants}
-            className="mt-6 max-w-lg text-lg leading-relaxed text-slate-600"
+            className="mt-6 max-w-lg text-lg leading-relaxed text-slate-600 dark:text-slate-300"
           >
             {description}
           </motion.p>
@@ -108,7 +108,7 @@ export default function HeroComponent({
           <motion.div variants={itemVariants} className="mt-10 w-full max-w-xl">
             <form 
               onSubmit={handleSearchSubmit} 
-              className="group flex items-center gap-2 rounded-3xl border border-slate-200 bg-white/70 p-2 shadow-xl shadow-slate-200/60 backdrop-blur-xl transition-all duration-500 focus-within:border-[#C5A059] focus-within:shadow-2xl focus-within:shadow-[#C5A059]/10"
+              className="group flex items-center gap-2 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-2 shadow-xl shadow-slate-200/60 dark:shadow-none backdrop-blur-xl transition-all duration-500 focus-within:border-[#C5A059] focus-within:shadow-2xl focus-within:shadow-[#C5A059]/10"
             >
               <div className="flex flex-1 items-center gap-4 px-6">
                 <FaMagnifyingGlass className="text-2xl text-slate-400 group-focus-within:text-[#C5A059] transition-colors" />
@@ -117,7 +117,7 @@ export default function HeroComponent({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={placeholder}
-                  className="w-full bg-transparent text-lg font-medium placeholder-slate-400 outline-none text-[#1A2332]"
+                  className="w-full bg-transparent text-lg font-medium placeholder-slate-400 outline-none text-[#1A2332] dark:text-slate-100"
                 />
               </div>
               <button
@@ -135,12 +135,12 @@ export default function HeroComponent({
             {stats.map((stat, idx) => (
               <div key={idx} className="flex items-center gap-10">
                 <div>
-                  <p className={`text-4xl font-black tracking-tighter ${stat.highlight ? 'text-[#C5A059]' : 'text-[#1A2332]'}`}>
+                  <p className={`text-4xl font-black tracking-tighter ${stat.highlight ? 'text-[#C5A059]' : 'text-[#1A2332] dark:text-slate-100'}`}>
                     {stat.value}
                   </p>
-                  <p className="text-sm font-semibold text-slate-500 mt-1">{stat.label}</p>
+                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">{stat.label}</p>
                 </div>
-                {idx < stats.length - 1 && <div className="h-9 w-px bg-slate-200" />}
+                {idx < stats.length - 1 && <div className="h-9 w-px bg-slate-200 dark:bg-slate-800" />}
               </div>
             ))}
           </motion.div>
@@ -160,7 +160,7 @@ export default function HeroComponent({
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             transition={{ duration: 1.1, ease: "easeOut" }}
             whileHover={{ scale: 1.03, rotate: 2 }}
-            className="relative w-full max-w-[380px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-slate-100"
+            className="relative w-full max-w-[380px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800"
           >
             <img className="w-full h-full object-cover" src={imageUrl} alt={imageTitle} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -176,14 +176,14 @@ export default function HeroComponent({
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ delay: 0.6, duration: 0.9 }}
             whileHover={{ y: -10, scale: 1.03 }}
-            className="absolute -bottom-6 -left-6 hidden sm:flex items-center gap-4 bg-white/90 backdrop-blur-2xl border border-white p-5 rounded-3xl shadow-2xl"
+            className="absolute -bottom-6 -left-6 hidden sm:flex items-center gap-4 bg-white dark:bg-slate-900/90 backdrop-blur-2xl border border-white/50 dark:border-slate-800 p-5 rounded-3xl shadow-2xl"
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1A2332] text-[#C5A059]">
               <FaBookOpen className="text-3xl" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-slate-500">THIS WEEK</p>
-              <p className="font-bold text-[#1A2332] text-lg">1,240+ Handpicked Books</p>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">THIS WEEK</p>
+              <p className="font-bold text-[#1A2332] dark:text-slate-100 text-lg">1,240+ Handpicked Books</p>
             </div>
           </motion.div>
         </div>

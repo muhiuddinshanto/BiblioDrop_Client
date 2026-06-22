@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { MdMenuBook, MdCloudUpload, MdHourglassEmpty, MdAttachMoney } from "react-icons/md";
 
-// ক্যাটাগরি লিস্ট
+// à¦•à§à¦¯à¦¾à¦Ÿà¦¾à¦—à¦°à¦¿ à¦²à¦¿à¦¸à§à¦Ÿ
 const CATEGORIES = [
   "Philosophy",
   "Architecture",
@@ -16,7 +16,7 @@ const CATEGORIES = [
 ];
 
 export default function BookForm({ onSubmit, initialData = null, isSubmitting = false }) {
-  // ডিফল্ট ব্ল্যাঙ্ক স্টেটের অবজেক্ট
+  // à¦¡à¦¿à¦«à¦²à§à¦Ÿ à¦¬à§à¦²à§à¦¯à¦¾à¦™à§à¦• à¦¸à§à¦Ÿà§‡à¦Ÿà§‡à¦° à¦…à¦¬à¦œà§‡à¦•à§à¦Ÿ
   const defaultFields = {
     title: "",
     author: "",
@@ -37,13 +37,13 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // ইনপুট চেঞ্জ হ্যান্ডলার
+  // à¦‡à¦¨à¦ªà§à¦Ÿ à¦šà§‡à¦žà§à¦œ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ইমেজ সিলেক্ট এবং প্রিভিউ হ্যান্ডলার
+  // à¦‡à¦®à§‡à¦œ à¦¸à¦¿à¦²à§‡à¦•à§à¦Ÿ à¦à¦¬à¦‚ à¦ªà§à¦°à¦¿à¦­à¦¿à¦‰ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,7 +52,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     }
   };
 
-  // imgBB-তে ইমেজ আপলোড করার মেইন লজিক
+  // imgBB-à¦¤à§‡ à¦‡à¦®à§‡à¦œ à¦†à¦ªà¦²à§‹à¦¡ à¦•à¦°à¦¾à¦° à¦®à§‡à¦‡à¦¨ à¦²à¦œà¦¿à¦•
   const uploadToImgBB = async (file) => {
     const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
     if (!apiKey) {
@@ -80,10 +80,10 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     }
   };
 
-  // ফর্ম সাবমিট হ্যান্ডলার
+  // à¦«à¦°à§à¦® à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formTarget = e.target; // ফর্ম এলিমেন্ট রেফারেন্স রাখা হলো রিসেট করার জন্য
+    const formTarget = e.target; // à¦«à¦°à§à¦® à¦à¦²à¦¿à¦®à§‡à¦¨à§à¦Ÿ à¦°à§‡à¦«à¦¾à¦°à§‡à¦¨à§à¦¸ à¦°à¦¾à¦–à¦¾ à¦¹à¦²à§‹ à¦°à¦¿à¦¸à§‡à¦Ÿ à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯
     setUploadingImage(true);
 
     let finalImageUrl = imagePreview;
@@ -108,7 +108,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     setUploadingImage(false);
 
     try {
-      // মেইন সাবমিট ফাংশনে ডাটা পাঠানো এবং এর রেসপন্সের জন্য অপেক্ষা করা
+      // à¦®à§‡à¦‡à¦¨ à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦«à¦¾à¦‚à¦¶à¦¨à§‡ à¦¡à¦¾à¦Ÿà¦¾ à¦ªà¦¾à¦ à¦¾à¦¨à§‹ à¦à¦¬à¦‚ à¦à¦° à¦°à§‡à¦¸à¦ªà¦¨à§à¦¸à§‡à¦° à¦œà¦¨à§à¦¯ à¦…à¦ªà§‡à¦•à§à¦·à¦¾ à¦•à¦°à¦¾
       await onSubmit({
         ...formData,
         price: Number(formData.price), 
@@ -116,12 +116,12 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         status: "Pending Approval", 
       });
 
-      // 💡 সফলভাবে সাবমিট হওয়ার পর যদি এটি নতুন এন্ট্রি হয় (initialData না থাকে), তবে ফিল্ড ক্লিয়ার হবে
+      // ðŸ’¡ à¦¸à¦«à¦²à¦­à¦¾à¦¬à§‡ à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦¹à¦“à§Ÿà¦¾à¦° à¦ªà¦° à¦¯à¦¦à¦¿ à¦à¦Ÿà¦¿ à¦¨à¦¤à§à¦¨ à¦à¦¨à§à¦Ÿà§à¦°à¦¿ à¦¹à§Ÿ (initialData à¦¨à¦¾ à¦¥à¦¾à¦•à§‡), à¦¤à¦¬à§‡ à¦«à¦¿à¦²à§à¦¡ à¦•à§à¦²à¦¿à§Ÿà¦¾à¦° à¦¹à¦¬à§‡
       if (!initialData) {
-        setFormData(defaultFields); // টেক্সট ফিল্ড স্টেট রিসেট
-        setImageFile(null); // ফাইল স্টেট রিসেট
-        setImagePreview(null); // ইমেজ প্রিভিউ বক্স রিসেট
-        formTarget.reset(); // HTML ডম ইনপুট রিসেট (ফাইল সিলেক্টরের ভেতরের ভ্যালু ক্লিনের জন্য)
+        setFormData(defaultFields); // à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦«à¦¿à¦²à§à¦¡ à¦¸à§à¦Ÿà§‡à¦Ÿ à¦°à¦¿à¦¸à§‡à¦Ÿ
+        setImageFile(null); // à¦«à¦¾à¦‡à¦² à¦¸à§à¦Ÿà§‡à¦Ÿ à¦°à¦¿à¦¸à§‡à¦Ÿ
+        setImagePreview(null); // à¦‡à¦®à§‡à¦œ à¦ªà§à¦°à¦¿à¦­à¦¿à¦‰ à¦¬à¦•à§à¦¸ à¦°à¦¿à¦¸à§‡à¦Ÿ
+        formTarget.reset(); // HTML à¦¡à¦® à¦‡à¦¨à¦ªà§à¦Ÿ à¦°à¦¿à¦¸à§‡à¦Ÿ (à¦«à¦¾à¦‡à¦² à¦¸à¦¿à¦²à§‡à¦•à§à¦Ÿà¦°à§‡à¦° à¦­à§‡à¦¤à¦°à§‡à¦° à¦­à§à¦¯à¦¾à¦²à§ à¦•à§à¦²à¦¿à¦¨à§‡à¦° à¦œà¦¨à§à¦¯)
       }
     } catch (error) {
       console.error("Submission handler error:", error);
@@ -129,12 +129,12 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-sm space-y-6">
+    <form onSubmit={handleSubmit} className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 p-6 md:p-8 shadow-sm space-y-6">
       
-      {/* দুই কলামের গ্রিড (Title & Author) */}
+      {/* à¦¦à§à¦‡ à¦•à¦²à¦¾à¦®à§‡à¦° à¦—à§à¦°à¦¿à¦¡ (Title & Author) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Book Title</label>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Book Title</label>
           <input
             type="text"
             name="title"
@@ -142,12 +142,12 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
             value={formData.title}
             onChange={handleChange}
             placeholder="e.g., The Silent Alchemist"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] transition-colors"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] dark:text-slate-100 transition-colors"
           />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Author Name</label>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Author Name</label>
           <input
             type="text"
             name="author"
@@ -155,21 +155,21 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
             value={formData.author}
             onChange={handleChange}
             placeholder="e.g., Sarah Jenkins"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] transition-colors"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] dark:text-slate-100 transition-colors"
           />
         </div>
       </div>
 
-      {/* dua কলামের গ্রিড (Category & Price) */}
+      {/* dua à¦•à¦²à¦¾à¦®à§‡à¦° à¦—à§à¦°à¦¿à¦¡ (Category & Price) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Category</label>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Category</label>
           <select
             name="category"
             required
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] bg-white transition-colors"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] dark:text-slate-100 bg-white dark:bg-slate-900 transition-colors"
           >
             <option value="" disabled>Select a category</option>
             {CATEGORIES.map((cat) => (
@@ -179,7 +179,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Book Price ($)</label>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Book Price ($)</label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
               <MdAttachMoney />
@@ -193,7 +193,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
               value={formData.price}
               onChange={handleChange}
               placeholder="0.00"
-              className="w-full pl-9 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] transition-colors"
+              className="w-full pl-9 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] dark:text-slate-100 transition-colors"
             />
           </div>
         </div>
@@ -201,7 +201,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
 
       {/* Description */}
       <div className="space-y-1.5">
-        <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Description / Synopsis</label>
+        <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Description / Synopsis</label>
         <textarea
           name="description"
           required
@@ -209,17 +209,17 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
           value={formData.description}
           onChange={handleChange}
           placeholder="Write a captivating summary of the book..."
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] transition-colors resize-none"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 focus:outline-none focus:border-[#775a19] text-sm text-[#040d1b] dark:text-slate-100 transition-colors resize-none"
         />
       </div>
 
       {/* Image Upload Feature */}
       <div className="space-y-1.5">
-        <label className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Book Cover Image</label>
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center border border-dashed border-slate-200 p-4 rounded-xl">
+        <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Book Cover Image</label>
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center border border-dashed border-slate-200 dark:border-slate-700 p-4 rounded-xl">
           
-          {/* প্রিভিউ বক্স */}
-          <div className="sm:col-span-3 flex justify-center bg-slate-50 rounded-lg p-2 h-28 border border-slate-100 overflow-hidden">
+          {/* à¦ªà§à¦°à¦¿à¦­à¦¿à¦‰ à¦¬à¦•à§à¦¸ */}
+          <div className="sm:col-span-3 flex justify-center bg-slate-50 dark:bg-slate-800 rounded-lg p-2 h-28 border border-slate-100 dark:border-slate-700 overflow-hidden">
             {imagePreview ? (
               <img src={imagePreview} alt="Cover Preview" className="h-full object-contain rounded shadow-sm" />
             ) : (
@@ -230,7 +230,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
             )}
           </div>
 
-          {/* ফাইল আপলোডার এরিয়া */}
+          {/* à¦«à¦¾à¦‡à¦² à¦†à¦ªà¦²à§‹à¦¡à¦¾à¦° à¦à¦°à¦¿à¦¯à¦¼à¦¾ */}
           <div className="sm:col-span-9 relative w-full">
             <input
               type="file"
@@ -241,25 +241,25 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
             />
             <label
               htmlFor="cover-upload"
-              className="flex flex-col items-center justify-center py-5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors group"
+              className="flex flex-col items-center justify-center py-5 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
             >
               <MdCloudUpload className="text-2xl text-slate-400 group-hover:text-[#775a19] transition-colors" />
-              <span className="text-xs font-bold text-[#040d1b] mt-1">Click to upload cover</span>
+              <span className="text-xs font-bold text-[#040d1b] dark:text-slate-100 mt-1">Click to upload cover</span>
               <span className="text-[10px] text-slate-400 mt-0.5">Supports PNG, JPG, WEBP (Max 5MB)</span>
             </label>
           </div>
         </div>
       </div>
 
-      {/* ইনফো নোট */}
-      <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-4 flex items-start gap-3">
+      {/* à¦‡à¦¨à¦«à§‹ à¦¨à§‹à¦Ÿ */}
+      <div className="bg-amber-50/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/50 rounded-xl p-4 flex items-start gap-3">
         <MdHourglassEmpty className="text-lg text-[#775a19] mt-0.5 flex-shrink-0" />
         <p className="text-xs text-[#775a19] font-medium leading-relaxed">
-          <strong>Notice:</strong> Upon submission, this volume will be cataloged under <strong>"Pending Approval"</strong> status. It will remain invisible on the public Browse platform until verified by institutional curation.
+          <strong>Notice:</strong> Upon submission, this volume will be cataloged under <strong>&quot;Pending Approval&quot;</strong> status. It will remain invisible on the public Browse platform until verified by institutional curation.
         </p>
       </div>
 
-      {/* সাবমিট বাটন */}
+      {/* à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦¬à¦¾à¦Ÿà¦¨ */}
       <button
         type="submit"
         disabled={isSubmitting || uploadingImage}
@@ -271,3 +271,4 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     </form>
   );
 }
+

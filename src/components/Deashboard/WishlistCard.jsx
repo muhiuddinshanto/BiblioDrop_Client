@@ -1,16 +1,17 @@
 "use client";
 
 import React from 'react';
+import { FaInfoCircle } from 'react-icons/fa';
 import { MdShoppingCart, MdDeleteOutline, MdOutlineCategory } from 'react-icons/md';
 
-export default function WishlistCard({ item, onAddToCart, onDelete }) {
+export default function WishlistCard({ item, onViewBookDetails, onDelete }) {
   // সেইফ প্রাইস ক্যালকুলেশন
   const displayPrice = typeof item.price === 'number' 
     ? item.price.toFixed(2) 
     : parseFloat(item.price || 0).toFixed(2);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden group hover:border-[#775a19]/30 hover:shadow-md transition-all duration-300 flex flex-col h-full">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden group hover:border-[#775a19]/30 hover:shadow-md transition-all duration-300 flex flex-col h-full">
       
       {/* ইমেজ সেকশন */}
       <div className="relative aspect-[3/4] bg-slate-50 w-full overflow-hidden border-b border-slate-100">
@@ -31,7 +32,7 @@ export default function WishlistCard({ item, onAddToCart, onDelete }) {
       {/* টেক্সট কন্টেন্ট */}
       <div className="p-4 flex flex-col flex-grow justify-between gap-3">
         <div className="space-y-1">
-          <h4 className="font-serif font-bold text-[#040d1b] text-base leading-snug line-clamp-2 group-hover:text-[#775a19] transition-colors" title={item.title}>
+          <h4 className="font-serif font-bold text-[#040d1b] dark:text-slate-100 text-base leading-snug line-clamp-2 group-hover:text-[#775a19] transition-colors" title={item.title}>
             {item.title || "Untitled Volume"}
           </h4>
           <p className="text-xs text-[#45474c] italic truncate">
@@ -59,11 +60,11 @@ export default function WishlistCard({ item, onAddToCart, onDelete }) {
             
             {/* কার্ট বাটন */}
             <button 
-              onClick={() => onAddToCart?.(item)}
+              onClick={() => onViewBookDetails?.(item)}
               className="p-2.5 rounded-xl bg-[#040d1b] text-white hover:bg-[#775a19] transition-all duration-200 shadow-sm flex items-center justify-center"
-              title="Add to Cart"
+              title="View Book Details"
             >
-              <MdShoppingCart className="text-lg" />
+              <FaInfoCircle className="text-lg" />
             </button>
           </div>
         </div>

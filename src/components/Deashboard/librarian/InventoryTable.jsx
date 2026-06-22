@@ -22,7 +22,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
         );
       case "Unpublished":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 rounded-full">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-full">
             <MdDoNotDisturbOn className="text-sm" /> Unpublished
           </span>
         );
@@ -32,13 +32,13 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px] text-left border-collapse">
 
           {/* টেবিল হেডার */}
           <thead>
-            <tr className="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-[#45474c]">
+            <tr className="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-700 text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-300">
               <th className="py-4 px-6">Book Details</th>
               <th className="py-4 px-6">Category</th>
               <th className="py-4 px-6">Delivery Fee</th>
@@ -49,7 +49,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
           </thead>
 
           {/* টেবিল বডি */}
-          <tbody className="divide-y divide-slate-50 text-sm text-[#040d1b]">
+          <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50 text-sm text-[#040d1b] dark:text-slate-100">
             {books.length === 0 ? (
               <tr>
                 <td colSpan="6" className="text-center py-12 text-slate-400 font-medium">
@@ -63,26 +63,26 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
                 const isPublished = book.status === "Published";
 
                 return (
-                  <tr key={bookId} className="hover:bg-slate-50/40 transition-colors">
+                  <tr key={bookId} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/50 transition-colors">
 
                     {/* বইয়ের বিবরণ এবং ইমেজ */}
                     <td className="py-4 px-6 flex items-center gap-4">
-                      <div className="w-10 h-14 bg-slate-100 rounded-md overflow-hidden border border-slate-100 flex-shrink-0 shadow-sm">
+                      <div className="w-10 h-14 bg-slate-100 dark:bg-slate-800 rounded-md overflow-hidden border border-slate-100 dark:border-slate-700 flex-shrink-0 shadow-sm">
                         <img src={book.image} alt={book.title} className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-bold text-base text-[#040d1b] truncate max-w-[200px]" title={book.title}>
+                        <h4 className="font-bold text-base text-[#040d1b] dark:text-slate-100 truncate max-w-[200px]" title={book.title}>
                           {book.title}
                         </h4>
-                        <p className="text-xs text-[#45474c] italic truncate">by {book.author}</p>
+                        <p className="text-xs text-[#45474c] dark:text-slate-400 italic truncate">by {book.author}</p>
                       </div>
                     </td>
 
                     {/* ক্যাটাগরি */}
-                    <td className="py-4 px-6 font-medium text-slate-600">{book.category}</td>
+                    <td className="py-4 px-6 font-medium text-slate-600 dark:text-slate-300">{book.category}</td>
 
                     {/* ডেলিভারি ফি */}
-                    <td className="py-4 px-6 font-mono font-bold text-[#775a19]">
+                    <td className="py-4 px-6 font-mono font-bold text-[#775a19] dark:text-amber-500">
                       ${(typeof book.price === 'number' ? book.price : parseFloat(book.price || 0)).toFixed(2)}
                     </td>
 
@@ -120,7 +120,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
                         {/* এডিট বাটন */}
                         <button
                           onClick={() => onEdit?.(book)}
-                          className="p-2 text-slate-500 hover:text-[#775a19] hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl transition-all"
+                          className="p-2 text-slate-500 dark:text-slate-400 hover:text-[#775a19] dark:hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent hover:border-slate-100 dark:hover:border-slate-700 rounded-xl transition-all"
                           title="Edit Book Details"
                         >
                           <MdEdit className="text-lg" />
@@ -129,7 +129,7 @@ export default function InventoryTable({ books = [], onEdit, onDelete, onStatusT
                         {/* ডিলিট বাটন */}
                         <button
                           onClick={() => onDelete?.(bookId)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-xl transition-all"
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 border border-transparent hover:border-red-100 dark:hover:border-red-800/50 rounded-xl transition-all"
                           title="Delete Book"
                         >
                           <MdDeleteOutline className="text-lg" />

@@ -25,17 +25,17 @@ export default async function ManageUsersPage() {
   const generalUserCount = allUsers.filter(u => !u.role || u.role?.toLowerCase() === "user").length;
 
   const statsData = [
-    { title: "Total Registered", value: totalUsers, icon: MdGroup, bg: "bg-slate-900 text-white" },
-    { title: "System Admins", value: adminCount, icon: MdShield, bg: "bg-amber-50 text-amber-700 border border-amber-200/50" },
-    { title: "Librarians", value: librarianCount, icon: MdOutlineSupervisedUserCircle, bg: "bg-blue-50 text-blue-700 border border-blue-200/50" },
-    { title: "General Users", value: generalUserCount, icon: MdPerson, bg: "bg-emerald-50 text-emerald-700 border border-emerald-200/50" },
+    { title: "Total Registered", value: totalUsers, icon: MdGroup, bg: "bg-slate-900 text-white dark:bg-slate-800" },
+    { title: "System Admins", value: adminCount, icon: MdShield, bg: "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-500 border border-amber-200/50 dark:border-amber-700/50" },
+    { title: "Librarians", value: librarianCount, icon: MdOutlineSupervisedUserCircle, bg: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-500 border border-blue-200/50 dark:border-blue-700/50" },
+    { title: "General Users", value: generalUserCount, icon: MdPerson, bg: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-500 border border-emerald-200/50 dark:border-emerald-700/50" },
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
       {/* হেডার */}
       <div className="border-b border-slate-100 pb-4">
-        <h1 className="text-2xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2">
           <MdManageAccounts className="text-[#775a19]" /> Manage Users
         </h1>
         <p className="text-xs text-slate-400 mt-0.5">
@@ -48,10 +48,10 @@ export default async function ManageUsersPage() {
         {statsData.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div key={idx} className="bg-white/80 backdrop-blur-md border border-slate-200/50 p-5 rounded-2xl shadow-sm flex items-center justify-between">
+            <div key={idx} className="bg-white dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/50 p-5 rounded-2xl shadow-sm flex items-center justify-between">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-wider text-[#45474c]">{stat.title}</p>
-                <h3 className="text-2xl font-bold text-[#040d1b] mt-1">{stat.value}</h3>
+                <h3 className="text-2xl font-bold text-[#040d1b] dark:text-slate-100 mt-1">{stat.value}</h3>
               </div>
               <div className={`p-3 rounded-xl text-xl ${stat.bg}`}>
                 <Icon />
@@ -63,7 +63,7 @@ export default async function ManageUsersPage() {
 
       {/* ক্লায়েন্ট র‍্যাপার ও টেবিল কল */}
       <div className="space-y-3">
-        <h4 className="text-base font-bold text-[#040d1b]">All User Registrations</h4>
+        <h4 className="text-base font-bold text-[#040d1b] dark:text-slate-100">All User Registrations</h4>
         <UserClientWrapper initialUsers={allUsers} />
       </div>
     </div>

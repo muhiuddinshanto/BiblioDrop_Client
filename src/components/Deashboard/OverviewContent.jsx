@@ -1,4 +1,4 @@
-"use client"; // Recharts অ্যানিমেশনের জন্য ক্লায়েন্ট কম্পোনেন্ট আবশ্যক
+"use client"; // Recharts à¦…à§à¦¯à¦¾à¦¨à¦¿à¦®à§‡à¦¶à¦¨à§‡à¦° à¦œà¦¨à§à¦¯ à¦•à§à¦²à¦¾à¦¯à¦¼à§‡à¦¨à§à¦Ÿ à¦•à¦®à§à¦ªà§‹à¦¨à§‡à¦¨à§à¦Ÿ à¦†à¦¬à¦¶à§à¦¯à¦•
 
 import React from 'react';
 import {
@@ -29,7 +29,7 @@ export default function OverviewContent({
 }) {
   const safeOrders = orders ?? [];
 
-  // ==================== ১. কুইক স্ট্যাটস ক্যালকুলেশন (রিয়েল ডাটা ব্যাকআপসহ) ====================
+  // ==================== à§§. à¦•à§à¦‡à¦• à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¸ à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦¶à¦¨ (à¦°à¦¿à¦¯à¦¼à§‡à¦² à¦¡à¦¾à¦Ÿà¦¾ à¦¬à§à¦¯à¦¾à¦•à¦†à¦ªà¦¸à¦¹) ====================
   const totalBooksRead = serverStats?.totalBooksRead ?? safeOrders.filter(o => o.status?.toLowerCase() === 'delivered').length;
   const pendingDeliveries = serverStats?.pendingDeliveries ?? safeOrders.filter(o => o.status?.toLowerCase() === 'pending').length;
 
@@ -38,7 +38,7 @@ export default function OverviewContent({
     return acc + price;
   }, 0);
 
-  // ==================== ২. চার্ট ডাটা প্রিপারেশন (ব্যাকএন্ড ডাটাকে ফার্স্ট প্রায়োরিটি দিয়ে) ====================
+  // ==================== à§¨. à¦šà¦¾à¦°à§à¦Ÿ à¦¡à¦¾à¦Ÿà¦¾ à¦ªà§à¦°à¦¿à¦ªà¦¾à¦°à§‡à¦¶à¦¨ (à¦¬à§à¦¯à¦¾à¦•à¦à¦¨à§à¦¡ à¦¡à¦¾à¦Ÿà¦¾à¦•à§‡ à¦«à¦¾à¦°à§à¦¸à§à¦Ÿ à¦ªà§à¦°à¦¾à§Ÿà§‹à¦°à¦¿à¦Ÿà¦¿ à¦¦à¦¿à§Ÿà§‡) ====================
   let trendChartData = serverTrendData;
   
   if (!trendChartData || trendChartData.length === 0) {
@@ -88,10 +88,10 @@ export default function OverviewContent({
 
   return (
     <div className="w-full space-y-8 p-1">
-      {/* হেডার সেকশন */}
+      {/* à¦¹à§‡à¦¡à¦¾à¦° à¦¸à§‡à¦•à¦¶à¦¨ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
-          <h1 className="text-3xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2.5">
+          <h1 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2.5">
             <MdDashboard className="text-[#775a19]" /> Dashboard Overview
           </h1>
           <p className="text-[#45474c] text-sm">
@@ -100,59 +100,59 @@ export default function OverviewContent({
         </div>
       </div>
 
-      {/* ==================== কুইক স্ট্যাটস কার্ডস ==================== */}
+      {/* ==================== à¦•à§à¦‡à¦• à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¸ à¦•à¦¾à¦°à§à¦¡à¦¸ ==================== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* ১. Total Books Read */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+        {/* à§§. Total Books Read */}
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
           <div className="space-y-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Total Books Read</span>
-            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">{totalBooksRead}</h3>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100">{totalBooksRead}</h3>
             <p className="text-[11px] text-emerald-600 flex items-center gap-0.5 font-medium">
               <MdTrendingUp className="text-sm" /> Completed Loans
             </p>
           </div>
-          <div className="w-12 h-12 bg-slate-50 text-[#040d1b] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#040d1b] group-hover:text-white transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-[#040d1b] dark:text-slate-100 rounded-xl flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-[#040d1b] dark:group-hover:bg-slate-700 group-hover:text-white transition-all duration-300 shadow-sm">
             <MdAutoStories className="text-xl" />
           </div>
         </div>
 
-        {/* ২. Pending Deliveries */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+        {/* à§¨. Pending Deliveries */}
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
           <div className="space-y-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Pending Deliveries</span>
-            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">{pendingDeliveries}</h3>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100">{pendingDeliveries}</h3>
             <p className="text-[11px] text-amber-600 font-medium">In transit or processing</p>
           </div>
-          <div className="w-12 h-12 bg-slate-50 text-[#775a19] rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-[#775a19] dark:text-amber-500 rounded-xl flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-[#775a19] group-hover:text-white transition-all duration-300 shadow-sm">
             <MdLocalShipping className="text-xl" />
           </div>
         </div>
 
-        {/* ৩. Total Spent on Fees */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
+        {/* à§©. Total Spent on Fees */}
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-[#775a19]/40 hover:shadow-md transition-all duration-300">
           <div className="space-y-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#45474c]">Total Spent on Fees</span>
-            <h3 className="text-3xl font-bold font-serif text-[#040d1b]">${totalSpent.toFixed(2)}</h3>
+            <h3 className="text-3xl font-bold font-serif text-[#040d1b] dark:text-slate-100">${totalSpent.toFixed(2)}</h3>
             <p className="text-[11px] text-slate-400 font-medium">Total institutional investment</p>
           </div>
-          <div className="w-12 h-12 bg-slate-50 text-emerald-700 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-emerald-700 dark:text-emerald-500 rounded-xl flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm">
             <MdPaid className="text-xl" />
           </div>
         </div>
       </div>
 
-      {/* ==================== চার্ট সেকশন ==================== */}
+      {/* ==================== à¦šà¦¾à¦°à§à¦Ÿ à¦¸à§‡à¦•à¦¶à¦¨ ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* ক) খরচ ও ভলিউমের গ্রাফ (Area Chart) */}
-        {/* 🛠️ এখানে min-w-0 যোগ করা হয়েছে Recharts এরর ফিক্স করার জন্য */}
-        <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm min-w-0">
+        {/* à¦•) à¦–à¦°à¦š à¦“ à¦­à¦²à¦¿à¦‰à¦®à§‡à¦° à¦—à§à¦°à¦¾à¦« (Area Chart) */}
+        {/* ðŸ› ï¸ à¦à¦–à¦¾à¦¨à§‡ min-w-0 à¦¯à§‹à¦— à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡ Recharts à¦à¦°à¦° à¦«à¦¿à¦•à§à¦¸ à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯ */}
+        <div className="col-span-12 lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm min-w-0">
           <div className="mb-6">
-            <h3 className="text-lg font-bold font-serif text-[#040d1b]">Acquisition Trend</h3>
+            <h3 className="text-lg font-bold font-serif text-[#040d1b] dark:text-slate-100">Acquisition Trend</h3>
             <p className="text-xs text-[#45474c]">Monthly breakdown of platform expenses.</p>
           </div>
           <div className="h-72 w-full text-xs">
-            {/* 🛠️ minHeight={288} ডিফাইন করা হয়েছে প্রাথমিক রেন্ডারিং এরর এড়াতে */}
+            {/* ðŸ› ï¸ minHeight={288} à¦¡à¦¿à¦«à¦¾à¦‡à¦¨ à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡ à¦ªà§à¦°à¦¾à¦¥à¦®à¦¿à¦• à¦°à§‡à¦¨à§à¦¡à¦¾à¦°à¦¿à¦‚ à¦à¦°à¦° à¦à§œà¦¾à¦¤à§‡ */}
             <ResponsiveContainer width="100%" height="100%" minHeight={288}>
               <AreaChart data={trendChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
@@ -174,15 +174,15 @@ export default function OverviewContent({
           </div>
         </div>
 
-        {/* খ) ক্যাটাগরি ডিস্ট্রিবিউশন (Pie Chart) */}
-        {/* 🛠️ এখানেও min-w-0 যোগ করা হয়েছে */}
-        <div className="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between min-w-0">
+        {/* à¦–) à¦•à§à¦¯à¦¾à¦Ÿà¦¾à¦—à¦°à¦¿ à¦¡à¦¿à¦¸à§à¦Ÿà§à¦°à¦¿à¦¬à¦¿à¦‰à¦¶à¦¨ (Pie Chart) */}
+        {/* ðŸ› ï¸ à¦à¦–à¦¾à¦¨à§‡à¦“ min-w-0 à¦¯à§‹à¦— à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡ */}
+        <div className="col-span-12 lg:col-span-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between min-w-0">
           <div className="mb-2">
-            <h3 className="text-lg font-bold font-serif text-[#040d1b]">Genre Distribution</h3>
+            <h3 className="text-lg font-bold font-serif text-[#040d1b] dark:text-slate-100">Genre Distribution</h3>
             <p className="text-xs text-[#45474c]">Classification of requested books.</p>
           </div>
           <div className="h-60 w-full text-xs flex items-center justify-center relative">
-            {/* 🛠️ minHeight={240} ডিফাইন করা হয়েছে */}
+            {/* ðŸ› ï¸ minHeight={240} à¦¡à¦¿à¦«à¦¾à¦‡à¦¨ à¦•à¦°à¦¾ à¦¹à§Ÿà§‡à¦›à§‡ */}
             <ResponsiveContainer width="100%" height="100%" minHeight={240}>
               <PieChart>
                 <Pie
@@ -199,21 +199,22 @@ export default function OverviewContent({
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                  contentStyle={{ backgroundColor: '#040d1b', borderRadius: '8px', border: 'none', color: '#fff' }}
+                  itemStyle={{ color: '#fed488' }}
                 />
               </PieChart>
             </ResponsiveContainer>
-            {/* সেন্ট্রাল টেক্সট ইফেক্ট */}
+            {/* à¦¸à§‡à¦¨à§à¦Ÿà§à¦°à¦¾à¦² à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦‡à¦«à§‡à¦•à§à¦Ÿ */}
             <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-2xl font-bold font-serif text-[#040d1b]">{safeOrders.length}</span>
+              <span className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100">{safeOrders.length}</span>
               <span className="text-[10px] uppercase font-bold text-[#45474c] tracking-wider">Orders</span>
             </div>
           </div>
 
-          {/* পাই চার্টের কাস্টম লেজেন্ড */}
+          {/* à¦ªà¦¾à¦‡ à¦šà¦¾à¦°à§à¦Ÿà§‡à¦° à¦•à¦¾à¦¸à§à¦Ÿà¦® à¦²à§‡à¦œà§‡à¦¨à§à¦¡ */}
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 pt-3 border-t border-slate-100">
             {pieChartData.slice(0, 4).map((entry, index) => (
-              <div key={index} className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+              <div key={index} className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></span>
                 <span className="capitalize">{entry.name}</span>
               </div>
@@ -222,14 +223,14 @@ export default function OverviewContent({
         </div>
       </div>
 
-      {/* ==================== উইশলিস্ট ও রিসেন্ট অর্ডারস ==================== */}
+      {/* ==================== à¦‰à¦‡à¦¶à¦²à¦¿à¦¸à§à¦Ÿ à¦“ à¦°à¦¿à¦¸à§‡à¦¨à§à¦Ÿ à¦…à¦°à§à¦¡à¦¾à¦°à¦¸ ==================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* উইশলিস্ট সেকশন */}
-        <div className="col-span-12 lg:col-span-5 bg-slate-50 p-6 rounded-2xl border border-slate-100 flex flex-col justify-between">
+        {/* à¦‰à¦‡à¦¶à¦²à¦¿à¦¸à§à¦Ÿ à¦¸à§‡à¦•à¦¶à¦¨ */}
+        <div className="col-span-12 lg:col-span-5 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold font-serif text-[#040d1b]">Wishlist</h2>
+              <h2 className="text-xl font-bold font-serif text-[#040d1b] dark:text-slate-100">Wishlist</h2>
               <MdGridView className="text-[#775a19] text-xl cursor-pointer hover:scale-105 transition-transform" />
             </div>
 
@@ -242,19 +243,19 @@ export default function OverviewContent({
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x">
                 {safeWishlist.map((item) => (
                   <div key={item._id} className="flex-shrink-0 w-32 group snap-start">
-                    <div className="w-full aspect-[2/3] bg-white rounded-xl mb-2.5 overflow-hidden relative border border-slate-200/60 shadow-sm">
+                    <div className="w-full aspect-[2/3] bg-white dark:bg-slate-900 rounded-xl mb-2.5 overflow-hidden relative border border-slate-200/60 shadow-sm">
                       <img
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         src={item.image || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600"}
                         alt={item.title}
                       />
                       <div className="absolute inset-0 bg-[#040d1b]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <button className="bg-white p-2.5 rounded-full shadow-lg text-[#040d1b] hover:text-[#775a19] hover:scale-110 transition-all">
+                        <button className="bg-white dark:bg-slate-900 p-2.5 rounded-full shadow-lg text-[#040d1b] dark:text-slate-100 hover:text-[#775a19] hover:scale-110 transition-all">
                           <MdShoppingCart className="text-lg" />
                         </button>
                       </div>
                     </div>
-                    <h4 className="text-xs font-bold text-[#040d1b] truncate px-0.5" title={item.title}>
+                    <h4 className="text-xs font-bold text-[#040d1b] dark:text-slate-100 truncate px-0.5" title={item.title}>
                       {item.title || "Untitled Volume"}
                     </h4>
                     <p className="text-[11px] font-mono font-bold text-[#775a19] mt-0.5 px-0.5">
@@ -267,12 +268,12 @@ export default function OverviewContent({
           </div>
         </div>
 
-        {/* রিসেন্ট অর্ডারস সেকশন */}
-        <div className="col-span-12 lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+        {/* à¦°à¦¿à¦¸à§‡à¦¨à§à¦Ÿ à¦…à¦°à§à¦¡à¦¾à¦°à¦¸ à¦¸à§‡à¦•à¦¶à¦¨ */}
+        <div className="col-span-12 lg:col-span-7 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-3">
+            <div className="flex justify-between items-center mb-6 border-b border-slate-50 dark:border-slate-800 pb-3">
               <div>
-                <h2 className="text-xl font-bold font-serif text-[#040d1b]">Recent Delivery</h2>
+                <h2 className="text-xl font-bold font-serif text-[#040d1b] dark:text-slate-100">Recent Delivery</h2>
                 <p className="text-[11px] text-slate-400 mt-0.5">Track and manage your latest book requests</p>
               </div>
               <MdFilterList className="text-[#45474c] text-xl cursor-pointer hover:text-[#775a19] hover:scale-110 transition-all" />
@@ -280,13 +281,13 @@ export default function OverviewContent({
 
             <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
               {safeOrders.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 p-6">
+                <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-6">
                   <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mb-3 shadow-sm">
                     <MdLayersClear className="text-2xl text-slate-400" />
                   </div>
-                  <h3 className="text-sm font-bold text-[#040d1b] mb-1">No Orders Found</h3>
+                  <h3 className="text-sm font-bold text-[#040d1b] dark:text-slate-100 mb-1">No Orders Found</h3>
                   <p className="text-xs text-[#45474c] max-w-[280px] leading-relaxed">
-                    You haven't requested any book deliveries yet. Explore our library to start your collection.
+                    You haven&apos;t requested any book deliveries yet. Explore our library to start your collection.
                   </p>
                 </div>
               ) : (
@@ -297,7 +298,7 @@ export default function OverviewContent({
                   return (
                     <div
                       key={order._id}
-                      className="flex items-center justify-between p-3 border border-slate-50 hover:border-slate-100 hover:bg-slate-50/60 transition-all duration-200 rounded-xl group"
+                      className="flex items-center justify-between p-3 border border-slate-50 dark:border-slate-800 hover:border-slate-100 dark:hover:border-slate-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition-all duration-200 rounded-xl group"
                     >
                       <div className="flex items-center gap-4 min-w-0">
                         {order.image ? (
@@ -305,18 +306,18 @@ export default function OverviewContent({
                             <img src={order.image} alt={order.title} className="w-full h-full object-cover" />
                           </div>
                         ) : (
-                          <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 group-hover:bg-[#775a19]/10 transition-colors">
+                          <div className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center flex-shrink-0 group-hover:bg-[#775a19]/10 transition-colors">
                             <MdLocalShipping className="text-[#775a19] text-xl" />
                           </div>
                         )}
 
                         <div className="min-w-0">
-                          <p className="text-sm font-bold text-[#040d1b] truncate pr-2 group-hover:text-[#775a19] transition-colors" title={order.title}>
+                          <p className="text-sm font-bold text-[#040d1b] dark:text-slate-100 truncate pr-2 group-hover:text-[#775a19] transition-colors" title={order.title}>
                             {order.title || "Untitled Volume"}
                           </p>
                           <p className="text-[11px] text-[#45474c] capitalize truncate flex items-center gap-1.5 mt-0.5">
                             <span className="font-medium">{order.category || "General"}</span>
-                            <span className="text-slate-300">•</span>
+                            <span className="text-slate-300 dark:text-slate-600">&bull;</span>
                             <span className="text-slate-400">
                               {rawDate ? new Date(rawDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Recent"}
                             </span>
@@ -325,7 +326,7 @@ export default function OverviewContent({
                       </div>
 
                       <div className="text-right flex-shrink-0 pl-3">
-                        <p className="text-sm font-bold font-mono text-[#040d1b]">
+                        <p className="text-sm font-bold font-mono text-[#040d1b] dark:text-slate-100">
                           ${typeof order.price === 'number' ? order.price.toFixed(2) : parseFloat(order.price || 0).toFixed(2)}
                         </p>
 
@@ -355,3 +356,4 @@ export default function OverviewContent({
     </div>
   );
 }
+

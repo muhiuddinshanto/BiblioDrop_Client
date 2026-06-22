@@ -39,7 +39,7 @@ export default async function ManageAllBooksPage() {
       
       {/* হেডার সেকশন */}
       <div className="border-b border-slate-100 pb-4">
-        <h1 className="text-2xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2">
           <MdImportContacts className="text-[#775a19]" /> Manage All Books
         </h1>
         <p className="text-xs text-slate-400 mt-0.5">
@@ -49,21 +49,21 @@ export default async function ManageAllBooksPage() {
 
       {/* 📊 বুকস স্ট্যাটস কুইক ওভারভিউ মিনি-কার্ডস */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
             <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Catalog Size</p>
-            <p className="text-xl font-bold text-[#040d1b] mt-0.5">{totalBooks} Items</p>
+            <p className="text-xl font-bold text-[#040d1b] dark:text-slate-100 mt-0.5">{totalBooks} Items</p>
           </div>
           <MdMenuBook className="text-xl text-slate-400" />
         </div>
-        <div className="bg-white border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
             <p className="text-[10px] uppercase font-bold tracking-wider text-emerald-500">Live / Active</p>
             <p className="text-xl font-bold text-emerald-700 mt-0.5">{liveBooks} Books</p>
           </div>
           <MdCheckCircle className="text-xl text-emerald-400" />
         </div>
-        <div className="bg-white border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
             <p className="text-[10px] uppercase font-bold tracking-wider text-rose-500">Forcibly Hidden</p>
             <p className="text-xl font-bold text-rose-700 mt-0.5">{unpublishedBooks} Books</p>

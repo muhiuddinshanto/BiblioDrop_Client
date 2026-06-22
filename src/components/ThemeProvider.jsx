@@ -3,11 +3,12 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const ThemeContext = createContext(null);
+const THEME_STORAGE_KEY = "bibliodrop-theme";
 
 const getInitialTheme = () => {
   if (typeof window === "undefined") return "light";
 
-  const savedTheme = window.localStorage.getItem("bibliodrop-theme");
+  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
   if (savedTheme === "dark" || savedTheme === "light") return savedTheme;
 
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -19,7 +20,7 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem("bibliodrop-theme", theme);
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
   const value = useMemo(

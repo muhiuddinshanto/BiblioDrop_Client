@@ -39,13 +39,13 @@ export default function DeliveryTable({ deliveries = [], onStatusChange, isUpdat
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[750px] text-left border-collapse">
           
           {/* টেবিল হেডার */}
           <thead>
-            <tr className="bg-slate-50/75 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-[#45474c]">
+            <tr className="bg-slate-50/75 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-700 text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-300">
               <th className="py-4 px-6">Client / Reader</th>
               <th className="py-4 px-6">Book Title</th>
               <th className="py-4 px-6">Order Date</th>
@@ -55,7 +55,7 @@ export default function DeliveryTable({ deliveries = [], onStatusChange, isUpdat
           </thead>
 
           {/* টেবিল বডি */}
-          <tbody className="divide-y divide-slate-50 text-sm text-[#040d1b]">
+          <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50 text-sm text-[#040d1b] dark:text-slate-100">
             {deliveries.map((delivery) => {
               // ওনার আইডি এক্সট্র্যাক্ট সেফটি মেথড
               const deliveryId = delivery._id?.$oid || delivery._id;
@@ -67,16 +67,16 @@ export default function DeliveryTable({ deliveries = [], onStatusChange, isUpdat
               const displayStatus = delivery?.status || "Pending";
 
               return (
-                <tr key={deliveryId} className="hover:bg-slate-50/40 transition-colors">
+                <tr key={deliveryId} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/50 transition-colors">
                   
                   {/* ক্লায়েন্ট নেম ও ইমেইল */}
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                         <MdPerson className="text-lg" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-900">{clientName}</h4>
+                        <h4 className="font-bold text-slate-900 dark:text-slate-100">{clientName}</h4>
                         <p className="text-xs text-slate-400 -mt-0.5">{clientEmail}</p>
                       </div>
                     </div>
@@ -86,14 +86,14 @@ export default function DeliveryTable({ deliveries = [], onStatusChange, isUpdat
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
                       <MdMenuBook className="text-slate-400 text-base flex-shrink-0" />
-                      <span className="font-semibold text-slate-700 truncate max-w-[220px]" title={bookTitle}>
+                      <span className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[220px]" title={bookTitle}>
                         {bookTitle}
                       </span>
                     </div>
                   </td>
 
                   {/* অর্ডারের তারিখ (ISO ফরম্যাট হ্যান্ডেলড) */}
-                  <td className="py-4 px-6 text-slate-500 font-medium">
+                  <td className="py-4 px-6 text-slate-500 dark:text-slate-400 font-medium">
                     <div className="flex items-center gap-1.5 text-xs">
                       <MdCalendarMonth className="text-slate-400 text-sm" />
                       {formatDate(delivery?.date)}
@@ -114,7 +114,7 @@ export default function DeliveryTable({ deliveries = [], onStatusChange, isUpdat
                       disabled={isUpdating}
                       value={displayStatus === "pending" ? "Pending" : displayStatus === "dispatched" ? "Dispatched" : displayStatus === "delivered" ? "Delivered" : displayStatus}
                       onChange={(e) => onStatusChange?.(deliveryId, e.target.value)}
-                      className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 focus:outline-none focus:border-[#775a19] shadow-sm cursor-pointer transition-colors disabled:bg-slate-50 disabled:text-slate-300"
+                      className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:border-[#775a19] shadow-sm cursor-pointer transition-colors disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:text-slate-300 dark:disabled:text-slate-500"
                     >
                       <option value="Pending">🕒 Mark as Pending</option>
                       <option value="Dispatched">📦 Mark as Dispatched</option>

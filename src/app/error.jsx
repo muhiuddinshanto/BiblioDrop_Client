@@ -9,8 +9,8 @@ export default function Error({ error, reset }) {
   }, [error]);
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-white px-6 py-12 dark:bg-slate-950">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl dark:border-slate-800 dark:bg-slate-900">
+    <main className="flex min-h-[70vh] items-center justify-center bg-white dark:bg-slate-900 px-6 py-12 dark:bg-slate-950">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-8 text-center shadow-xl dark:border-slate-800 dark:bg-slate-900">
         <p className="text-xs font-black uppercase tracking-widest text-[#D4AF37]">Something went wrong</p>
         <h1 className="mt-3 text-3xl font-black text-slate-950 dark:text-white">We could not load this shelf.</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">

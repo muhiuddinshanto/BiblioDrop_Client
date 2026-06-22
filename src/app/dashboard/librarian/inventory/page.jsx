@@ -1,4 +1,4 @@
-import { MdInventory, MdMenuBook, MdAdd } from "react-icons/md";
+﻿import { MdInventory, MdMenuBook, MdAdd } from "react-icons/md";
 import InventoryClientContainer from "@/components/Deashboard/librarian/InventoryClientContainer";
 import { getUserSession } from "@/lib/core/session";
 import { getBooksByUserId } from "@/lib/api/books";
@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default async function ManageInventoryPage() {
   const user = await getUserSession();
-  console.log("🚀 Logged In User:", user);
+  console.log("ðŸš€ Logged In User:", user);
 
   let fetchedBooks = null;
 
@@ -14,25 +14,25 @@ export default async function ManageInventoryPage() {
     fetchedBooks = await getBooksByUserId(user.id);
   }
 
-  console.log("🚀 Database Response (Raw):", fetchedBooks);
+  console.log("ðŸš€ Database Response (Raw):", fetchedBooks);
 
-  // ==================== 🛡️ বুলেটপ্রুফ স্যানিটাইজেশন গার্ড ====================
+  // ==================== ðŸ›¡ï¸ à¦¬à§à¦²à§‡à¦Ÿà¦ªà§à¦°à§à¦« à¦¸à§à¦¯à¦¾à¦¨à¦¿à¦Ÿà¦¾à¦‡à¦œà§‡à¦¶à¦¨ à¦—à¦¾à¦°à§à¦¡ ====================
   let sanitizedBooks = [];
 
   if (fetchedBooks) {
     if (Array.isArray(fetchedBooks)) {
-      // ১. ডাটা সরাসরি অ্যারে হলে
+      // à§§. à¦¡à¦¾à¦Ÿà¦¾ à¦¸à¦°à¦¾à¦¸à¦°à¦¿ à¦…à§à¦¯à¦¾à¦°à§‡ à¦¹à¦²à§‡
       sanitizedBooks = fetchedBooks.map((book) => ({
         ...book,
 
-        // status যদি object হয়ে corrupt থাকে, ভেতর থেকে status বের করো
+        // status à¦¯à¦¦à¦¿ object à¦¹à§Ÿà§‡ corrupt à¦¥à¦¾à¦•à§‡, à¦­à§‡à¦¤à¦° à¦¥à§‡à¦•à§‡ status à¦¬à§‡à¦° à¦•à¦°à§‹
         status:
           typeof book.status === "object"
             ? (book.status?.status ?? "Pending Approval")
             : (book.status ?? "Pending Approval"),
       }));
     } else if (typeof fetchedBooks === "object") {
-      // ২. ডাটা যদি কোনো object wrapper এর ভেতরে আসে
+      // à§¨. à¦¡à¦¾à¦Ÿà¦¾ à¦¯à¦¦à¦¿ à¦•à§‹à¦¨à§‹ object wrapper à¦à¦° à¦­à§‡à¦¤à¦°à§‡ à¦†à¦¸à§‡
 
       if (fetchedBooks.books && Array.isArray(fetchedBooks.books)) {
         sanitizedBooks = fetchedBooks.books.map((book) => ({
@@ -54,7 +54,7 @@ export default async function ManageInventoryPage() {
         fetchedBooks.result &&
         Array.isArray(fetchedBooks.result)
       ) {
-        // Express থেকে { success: true, result: [...] } আসতে পারে
+        // Express à¦¥à§‡à¦•à§‡ { success: true, result: [...] } à¦†à¦¸à¦¤à§‡ à¦ªà¦¾à¦°à§‡
         sanitizedBooks = fetchedBooks.result.map((book) => ({
           ...book,
           status:
@@ -63,7 +63,7 @@ export default async function ManageInventoryPage() {
               : (book.status ?? "Pending Approval"),
         }));
       } else if (fetchedBooks.title) {
-        // ৩. যদি সরাসরি একটি single book object আসে
+        // à§©. à¦¯à¦¦à¦¿ à¦¸à¦°à¦¾à¦¸à¦°à¦¿ à¦à¦•à¦Ÿà¦¿ single book object à¦†à¦¸à§‡
         sanitizedBooks = [
           {
             ...fetchedBooks,
@@ -78,7 +78,7 @@ export default async function ManageInventoryPage() {
         typeof fetchedBooks.data === "object" &&
         fetchedBooks.data.title
       ) {
-        // ৪. যদি data এর ভিতরে single book object থাকে
+        // à§ª. à¦¯à¦¦à¦¿ data à¦à¦° à¦­à¦¿à¦¤à¦°à§‡ single book object à¦¥à¦¾à¦•à§‡
         sanitizedBooks = [
           {
             ...fetchedBooks.data,
@@ -92,25 +92,25 @@ export default async function ManageInventoryPage() {
     }
   }
 
-  console.log("📊 Cleaned Sanitized Books Array:", sanitizedBooks);
+  console.log("ðŸ“Š Cleaned Sanitized Books Array:", sanitizedBooks);
 
-  // ডাটা ভ্যালিডেশন চেক
+  // à¦¡à¦¾à¦Ÿà¦¾ à¦­à§à¦¯à¦¾à¦²à¦¿à¦¡à§‡à¦¶à¦¨ à¦šà§‡à¦•
   const hasBooks =
     Array.isArray(sanitizedBooks) && sanitizedBooks.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-      {/* হেডার সেকশন */}
+      {/* à¦¹à§‡à¦¡à¦¾à¦° à¦¸à§‡à¦•à¦¶à¦¨ */}
       <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-serif text-[#040d1b] tracking-tight mb-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2">
             <MdInventory className="text-[#775a19]" />
             Manage Book Inventory
           </h1>
 
           <p className="text-xs text-slate-400 mt-0.5">
             Logged in as:{" "}
-            <span className="font-semibold text-[#040d1b]">
+            <span className="font-semibold text-[#040d1b] dark:text-slate-100">
               {user?.email || "Archivist"}
             </span>
           </p>
@@ -129,19 +129,22 @@ export default async function ManageInventoryPage() {
 
       {/* Conditional Rendering */}
       {hasBooks ? (
-        <InventoryClientContainer initialBooks={sanitizedBooks} />
+        <InventoryClientContainer
+          key={sanitizedBooks.map((book) => book._id).join("-")}
+          initialBooks={sanitizedBooks}
+        />
       ) : (
-        <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 p-6 shadow-sm">
           <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5 border border-dashed border-slate-200">
             <MdMenuBook className="text-4xl text-slate-300" />
           </div>
 
-          <h3 className="text-lg font-bold text-[#040d1b] mb-1.5">
+          <h3 className="text-lg font-bold text-[#040d1b] dark:text-slate-100 mb-1.5">
             Your Inventory is Empty
           </h3>
 
-          <p className="text-sm text-[#45474c] max-w-sm leading-relaxed mb-6">
-            It looks like you haven't cataloged any volumes yet. Start
+          <p className="text-sm text-[#45474c] dark:text-slate-400 max-w-sm leading-relaxed mb-6">
+            It looks like you haven&apos;t cataloged any volumes yet. Start
             building your repository by adding your first institutional
             book.
           </p>
@@ -158,3 +161,6 @@ export default async function ManageInventoryPage() {
     </div>
   );
 }
+
+
+

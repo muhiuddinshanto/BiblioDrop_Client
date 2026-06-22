@@ -1,29 +1,24 @@
-"use client";
+﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DeliveryTable from "@/components/Deashboard/librarian/DeliveryTable";
 import { orderBooksStatus } from "@/lib/actions/order";
+import toast from "react-hot-toast";
 
 
 export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
   const [deliveries, setDeliveries] = useState(initialDeliveries);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  useEffect(() => {
-    if (initialDeliveries) {
-      setDeliveries(initialDeliveries);
-    }
-  }, [initialDeliveries]);
-
-  // 💡 ডাইনামিক ডেলিভারি স্ট্যাটাস চেঞ্জার হ্যান্ডলার
+  // ðŸ’¡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§‡à¦²à¦¿à¦­à¦¾à¦°à¦¿ à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¾à¦¸ à¦šà§‡à¦žà§à¦œà¦¾à¦° à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
   const handleDeliveryStatusChange = async (id, newStatus) => {
     setIsUpdating(true);
     console.log(`Shipment ID: ${id} updated to state: ${newStatus}`);
 
-    // ১. ব্যাকআপ রাখা (যদি এপিআই ফেইল করে তবে আগের স্টেটে ফেরত যাওয়ার জন্য)
+    // à§§. à¦¬à§à¦¯à¦¾à¦•à¦†à¦ª à¦°à¦¾à¦–à¦¾ (à¦¯à¦¦à¦¿ à¦à¦ªà¦¿à¦†à¦‡ à¦«à§‡à¦‡à¦² à¦•à¦°à§‡ à¦¤à¦¬à§‡ à¦†à¦—à§‡à¦° à¦¸à§à¦Ÿà§‡à¦Ÿà§‡ à¦«à§‡à¦°à¦¤ à¦¯à¦¾à¦“à§Ÿà¦¾à¦° à¦œà¦¨à§à¦¯)
     const previousDeliveries = [...deliveries];
 
-    // ২. UI-তে ইনস্ট্যান্ট স্টেট আপডেট (Optimistic Update)
+    // à§¨. UI-à¦¤à§‡ à¦‡à¦¨à¦¸à§à¦Ÿà§à¦¯à¦¾à¦¨à§à¦Ÿ à¦¸à§à¦Ÿà§‡à¦Ÿ à¦†à¦ªà¦¡à§‡à¦Ÿ (Optimistic Update)
     setDeliveries((prevDeliveries) =>
       prevDeliveries.map((item) =>
         item._id === id ? { ...item, status: newStatus } : item
@@ -31,7 +26,7 @@ export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
     );
 
     try {
-      // 🚀 ব্যাকএন্ড এপিআই এন্ডপয়েন্ট ট্রিগার করা হলো
+      // ðŸš€ à¦¬à§à¦¯à¦¾à¦•à¦à¦¨à§à¦¡ à¦à¦ªà¦¿à¦†à¦‡ à¦à¦¨à§à¦¡à¦ªà¦¯à¦¼à§‡à¦¨à§à¦Ÿ à¦Ÿà§à¦°à¦¿à¦—à¦¾à¦° à¦•à¦°à¦¾ à¦¹à¦²à§‹
       const response = await orderBooksStatus(id, newStatus);
       
       if (!response.success) {
@@ -44,7 +39,7 @@ export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
       console.error("Failed to sync delivery status with server:", error);
       toast.error("Could not update shipment status. Please try again.");
       
-      // 🔄 এপিআই এরর খাইলো, তাই UI-তে আগের ডাটা ফিরিয়ে আনা (Rollback)
+      // ðŸ”„ à¦à¦ªà¦¿à¦†à¦‡ à¦à¦°à¦° à¦–à¦¾à¦‡à¦²à§‹, à¦¤à¦¾à¦‡ UI-à¦¤à§‡ à¦†à¦—à§‡à¦° à¦¡à¦¾à¦Ÿà¦¾ à¦«à¦¿à¦°à¦¿à§Ÿà§‡ à¦†à¦¨à¦¾ (Rollback)
       setDeliveries(previousDeliveries);
     } finally {
       setIsUpdating(false);
@@ -59,3 +54,5 @@ export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
     />
   );
 }
+
+

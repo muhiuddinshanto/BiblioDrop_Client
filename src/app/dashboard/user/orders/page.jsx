@@ -10,7 +10,7 @@ export default async function MyOrdersPage() {
   const orders = user?.id ? await orderById(user.id) : [];
 
   return (
-    <div className="p-6 md:p-10 min-h-screen bg-[#faf9fa]">
+    <div className="p-6 md:p-10 min-h-screen bg-[#faf9fa] dark:bg-slate-900">
       <OrdersContent orders={orders} />
     </div>
   );

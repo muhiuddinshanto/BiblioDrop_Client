@@ -76,7 +76,7 @@ export default function WhyChooseUs() {
     ];
 
     return (
-        <section className="w-full bg-white py-20 px-6 lg:px-8 border-t border-slate-100 overflow-hidden">
+        <section className="w-full bg-white dark:bg-slate-900 py-20 px-6 lg:px-8 border-t border-slate-100 overflow-hidden">
             <div className="mx-auto max-w-6xl">
                 
                 {/* 🎯 Section Header */}
@@ -90,10 +90,10 @@ export default function WhyChooseUs() {
                     <span className="text-xs font-black uppercase tracking-widest text-[#C5A059]">
                         Core Advantages
                     </span>
-                    <h2 className="mt-2 text-2xl font-black text-[#1A2332] tracking-tight sm:text-4xl">
+                    <h2 className="mt-2 text-2xl font-black text-[#1A2332] dark:text-slate-100 tracking-tight sm:text-4xl">
                         Why Choose BiblioDrop
                     </h2>
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                         Bridging institutional archival standards with real-time on-demand local distribution networks.
                     </p>
                 </motion.div>
@@ -114,7 +114,7 @@ export default function WhyChooseUs() {
                                 key={feature.id}
                                 variants={cardVariants}
                                 whileHover={{ y: -5, scale: 1.01, transition: { duration: 0.2 } }}
-                                className={`group flex flex-col items-start bg-slate-50/50 border border-slate-100 rounded-2xl p-6 transition-all duration-300 hover:bg-white hover:shadow-xl ${feature.borderColor}`}
+                                className={`group flex flex-col items-start bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl ${feature.borderColor}`}
                             >
                                 {/* Icon Container */}
                                 <div className={`p-3 rounded-xl border border-transparent shadow-sm transition-transform duration-300 group-hover:scale-105 ${feature.iconColor}`}>
@@ -122,10 +122,10 @@ export default function WhyChooseUs() {
                                 </div>
 
                                 {/* Content Title & Desc */}
-                                <h3 className="mt-5 text-base font-black text-[#1A2332] tracking-tight group-hover:text-blue-600 transition-colors">
+                                <h3 className="mt-5 text-base font-black text-[#1A2332] dark:text-slate-100 tracking-tight group-hover:text-blue-600 transition-colors">
                                     {feature.title}
                                 </h3>
-                                <p className="mt-2 text-xs leading-relaxed text-slate-500 font-medium">
+                                <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400 font-medium">
                                     {feature.description}
                                 </p>
                             </motion.div>

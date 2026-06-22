@@ -16,7 +16,7 @@ export default async function TopLibrarians() {
     };
 
     return (
-        <section className="w-full bg-white py-16 px-6 lg:px-8 border-t border-slate-100">
+        <section className="w-full bg-white dark:bg-slate-900 py-16 px-6 lg:px-8 border-t border-slate-100">
             <div className="mx-auto max-w-6xl">
                 
                 {/* সেকশন হেডার */}
@@ -24,10 +24,10 @@ export default async function TopLibrarians() {
                     <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37] flex items-center justify-center gap-1.5">
                         <FaUserCheck /> Elite Network
                     </span>
-                    <h2 className="mt-1 text-2xl font-black text-[#0F172A] tracking-tight sm:text-3xl">
+                    <h2 className="mt-1 text-2xl font-black text-[#0F172A] dark:text-slate-100 tracking-tight sm:text-3xl">
                         Top Librarians / Providers
                     </h2>
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                         Top 3 librarians with the most successful book deliveries and excellent user ratings
                     </p>
                 </div>
@@ -43,7 +43,7 @@ export default async function TopLibrarians() {
                         return (
                             <div 
                                 key={id || index}
-                                className="group relative flex flex-col items-center bg-slate-50/60 border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:bg-white hover:border-slate-200/80 transition-all duration-300 text-center"
+                                className="group relative flex flex-col items-center bg-slate-50/60 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-slate-900 hover:border-slate-200/80 transition-all duration-300 text-center"
                             >
                                 {/* 🏅 মেডেল পজিশন ব্যাজ (ডাইনামিক কালার) */}
                                 <div className={`absolute top-4 right-4 text-xl ${currentMedalColor} drop-shadow-sm animate-pulse`}>
@@ -61,7 +61,7 @@ export default async function TopLibrarians() {
 
                                 {/* লাইব্রেরিয়ান ইনফরমেশন */}
                                 <div className="mt-4">
-                                    <h3 className="text-base font-black text-[#0F172A] tracking-tight group-hover:text-blue-600 transition-colors capitalize">
+                                    <h3 className="text-base font-black text-[#0F172A] dark:text-slate-100 tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
                                         {name}
                                     </h3>
                                     <p className="text-xs text-slate-400 font-medium mt-0.5 capitalize">
@@ -70,11 +70,11 @@ export default async function TopLibrarians() {
                                 </div>
 
                                 {/* 📦 ডেলিভারি কাউন্টার */}
-                                <div className="mt-5 w-full bg-white group-hover:bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 flex items-center justify-between transition-colors">
-                                    <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                                <div className="mt-5 w-full bg-white dark:bg-slate-900 group-hover:bg-slate-50 dark:group-hover:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl py-2.5 px-4 flex items-center justify-between transition-colors">
+                                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                                         <FaCircleCheck className="text-green-500 text-sm" /> Deliveries
                                     </span>
-                                    <span className="text-sm font-black text-[#0F172A]">
+                                    <span className="text-sm font-black text-[#0F172A] dark:text-slate-100">
                                         {deliveries} Completed
                                     </span>
                                 </div>

@@ -5,7 +5,7 @@ import React from "react";
 export default function ApprovalRow({ title, author, librarian, onApprove, onDelete }) {
   return (
     <tr className="hover:bg-slate-50/50 transition-colors">
-      <td className="p-4 font-bold text-[#040d1b] text-sm">{title}</td>
+      <td className="p-4 font-bold text-[#040d1b] dark:text-slate-100 text-sm">{title}</td>
       <td className="p-4 text-sm text-[#45474c]">{author}</td>
       <td className="p-4 text-sm text-[#45474c]">{librarian}</td>
       <td className="p-4 text-right space-x-2">

@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import { orderBooks } from '@/lib/actions/order';
 import { wishlistCreate } from '@/lib/actions/wishlist';
-import { booksUpdate, bookDetailsUpdate } from '@/lib/actions/books'; // ⚙️ দুটো অ্যাকশনই আনা হলো
+import { booksUpdate, bookDetailsUpdate } from '@/lib/actions/books'; // âš™ï¸ à¦¦à§à¦Ÿà§‹ à¦…à§à¦¯à¦¾à¦•à¦¶à¦¨à¦‡ à¦†à¦¨à¦¾ à¦¹à¦²à§‹
 import { authClient } from '@/lib/auth-client';
 
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   FaStar, FaTruckMoving, FaHeart, FaRegCommentDots, 
   FaCircleUser, FaPenToSquare, FaTrashCan, FaEyeSlash, FaXmark 
@@ -17,39 +17,25 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
   const router = useRouter();
   const { data: session } = authClient.useSession();
   
-  // 🔄 বইয়ের লাইভ রিয়েল-টাইম স্টেট (যাতে আপডেট সাবমিট করলেই স্ক্রিন চেঞ্জ হয়)
+  // ðŸ”„ à¦¬à¦‡à¦¯à¦¼à§‡à¦° à¦²à¦¾à¦‡à¦­ à¦°à¦¿à¦¯à¦¼à§‡à¦²-à¦Ÿà¦¾à¦‡à¦® à¦¸à§à¦Ÿà§‡à¦Ÿ (à¦¯à¦¾à¦¤à§‡ à¦†à¦ªà¦¡à§‡à¦Ÿ à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦•à¦°à¦²à§‡à¦‡ à¦¸à§à¦•à§à¦°à¦¿à¦¨ à¦šà§‡à¦žà§à¦œ à¦¹à§Ÿ)
   const [book, setBook] = useState(initialBook);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // 📋 মডাল ও এডিট ফর্ম স্টেট
+  // ðŸ“‹ à¦®à¦¡à¦¾à¦² à¦“ à¦à¦¡à¦¿à¦Ÿ à¦«à¦°à§à¦® à¦¸à§à¦Ÿà§‡à¦Ÿ
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    author: '',
-    category: '',
-    price: '',
-    description: '',
-    image: ''
+    title: initialBook?.title || '',
+    author: initialBook?.author || '',
+    category: initialBook?.category || '',
+    price: initialBook?.price || '',
+    description: initialBook?.description || '',
+    image: initialBook?.image || ''
   });
-
-  // ডাটাবেজ বা ইনিশিয়াল ডাটা লোড হলে স্টেট সিঙ্ক
-  useEffect(() => {
-    if (book) {
-      setFormData({
-        title: book.title || '',
-        author: book.author || '',
-        category: book.category || '',
-        price: book.price || '',
-        description: book.description || '',
-        image: book.image || ''
-      });
-    }
-  }, [book]);
 
   if (!book) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-lg font-bold text-slate-500">Book data not found.</p>
+        <p className="text-lg font-bold text-slate-500 dark:text-slate-400">Book data not found.</p>
       </div>
     );
   }
@@ -78,26 +64,26 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     }));
   };
 
-  // 💾 ১. বইয়ের ডিটেইলস আপডেট মেথড (যেমনটা ড্যাশবোর্ডে করেছ)
+  // ðŸ’¾ à§§. à¦¬à¦‡à¦¯à¦¼à§‡à¦° à¦¡à¦¿à¦Ÿà§‡à¦‡à¦²à¦¸ à¦†à¦ªà¦¡à§‡à¦Ÿ à¦®à§‡à¦¥à¦¡ (à¦¯à§‡à¦®à¦¨à¦Ÿà¦¾ à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡à§‡ à¦•à¦°à§‡à¦›)
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
     
-    // অপটিমিস্টিক রোলব্যাকের জন্য কারেন্ট স্টেট কপি
+    // à¦…à¦ªà¦Ÿà¦¿à¦®à¦¿à¦¸à§à¦Ÿà¦¿à¦• à¦°à§‹à¦²à¦¬à§à¦¯à¦¾à¦•à§‡à¦° à¦œà¦¨à§à¦¯ à¦•à¦¾à¦°à§‡à¦¨à§à¦Ÿ à¦¸à§à¦Ÿà§‡à¦Ÿ à¦•à¦ªà¦¿
     const oldBook = { ...book };
 
     try {
-      // এডিটেবল ফিল্ডগুলো আলাদা করা হলো (ID, UserID, Status বাদ দিয়ে)
+      // à¦à¦¡à¦¿à¦Ÿà§‡à¦¬à¦² à¦«à¦¿à¦²à§à¦¡à¦—à§à¦²à§‹ à¦†à¦²à¦¾à¦¦à¦¾ à¦•à¦°à¦¾ à¦¹à¦²à§‹ (ID, UserID, Status à¦¬à¦¾à¦¦ à¦¦à¦¿à§Ÿà§‡)
       const { title, author, category, price, description, image } = formData;
       const editableFields = { title, author, category, price, description, image };
 
-      // ড্যাশবোর্ডের মতো bookDetailsUpdate অ্যাকশন দিয়ে আপডেট
+      // à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡à§‡à¦° à¦®à¦¤à§‹ bookDetailsUpdate à¦…à§à¦¯à¦¾à¦•à¦¶à¦¨ à¦¦à¦¿à§Ÿà§‡ à¦†à¦ªà¦¡à§‡à¦Ÿ
       const result = await bookDetailsUpdate(_id, editableFields);
 
       if (result?.success) {
-        toast.success("Book metadata updated successfully! 📚");
+        toast.success("Book metadata updated successfully! ðŸ“š");
         
-        // রিঅ্যাক্টিভলি স্ক্রিনের মেইন স্টেট আপডেট করা হলো
+        // à¦°à¦¿à¦…à§à¦¯à¦¾à¦•à§à¦Ÿà¦¿à¦­à¦²à¦¿ à¦¸à§à¦•à§à¦°à¦¿à¦¨à§‡à¦° à¦®à§‡à¦‡à¦¨ à¦¸à§à¦Ÿà§‡à¦Ÿ à¦†à¦ªà¦¡à§‡à¦Ÿ à¦•à¦°à¦¾ à¦¹à¦²à§‹
         setBook(prev => ({
           ...prev,
           ...editableFields
@@ -116,7 +102,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     }
   };
 
-  // 🔄 ২. স্ট্যাটাস আনপাবলিশ করার মেথড
+  // ðŸ”„ à§¨. à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¾à¦¸ à¦†à¦¨à¦ªà¦¾à¦¬à¦²à¦¿à¦¶ à¦•à¦°à¦¾à¦° à¦®à§‡à¦¥à¦¡
   const handleUnpublishBook = async () => {
     const confirmed = window.confirm("Are you sure you want to unpublish this book?");
     if (!confirmed) return;
@@ -141,7 +127,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     }
   };
 
-  // 🚚 ৩. ডেলিভারি রিকোয়েস্ট মেথড
+  // ðŸšš à§©. à¦¡à§‡à¦²à¦¿à¦­à¦¾à¦°à¦¿ à¦°à¦¿à¦•à§‹à¦¯à¦¼à§‡à¦¸à§à¦Ÿ à¦®à§‡à¦¥à¦¡
   const handleDelivery = async () => {
     if (!session?.user?.id) {
       toast.error("Please login first");
@@ -168,7 +154,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     }
   };
 
-  // ❤️ ৪. উইশলিস্ট মেথড
+  // â¤ï¸ à§ª. à¦‰à¦‡à¦¶à¦²à¦¿à¦¸à§à¦Ÿ à¦®à§‡à¦¥à¦¡
   const handleWishlist = async () => {
     if (!session?.user?.id) {
       toast.error("Please login first!");
@@ -177,14 +163,14 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     }
     try {
       const res = await wishlistCreate({ BookId: _id, title, author, category, price, image, userId: session?.user?.id });
-      if (res?.insertedId) toast.success("Successfully added to Wishlist! ❤️");
+      if (res?.insertedId) toast.success("Successfully added to Wishlist! â¤ï¸");
       else toast.error("Already exists or something went wrong.");
     } catch (error) {
       toast.error("Failed to connect to the server.");
     }
   };
 
-  // 🗑️ ৫. পার্মানেন্ট ডিলিট মেথড
+  // ðŸ—‘ï¸ à§«. à¦ªà¦¾à¦°à§à¦®à¦¾à¦¨à§‡à¦¨à§à¦Ÿ à¦¡à¦¿à¦²à¦¿à¦Ÿ à¦®à§‡à¦¥à¦¡
   const handleDeleteBook = async () => {
     const confirmed = window.confirm(`Are you sure you want to permanently delete "${title}"?`);
     if (!confirmed) return;
@@ -205,13 +191,13 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
   };
 
   return (
-    <section className="w-full bg-white px-6 py-12 lg:px-8 relative">
+    <section className="w-full bg-white dark:bg-slate-900 px-6 py-12 lg:px-8 relative">
       <div className="mx-auto max-w-6xl">
         
-        {/* === প্রথম পার্ট: বইয়ের বিবরণ এবং মেইন ইনফো === */}
+        {/* === à¦ªà§à¦°à¦¥à¦® à¦ªà¦¾à¦°à§à¦Ÿ: à¦¬à¦‡à¦¯à¦¼à§‡à¦° à¦¬à¦¿à¦¬à¦°à¦£ à¦à¦¬à¦‚ à¦®à§‡à¦‡à¦¨ à¦‡à¦¨à¦«à§‹ === */}
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 items-start">
           
-          {/* === বাম পাশ: বইয়ের কভার ইমেজ === */}
+          {/* === à¦¬à¦¾à¦® à¦ªà¦¾à¦¶: à¦¬à¦‡à¦¯à¦¼à§‡à¦° à¦•à¦­à¦¾à¦° à¦‡à¦®à§‡à¦œ === */}
           <div className="md:col-span-5 flex flex-col items-center bg-slate-50 rounded-2xl p-8 border border-slate-100">
             <div className="relative w-full max-w-[320px] aspect-[3/4] shadow-2xl rounded-lg overflow-hidden group">
               <img
@@ -228,7 +214,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               )}
             </div>
             
-            <div className="w-full max-w-[320px] mt-6 space-y-2 border-t border-slate-200/60 pt-4 text-xs font-medium text-slate-500">
+            <div className="w-full max-w-[320px] mt-6 space-y-2 border-t border-slate-200/60 pt-4 text-xs font-medium text-slate-500 dark:text-slate-400">
               <div className="flex justify-between">
                 <span>Status:</span> 
                 <span className={`font-bold ${status === "Available" ? "text-emerald-600" : "text-amber-600"}`}>
@@ -242,7 +228,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
             </div>
           </div>
 
-          {/* === ডান পাশ: বইয়ের বিবরণ ও অ্যাকশন বাটন === */}
+          {/* === à¦¡à¦¾à¦¨ à¦ªà¦¾à¦¶: à¦¬à¦‡à¦¯à¦¼à§‡à¦° à¦¬à¦¿à¦¬à¦°à¦£ à¦“ à¦…à§à¦¯à¦¾à¦•à¦¶à¦¨ à¦¬à¦¾à¦Ÿà¦¨ === */}
           <div className="md:col-span-7 flex flex-col h-full justify-center">
             <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37]">
               {category}
@@ -252,7 +238,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               {title}
             </h1>
 
-            <p className="mt-2 text-lg font-medium text-slate-600">
+            <p className="mt-2 text-lg font-medium text-slate-600 dark:text-slate-300">
               by <span className="font-bold text-[#0F172A]">{author}</span>
             </p>
 
@@ -262,7 +248,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
                   <FaStar key={i} className={i < Math.floor(rating || 5) ? "text-[#D4AF37]" : "text-gray-200"} />
                 ))}
               </div>
-              <span className="text-sm font-bold text-slate-500">
+              <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
                 {rating || 5}.0 ({reviews || 0} customer reviews)
               </span>
             </div>
@@ -277,17 +263,17 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
                 </span>
               </div>
               
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed bg-slate-50/60 border border-slate-100 p-4 rounded-xl">
+              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50/60 border border-slate-100 p-4 rounded-xl">
                 {description || "No description provided for this premium scholarly volume."}
               </p>
             </div>
 
-            {/* === অ্যাকশন বাটনসমূহ === */}
+            {/* === à¦…à§à¦¯à¦¾à¦•à¦¶à¦¨ à¦¬à¦¾à¦Ÿà¦¨à¦¸à¦®à§‚à¦¹ === */}
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <button 
                 className={`flex-1 flex items-center justify-center gap-3 rounded-xl px-6 py-4 text-sm font-bold text-white transition-all shadow-sm
                   ${isDeliveryDisabled 
-                    ? "bg-slate-300 cursor-not-allowed text-slate-500 shadow-none" 
+                    ? "bg-slate-300 cursor-not-allowed text-slate-500 dark:text-slate-400 shadow-none" 
                     : "bg-[#0F172A] hover:bg-[#1E293B] active:scale-[0.98]"}`}
                 onClick={handleDelivery}
                 disabled={isDeliveryDisabled}
@@ -304,25 +290,25 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               </button>
             </div>
 
-            {/* 🛠️ ─── LIBRARIAN CONTROLS PANEL ─── */}
+            {/* ðŸ› ï¸ â”€â”€â”€ LIBRARIAN CONTROLS PANEL â”€â”€â”€ */}
             {isLibrarianOwner && (
               <div className="mt-6 p-4 border border-amber-200 bg-amber-50/40 rounded-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black uppercase tracking-wider text-[#775a19] flex items-center gap-1.5">
-                    ⚙️ Librarian Management Panel
+                    âš™ï¸ Librarian Management Panel
                   </span>
                   <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md">Owner View</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2.5">
                   <button 
                     onClick={() => setIsEditModalOpen(true)}
-                    className="flex items-center justify-center gap-2 bg-white border border-slate-200 rounded-lg py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition shadow-sm"
+                    className="flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 rounded-lg py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition shadow-sm"
                   >
                     <FaPenToSquare className="text-blue-500" /> Edit Catalog
                   </button>
                   <button 
                     onClick={handleUnpublishBook}
-                    className="flex items-center justify-center gap-2 bg-white border border-slate-200 rounded-lg py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-amber-700 transition shadow-sm"
+                    className="flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 rounded-lg py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-amber-700 transition shadow-sm"
                   >
                     <FaEyeSlash className="text-amber-500" /> Unpublish
                   </button>
@@ -338,33 +324,33 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
           </div>
         </div>
 
-        {/* === রিভিউ সেকশন === */}
+        {/* === à¦°à¦¿à¦­à¦¿à¦‰ à¦¸à§‡à¦•à¦¶à¦¨ === */}
         <div className="mt-16 border-t border-slate-100 pt-10">
-          {/* আপনার রিভিউ সেকশনের আগের কোড এখানে থাকবে */}
+          {/* à¦†à¦ªà¦¨à¦¾à¦° à¦°à¦¿à¦­à¦¿à¦‰ à¦¸à§‡à¦•à¦¶à¦¨à§‡à¦° à¦†à¦—à§‡à¦° à¦•à§‹à¦¡ à¦à¦–à¦¾à¦¨à§‡ à¦¥à¦¾à¦•à¦¬à§‡ */}
         </div>
 
       </div>
 
-      {/* 📋 ─── DYNAMIC EDIT MODAL BACKDROP & BODY ─── */}
+      {/* ðŸ“‹ â”€â”€â”€ DYNAMIC EDIT MODAL BACKDROP & BODY â”€â”€â”€ */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]">
             
-            {/* মডাল হেডার */}
+            {/* à¦®à¦¡à¦¾à¦² à¦¹à§‡à¦¡à¦¾à¦° */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <h3 className="text-lg font-black text-slate-900">Update Book Catalog</h3>
               <button 
                 onClick={() => setIsEditModalOpen(false)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:text-slate-300 transition"
               >
                 <FaXmark className="text-xl" />
               </button>
             </div>
 
-            {/* মডাল ফর্ম বডি */}
+            {/* à¦®à¦¡à¦¾à¦² à¦«à¦°à§à¦® à¦¬à¦¡à¦¿ */}
             <form onSubmit={handleUpdateSubmit} className="space-y-4 py-4 overflow-y-auto pr-1 flex-1">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Book Title</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Book Title</label>
                 <input 
                   type="text" name="title" value={formData.title} onChange={handleInputChange} required
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
@@ -373,14 +359,14 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Author</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Author</label>
                   <input 
                     type="text" name="author" value={formData.author} onChange={handleInputChange} required
                     className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Price ($)</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Price ($)</label>
                   <input 
                     type="number" step="0.01" name="price" value={formData.price} onChange={handleInputChange} required
                     className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
@@ -389,7 +375,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Category</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Category</label>
                 <input 
                   type="text" name="category" value={formData.category} onChange={handleInputChange} required
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
@@ -397,7 +383,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Cover Image URL</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Cover Image URL</label>
                 <input 
                   type="url" name="image" value={formData.image} onChange={handleInputChange}
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-slate-900 focus:outline-none"
@@ -405,14 +391,14 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Description</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Description</label>
                 <textarea 
                   name="description" rows="4" value={formData.description} onChange={handleInputChange} required
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-slate-900 focus:outline-none resize-none"
                 ></textarea>
               </div>
 
-              {/* ফুটার অ্যাকশন বাটনসমূহ */}
+              {/* à¦«à§à¦Ÿà¦¾à¦° à¦…à§à¦¯à¦¾à¦•à¦¶à¦¨ à¦¬à¦¾à¦Ÿà¦¨à¦¸à¦®à§‚à¦¹ */}
               <div className="flex gap-3 pt-4 border-t border-slate-100">
                 <button 
                   type="button" onClick={() => setIsEditModalOpen(false)}
@@ -435,3 +421,5 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     </section>
   );
 }
+
+

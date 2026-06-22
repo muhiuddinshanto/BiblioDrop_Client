@@ -28,19 +28,19 @@ export default async function FeaturedBooks() {
     }
 
     return (
-        <section className="w-full bg-slate-50/50 py-16 px-6 lg:px-8">
+        <section className="w-full bg-slate-50/50 dark:bg-slate-950 py-16 px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
 
                 {/* সেকশন হেডার */}
                 <div className="flex items-end justify-between border-b border-slate-100 pb-5 mb-10">
                     <div>
                         <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37]">Explore Our Catalog</span>
-                        <h2 className="mt-1 text-2xl font-black text-[#0F172A] tracking-tight sm:text-3xl">Featured Books</h2>
-                        <p className="mt-1 text-sm text-slate-500">ডাটাবেস থেকে বাছাইকৃত একদম নতুন প্রকাশিত বইসমূহ</p>
+                        <h2 className="mt-1 text-2xl font-black text-[#0F172A] dark:text-slate-100 tracking-tight sm:text-3xl">Featured Books</h2>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">ডাটাবেস থেকে বাছাইকৃত একদম নতুন প্রকাশিত বইসমূহ</p>
                     </div>
                     <Link
                         href="/books"
-                        className="group flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0F172A] hover:text-slate-600 transition"
+                        className="group flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0F172A] hover:text-slate-600 dark:text-slate-300 transition"
                     >
                         See All Books <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
                     </Link>
@@ -55,8 +55,8 @@ export default async function FeaturedBooks() {
 
                 {/* এম্পটি বা ফাঁকা স্টেট */}
                 {!error && books.length === 0 && (
-                    <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200 shadow-sm">
-                        <p className="text-sm font-bold text-slate-500">বর্তমানে কোনো ফিচার্ড বই পাওয়া যায়নি।</p>
+                    <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 shadow-sm">
+                        <p className="text-sm font-bold text-slate-500 dark:text-slate-400">বর্তমানে কোনো ফিচার্ড বই পাওয়া যায়নি।</p>
                     </div>
                 )}
 

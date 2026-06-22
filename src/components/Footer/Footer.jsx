@@ -38,7 +38,7 @@ export default function Footer() {
                     {/* Column 1: Brand Info (4 Columns) */}
                     <div className="md:col-span-4 flex flex-col gap-4">
                         <Link href="/" className="flex items-center gap-2 text-white font-black text-xl tracking-tight">
-                            <div className="h-8 w-8 rounded-lg bg-[#C5A059] flex items-center justify-center text-[#1A2332]">
+                            <div className="h-8 w-8 rounded-lg bg-[#C5A059] flex items-center justify-center text-[#1A2332] dark:text-slate-100">
                                 <FaLayerGroup className="text-sm" />
                             </div>
                             BiblioDrop<span className="text-[#C5A059]">.</span>
@@ -75,7 +75,7 @@ export default function Footer() {
                         
                         <form onSubmit={handleSubscribe} className="mt-2 flex items-center gap-2 bg-slate-900 border border-slate-800 p-1.5 rounded-xl focus-within:border-[#C5A059] transition-colors">
                             <div className="flex items-center gap-2 pl-3 flex-1">
-                                <FaEnvelope className="text-slate-500 text-sm" />
+                                <FaEnvelope className="text-slate-500 dark:text-slate-400 text-sm" />
                                 <input 
                                     type="email" 
                                     placeholder="Enter institutional email..." 
@@ -85,7 +85,7 @@ export default function Footer() {
                             </div>
                             <button 
                                 type="submit" 
-                                className="bg-[#C5A059] hover:bg-white text-[#1A2332] font-bold text-xs px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 group"
+                                className="bg-[#C5A059] hover:bg-white dark:bg-slate-900 text-[#1A2332] dark:text-slate-100 font-bold text-xs px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 group"
                             >
                                 Subscribe <FaArrowRight className="text-[10px] group-hover:translate-x-0.5 transition-transform" />
                             </button>

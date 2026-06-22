@@ -17,7 +17,7 @@ export default async function UserOverviewPage() {
   console.log(userState, "🚀 ~ file: page.jsx:12 ~ UserOverviewPage ~ userState");
 
   return (
-    <div className="p-6 md:p-10 min-h-screen bg-[#faf9fa]">
+    <div className="p-6 md:p-10 min-h-screen bg-[#faf9fa] dark:bg-slate-900">
       {/* এপিআই থেকে প্রাপ্ত রিয়েল চার্ট ডাটা প্রপস আকারে পাস করা হলো */}
       <OverviewContent 
         orders={orders}  

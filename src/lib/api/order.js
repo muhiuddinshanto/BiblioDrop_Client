@@ -13,6 +13,10 @@ export const orderByAuthorId = async (userId) => {
     return protectedFetch(`/api/orders/user/${userId}`);
 };
 
+export const purchaseChecker = async (bookId) => {
+    return protectedFetch(`/api/orders/check/${bookId}`);
+};
+
 
 
 export const transactionsList = async () => {
