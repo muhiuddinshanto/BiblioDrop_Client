@@ -41,25 +41,32 @@ export default function BookGridClient({ initialBooks }) {
             return;
         }
 
-        const updateURLAndFetch = async () => {
+        const updateURLAndFetch = () => {
             setLoading(true);
             const params = new URLSearchParams();
-            
+
+            const currentSearch = searchParams.get("search");
+            if (currentSearch) {
+                params.append("search", currentSearch);
+            }
+
             if (selectedCategories.length > 0) {
                 params.append("category", selectedCategories.join(","));
             }
             params.append("maxPrice", maxPrice.toString());
             params.append("sortBy", sortBy);
 
-            // ব্রাউজারের URL পরিবর্তন করা হচ্ছে (যেমন: /books?category=Philosophy&maxPrice=100)
-            // scroll: false দেওয়ার কারণে পেজ লাফ দিয়ে একদম উপরে উঠে যাবে না
-            router.push(`?${params.toString()}`, { scroll: false });
+            // ✨ Next.js রাউটার চেঞ্জ করে ব্রাউজার হিস্ট্রি ব্যবহার করুন (লুপ বন্ধ হবে)
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
+
+            setLoading(false);
         };
 
-        // ইউজারের ক্লিক করার পর সামান্য ডিলে বা সরাসরি কল
         updateURLAndFetch();
-        
-    }, [selectedCategories, maxPrice, sortBy, router]); 
+
+        // ✨ [FIXED]: ডিপেন্ডেন্সি অ্যারে-তে searchParams যুক্ত করা হয়েছে নির্ভুল ট্র্যাকিংয়ের জন্য
+    }, [selectedCategories, maxPrice, sortBy, router, searchParams]);
 
     const handleCategoryChange = (category) => {
         if (selectedCategories.includes(category)) {
@@ -69,11 +76,19 @@ export default function BookGridClient({ initialBooks }) {
         }
     };
 
+    // ✨ [FIXED]: ফিল্টার ক্লিয়ার করার সময়ও যেন সার্চের ভ্যালু হারিয়ে না যায়, তা নিশ্চিত করা হয়েছে
     const handleClearFilters = () => {
         setSelectedCategories([]);
         setMaxPrice(100);
         setSortBy("Popularity");
-        router.push("?", { scroll: false }); // URL রিমোভ করে একদম ক্লিন করে দেবে
+
+        const currentSearch = searchParams.get("search");
+        if (currentSearch) {
+            // শুধু সার্চ কুয়েরি রেখে বাকি সব ফিল্টার URL থেকে ক্লিন করে দেবে
+            router.push(`?search=${encodeURIComponent(currentSearch)}`, { scroll: false });
+        } else {
+            router.push("?", { scroll: false });
+        }
     };
 
     return (
@@ -119,7 +134,7 @@ export default function BookGridClient({ initialBooks }) {
 
                     <button
                         onClick={handleClearFilters}
-                        className="mt-4 w-full rounded-xl border border-[#D4AF37]/40 bg-transparent py-3 text-sm font-bold text-[#0F172A] hover:bg-slate-50 transition-colors"
+                        className="mt-4 w-full rounded-xl border border-dashed border-red-200 bg-transparent py-3 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
                     >
                         Clear All Filters
                     </button>

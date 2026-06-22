@@ -4,6 +4,10 @@ export const getBooks = async (params) => {
     return serverFetch(`/api/books?${params}`);
 };
 
+export const getBooksSearch = async (params) => {
+    return serverFetch(`/api/books/search?${params}`);
+};
+
 
 export const getBooksById = async (booksId) => {
     return protectedFetch(`/api/books/${booksId}`);

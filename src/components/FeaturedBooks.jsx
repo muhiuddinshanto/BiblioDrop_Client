@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaArrowRight, FaStar } from 'react-icons/fa6';
+import { FaArrowRight } from 'react-icons/fa6';
 import { getBooks } from '@/lib/api/books';
 import BookCard from './Books/BookCard';
 
@@ -10,23 +10,17 @@ export default async function FeaturedBooks() {
 
     try {
         // ১. API বা ডিরেক্ট ফাংশন থেকে ডাটা ফেচ করা হচ্ছে
-        const rawData = await getBooks();
+        const booksData = await getBooks();
         
-        // ২. ব্যাকএন্ড রেসপন্স স্ট্রাকচার হ্যান্ডলিং
-        // টার্মিনাল লগ অনুযায়ী rawData নিজেই একটি ডিরেক্ট অ্যারে (Array of 28 books)
-        let allBooks = [];
-        if (Array.isArray(rawData)) {
-            allBooks = rawData;
-        } else if (rawData?.success) {
-            allBooks = rawData.data || rawData.result || [];
-        }
+        // ✨ [FIXED]: rawData-এর বদলে সঠিক ভেরিয়েবল booksData লগ করা হলো
+        console.log("Fetched Books Data:", booksData); 
 
         // ৩. ডাইনামিক ফিল্টারিং ও স্লাইসিং লজিক (Latest 6 Published Books)
-        // ক) শুধু 'Published' স্ট্যাটাসের বইগুলো ফিল্টার করা হচ্ছে
-        // খ) ডাইনামিক স্লাইস (.slice(0, 6)) ব্যবহার করে সর্বশেষ ৬টি বই নেওয়া হচ্ছে
-        books = allBooks
-            .filter(book => book.status === "Published")
-            .slice(0, 6);
+        if (Array.isArray(booksData)) {
+            books = booksData
+                .filter(book => book.status === "Published")
+                .slice(0, 6);
+        }
 
     } catch (err) {
         console.error("Error fetching featured books:", err);
@@ -36,7 +30,7 @@ export default async function FeaturedBooks() {
     return (
         <section className="w-full bg-slate-50/50 py-16 px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
-                
+
                 {/* সেকশন হেডার */}
                 <div className="flex items-end justify-between border-b border-slate-100 pb-5 mb-10">
                     <div>
@@ -44,8 +38,8 @@ export default async function FeaturedBooks() {
                         <h2 className="mt-1 text-2xl font-black text-[#0F172A] tracking-tight sm:text-3xl">Featured Books</h2>
                         <p className="mt-1 text-sm text-slate-500">ডাটাবেস থেকে বাছাইকৃত একদম নতুন প্রকাশিত বইসমূহ</p>
                     </div>
-                    <Link 
-                        href="/books" 
+                    <Link
+                        href="/books"
                         className="group flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0F172A] hover:text-slate-600 transition"
                     >
                         See All Books <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
@@ -68,14 +62,14 @@ export default async function FeaturedBooks() {
 
                 {/* 🛒 গ্রিড লেআউট (বুক কার্ডস) */}
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-                    {books.map((book) => {
-                       
-                        
+                    {!error && books.map((book) => {
+                        // ✨ [FIXED]: নিরাপদ আইডি এক্সট্রাকশন (MongoDB এবং নরমাল আইডি উভয়ই সাপোর্ট করবে)
+                        const bookId = book._id?.$oid || book._id || book.id;
+
                         return (
-                            <BookCard
-                                key={book._id}
-                                book={book}
-                            />
+                            <Link href={`/books/${bookId}`} key={bookId} className="block">
+                                <BookCard book={book} />
+                            </Link>
                         );
                     })}
                 </div>
