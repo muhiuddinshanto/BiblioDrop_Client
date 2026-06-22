@@ -1,7 +1,7 @@
 "use client";
 
+import { Pagination } from "@heroui/react";
 import BookCard from "@/components/Books/BookCard";
-import { getBooks } from "@/lib/api/books";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
@@ -10,13 +10,55 @@ export default function BookGridClient({ initialBooks }) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // ১. শুরুতে URL-এ কোনো ফিল্টার থাকলে সেটা স্টেটে বসবে, না থাকলে ডিফল্ট ভ্যালু পাবে
-    const [books, setBooks] = useState(initialBooks);
+    // সেফ ডেটা পার্সিং (অবজেক্ট বা অ্যারে যাই আসুক)
+    const initialBooksArray = Array.isArray(initialBooks) ? initialBooks : (initialBooks?.books || []);
+    const backendTotalItems = Array.isArray(initialBooks) ? initialBooks.length : (initialBooks?.total || 0);
+
+    const [books, setBooks] = useState(initialBooksArray);
     const [loading, setLoading] = useState(false);
+
+    // URL থেকে ডিরেক্ট কারেন্ট পেজ রিড করা
+    const currentPage = Number(searchParams.get("page")) || 1;
 
     const [selectedCategories, setSelectedCategories] = useState(
         searchParams.get("category") ? searchParams.get("category").split(",") : []
     );
+
+    const itemsPerPage = 9;
+    const totalItems = backendTotalItems;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+
+    // 'Showing X-Y of Z' ক্যালকুলেশন
+    const currentStartItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const currentEndItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    // 🔢 কাস্টম পেজ নাম্বার এবং ইলিপসিস (...) জেনারেট করার লজিক
+    const getPageNumbers = () => {
+        const pages = [];
+        pages.push(1);
+
+        if (currentPage > 3) {
+            pages.push("ellipsis");
+        }
+
+        const startLoop = Math.max(2, currentPage - 1);
+        const endLoop = Math.min(totalPages - 1, currentPage + 1);
+
+        for (let i = startLoop; i <= endLoop; i++) {
+            pages.push(i);
+        }
+
+        if (currentPage < totalPages - 2) {
+            pages.push("ellipsis");
+        }
+
+        if (totalPages > 1) {
+            pages.push(totalPages);
+        }
+
+        return [...new Set(pages)];
+    };
+
     const [maxPrice, setMaxPrice] = useState(
         Number(searchParams.get("maxPrice")) || 100
     );
@@ -24,71 +66,70 @@ export default function BookGridClient({ initialBooks }) {
         searchParams.get("sortBy") || "Popularity"
     );
 
-    // প্রথমবার পেজ লোডের অতিরিক্ত রান স্কিপ করার জন্য ট্র্যাকার
     const isFirstRender = useRef(true);
 
-    // ২. সার্ভার থেকে আসা initialBooks যখনই চেঞ্জ হবে (URL চেঞ্জের কারণে), তখনই স্টেট আপডেট হবে
+    // সার্ভার থেকে যখনই নতুন initialBooks প্রপ্স আসবে, স্টেট আপডেট হবে ও লোডিং ফলস হবে
     useEffect(() => {
-        setBooks(initialBooks);
-        setLoading(false); // ডেটা চলে আসলে লোডিং ফলস হবে
+        setBooks(Array.isArray(initialBooks) ? initialBooks : (initialBooks?.books || []));
+        setLoading(false);
     }, [initialBooks]);
 
-    // ৩. ফিল্টার বা সর্ট স্টেট চেঞ্জ হলে ব্রাউজারের URL আপডেট করার লজিক
+    // ফিল্টার বা সর্ট চেঞ্জ হলে URL আপডেট করার লজিক
     useEffect(() => {
-        // প্রথমবার পেজ রেন্ডারে URL পুশ করা স্কিপ করবে
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
 
-        const updateURLAndFetch = () => {
+        setLoading(true);
+        const params = new URLSearchParams();
+
+        const currentSearch = searchParams.get("search");
+        if (currentSearch) params.append("search", currentSearch);
+        if (selectedCategories.length > 0) params.append("category", selectedCategories.join(","));
+
+        params.append("maxPrice", maxPrice.toString());
+        params.append("sortBy", sortBy);
+
+        params.append("page", "1");
+        params.append("perPage", itemsPerPage.toString());
+
+        router.push(`?${params.toString()}`, { scroll: false });
+        router.refresh(); 
+    }, [selectedCategories, maxPrice, sortBy]);
+
+    // শুধুমাত্র পেজ চেঞ্জ হ্যান্ডেল করার জন্য ডেডিকেটেড ফাংশন
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
             setLoading(true);
-            const params = new URLSearchParams();
+            const params = new URLSearchParams(searchParams.toString());
+            params.set("page", newPage.toString());
+            params.set("perPage", itemsPerPage.toString());
 
-            const currentSearch = searchParams.get("search");
-            if (currentSearch) {
-                params.append("search", currentSearch);
-            }
-
-            if (selectedCategories.length > 0) {
-                params.append("category", selectedCategories.join(","));
-            }
-            params.append("maxPrice", maxPrice.toString());
-            params.append("sortBy", sortBy);
-
-            // ✨ Next.js রাউটার চেঞ্জ করে ব্রাউজার হিস্ট্রি ব্যবহার করুন (লুপ বন্ধ হবে)
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
-
-            setLoading(false);
-        };
-
-        updateURLAndFetch();
-
-        // ✨ [FIXED]: ডিপেন্ডেন্সি অ্যারে-তে searchParams যুক্ত করা হয়েছে নির্ভুল ট্র্যাকিংয়ের জন্য
-    }, [selectedCategories, maxPrice, sortBy, router, searchParams]);
-
-    const handleCategoryChange = (category) => {
-        if (selectedCategories.includes(category)) {
-            setSelectedCategories(selectedCategories.filter((c) => c !== category));
-        } else {
-            setSelectedCategories([...selectedCategories, category]);
+            router.push(`?${params.toString()}`, { scroll: false });
+            router.refresh(); 
         }
     };
 
-    // ✨ [FIXED]: ফিল্টার ক্লিয়ার করার সময়ও যেন সার্চের ভ্যালু হারিয়ে না যায়, তা নিশ্চিত করা হয়েছে
+    const handleCategoryChange = (category) => {
+        setSelectedCategories(prev =>
+            prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+        );
+    };
+
     const handleClearFilters = () => {
         setSelectedCategories([]);
         setMaxPrice(100);
         setSortBy("Popularity");
+        setLoading(true);
 
         const currentSearch = searchParams.get("search");
         if (currentSearch) {
-            // শুধু সার্চ কুয়েরি রেখে বাকি সব ফিল্টার URL থেকে ক্লিন করে দেবে
             router.push(`?search=${encodeURIComponent(currentSearch)}`, { scroll: false });
         } else {
             router.push("?", { scroll: false });
         }
+        router.refresh();
     };
 
     return (
@@ -146,7 +187,7 @@ export default function BookGridClient({ initialBooks }) {
                         <div>
                             <h2 className="text-2xl font-black text-[#0F172A] tracking-tight sm:text-3xl">Scholarly Collections</h2>
                             <p className="mt-1 text-sm font-medium text-slate-500">
-                                {loading ? "Updating library..." : `Found ${books.length} volumes curated for you.`}
+                                {loading ? "Updating library..." : `Found ${totalItems} volumes curated for you.`}
                             </p>
                         </div>
 
@@ -164,23 +205,100 @@ export default function BookGridClient({ initialBooks }) {
                         </div>
                     </div>
 
-                    {/* লোডিং বা ব্ল্যাঙ্ক স্টেট হ্যান্ডলিং */}
-                    {loading ? (
-                        <div className="text-center py-20">
-                            <p className="text-lg font-bold text-slate-400 animate-pulse">Loading items from server...</p>
-                        </div>
-                    ) : books.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-                            {books.map((book) => {
-                                const bookId = book._id?.$oid || book._id;
-                                return (
-                                    <Link href={`/books/${bookId}`} key={bookId} className="block">
-                                        <BookCard book={book} />
-                                    </Link>
-                                );
-                            })}
-                        </div>
+                    {/* 🔄 লোডিং অথবা কনটেন্ট থাকা অবস্থায় পেজের লেআউট স্থির রাখার মেকানিজম */}
+                    {(loading || books.length > 0) ? (
+                        <>
+                            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+                                {loading ? (
+                                    // ১. লোড হওয়ার সময় হুট করে গ্রিড ডিলিট না হয়ে ৯টি সুন্দর অ্যানিমেটেড কঙ্কাল (Skeleton) দেখাবে
+                                    Array.from({ length: itemsPerPage }).map((_, idx) => (
+                                        <div 
+                                            key={idx} 
+                                            className="w-full h-[380px] rounded-2xl bg-slate-100/80 animate-pulse border border-slate-200/50 flex flex-col justify-between p-5"
+                                        >
+                                            <div className="w-full h-44 bg-slate-200 rounded-xl" />
+                                            <div className="h-4 bg-slate-200 rounded w-3/4 mt-4" />
+                                            <div className="h-3 bg-slate-200 rounded w-1/2 mt-2" />
+                                            <div className="h-6 bg-slate-200 rounded w-1/4 mt-4" />
+                                        </div>
+                                    ))
+                                ) : (
+                                    // ২. ডাটা সফলভাবে চলে আসলে আসল কার্ড রেন্ডার হবে
+                                    books.map((book) => {
+                                        const bookId = book._id?.$oid || book._id;
+                                        return (
+                                            <Link href={`/books/${bookId}`} key={bookId} className="block">
+                                                <BookCard book={book} />
+                                            </Link>
+                                        );
+                                    })
+                                )}
+                            </div>
+
+                            {/* === HeroUI স্ট্রাকচার্ড পেজিনেশন (যা লোডিং অবস্থায়ও নিচে ফিক্সড থাকবে) === */}
+                            <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row border-t border-gray-100 pt-6">
+                                <span className="text-sm font-semibold text-slate-500">
+                                    Showing <b className="text-slate-800">{currentStartItem}</b> to <b className="text-slate-800">{currentEndItem}</b> of <b className="text-slate-800">{totalItems}</b> results
+                                </span>
+                                
+                                <Pagination className="select-none select-none-pagination">
+                                    <Pagination.Content>
+                                        {/* Previous Button */}
+                                        <Pagination.Item>
+                                            <button
+                                                disabled={currentPage === 1 || loading}
+                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                                    currentPage === 1 || loading
+                                                    ? "text-slate-300 cursor-not-allowed" 
+                                                    : "text-slate-700 hover:bg-slate-100"
+                                                }`}
+                                            >
+                                                &larr; Previous
+                                            </button>
+                                        </Pagination.Item>
+
+                                        {/* Dynamic Page Numbers & Ellipsis */}
+                                        {getPageNumbers().map((p, idx) => (
+                                            <Pagination.Item key={idx}>
+                                                {p === "ellipsis" ? (
+                                                    <span className="px-2 text-slate-400">...</span>
+                                                ) : (
+                                                    <button
+                                                        disabled={loading}
+                                                        onClick={() => handlePageChange(p)}
+                                                        className={`h-8 w-8 rounded-lg text-xs font-bold transition-all ${
+                                                            p === currentPage
+                                                            ? "bg-[#0F172A] text-white"
+                                                            : "text-slate-700 hover:bg-slate-100 disabled:opacity-50"
+                                                        }`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                )}
+                                            </Pagination.Item>
+                                        ))}
+
+                                        {/* Next Button */}
+                                        <Pagination.Item>
+                                            <button
+                                                disabled={currentPage === totalPages || loading}
+                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                                    currentPage === totalPages || loading
+                                                    ? "text-slate-300 cursor-not-allowed" 
+                                                    : "text-slate-700 hover:bg-slate-100"
+                                                }`}
+                                            >
+                                                Next &rarr;
+                                            </button>
+                                        </Pagination.Item>
+                                    </Pagination.Content>
+                                </Pagination>
+                            </div>
+                        </>
                     ) : (
+                        // ৩. লোডিং শেষ এবং কোনো বই ফিল্টারে ম্যাচ করেনি—শুধু তখনই এই ফাঁকা স্টেটটি আসবে
                         <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                             <p className="text-lg font-bold text-slate-700">No books available for this filter.</p>
                             <button onClick={handleClearFilters} className="mt-3 text-sm text-[#D4AF37] font-extrabold underline">Reset Filters</button>

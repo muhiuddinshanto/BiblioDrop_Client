@@ -10,10 +10,11 @@ export default async function BooksPage({ searchParams }) {
   // ২. এবার URLSearchParams-এ পাস করলে আর কোনো এরর আসবে না
   const params = new URLSearchParams(resolvedSearchParams);
   const booksData = await getBooks(params.toString());
+  console.log("booksData:", booksData);
 
   return (
     <main className="w-full bg-white">
-      <BookGridClient initialBooks={booksData || []} />
+      <BookGridClient initialBooks={booksData || []}  />
     </main>
   );
 }
