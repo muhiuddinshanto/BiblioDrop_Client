@@ -1,7 +1,7 @@
 import { requireRole } from "@/lib/core/session";
 
 const LibrarianLayout = async ({ children }) => {
-    await requireRole('librarian');
+    await requireRole('Librarian');
 
     return children;
 };

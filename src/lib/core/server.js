@@ -32,6 +32,7 @@ export const protectedFetch = async (path) => {
     }
 
     if (response.status === 403) {
+      console.error(`403 Forbidden for ${path}`);
       redirect("/forbidden");
     }
 

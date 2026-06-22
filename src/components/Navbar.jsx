@@ -31,7 +31,7 @@ export default function Navbar() {
   const { user } = session || {};
   const role = user?.role;
 
-  // ðŸ’¡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡ à¦ªà¦¾à¦¥ à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦¶à¦¨ à¦²à¦œà¦¿à¦•
+ 
   const getDashboardPath = () => {
     if (role === "admin") return "/dashboard/admin";
     if (role === "librarian") return "/dashboard/librarian";
@@ -40,7 +40,7 @@ export default function Navbar() {
 
   const dashboardPath = getDashboardPath();
 
-  // ðŸ’¡ à¦®à§‡à¦¨à§ à¦†à¦‡à¦Ÿà§‡à¦®à¦—à§à¦²à§‹à¦° à¦¸à¦¾à¦¥à§‡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§à¦¯à¦¾à¦¶à¦¬à§‹à¦°à§à¦¡ à¦°à§à¦Ÿ à¦ªà§à¦¶ à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡
+ 
   const dynamicMenuItems = user 
     ? [...MENU_ITEMS.slice(0, 2), { label: "Dashboard", href: dashboardPath }, ...MENU_ITEMS.slice(2)]
     : MENU_ITEMS;

@@ -6,20 +6,7 @@ import React from "react";
 import { MdMonetizationOn } from "react-icons/md";
 
 export default async function TransactionsPage() {
-  // আপনার রিয়াল API বা ডাটাবেজ থেকে ডাটা ফোল্ডার স্ট্রাকচার তুলে আনুন
-  // const data = await getAllTransactions(); 
-  const dummyTransactions = [
-    {
-      _id: "6a37a56b8768e366ea8ec21a",
-      title: "Beyond the Mind: A Modern Insight",
-      status: "pending",
-      date: "2026-06-21T08:48:43.767Z",
-      transactionId: "6a37a56b8768e366ea8ec21a",
-      userEmail: "dmxxtremet20@gmail.com",
-      librarianEmail: "meherin.sultana@gmail.com",
-      amount: 28
-    }
-  ];
+  
 
 
   const trtransactionsData = await transactionsList();

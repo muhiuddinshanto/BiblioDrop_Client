@@ -45,7 +45,7 @@ export const requireRole = async (role) => {
     if(!user) {
         return redirect('/login')
     }
-    if (user.role !== role) {
+    if (user.role?.toLowerCase() !== role?.toLowerCase()) {
         return redirect('/unauthorized')
     }
     return user;

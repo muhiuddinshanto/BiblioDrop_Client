@@ -5,7 +5,7 @@ import React from 'react';
 const librarianPage = async () => {
 
     const user = await getUserSession();
-        const librarian = user?.role === "librarian";
+        const librarian = user?.role?.toLowerCase() === "librarian";
     
        
         if(librarian){

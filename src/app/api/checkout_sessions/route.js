@@ -46,7 +46,7 @@ export async function POST(req) {
                 authorid: product.userId ? product.userId.toString() : "", 
             },
 
-            success_url: `${baseUrl}/success`,
+            success_url: `${baseUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${baseUrl}/cancel`,
         });
 

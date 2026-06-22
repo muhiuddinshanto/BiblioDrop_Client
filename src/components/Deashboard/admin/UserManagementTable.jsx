@@ -1,18 +1,25 @@
 import React from "react";
-import { MdDeleteOutline, MdShield, MdOutlineSupervisedUserCircle, MdPerson, MdLayersClear, MdRateReview } from "react-icons/md";
+import {
+  MdDeleteOutline,
+  MdShield,
+  MdOutlineSupervisedUserCircle,
+  MdPerson,
+  MdLayersClear,
+} from "react-icons/md";
 
-export default function UserManagementTable({ 
-  users = [], 
-  isLoading = false, 
-  onChangeRole, 
-  onDelete 
+export default function UserManagementTable({
+  users = [],
+  isLoading = false,
+  onChangeRole,
+  onDelete,
 }) {
-  
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-slate-900 border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
         <div className="w-10 h-10 border-4 border-[#775a19] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-        <p className="text-sm text-slate-400 font-medium">Loading all user records...</p>
+        <p className="text-sm text-slate-400 font-medium">
+          Loading all user records...
+        </p>
       </div>
     );
   }
@@ -23,8 +30,12 @@ export default function UserManagementTable({
         <div className="w-16 h-16 bg-slate-50 border border-dashed border-slate-200 rounded-full flex items-center justify-center mb-4">
           <MdLayersClear className="text-3xl text-slate-300" />
         </div>
-        <h3 className="text-base font-bold text-[#040d1b] dark:text-slate-100 mb-1">No Users Found</h3>
-        <p className="text-xs text-slate-400 max-w-xs">There are no accounts registered in the system.</p>
+        <h3 className="text-base font-bold text-[#040d1b] dark:text-slate-100 mb-1">
+          No Users Found
+        </h3>
+        <p className="text-xs text-slate-400 max-w-xs">
+          There are no accounts registered in the system.
+        </p>
       </div>
     );
   }
@@ -40,7 +51,6 @@ export default function UserManagementTable({
     }
   };
 
-  // রোল ফরম্যাট ঠিক করার হেল্পার
   const formatRoleValue = (role) => {
     if (!role) return "User";
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
@@ -54,52 +64,82 @@ export default function UserManagementTable({
             <tr>
               <th className="p-4 pl-6">User Profile</th>
               <th className="p-4">Current Role</th>
-              <th className="p-4 pr-6 text-right">Change Role & Actions</th>
+              <th className="p-4 pr-6 text-right">
+                Change Role & Actions
+              </th>
             </tr>
           </thead>
+
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
             {users.map((user) => {
               const userId = user._id || user.id;
-              const initial = user.name ? user.name.charAt(0).toUpperCase() : "U";
-              const currentRoleFormatted = formatRoleValue(user.role);
+              const initial = user.name
+                ? user.name.charAt(0).toUpperCase()
+                : "U";
+
+              const role = user.role?.toLowerCase() || "user";
+              const currentRoleFormatted = formatRoleValue(role);
 
               return (
-                <tr key={userId} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                <tr
+                  key={userId}
+                  className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  {/* USER INFO */}
                   <td className="p-4 pl-6">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-[#040d1b] dark:text-slate-100 border border-slate-200/60 dark:border-slate-700 flex items-center justify-center font-bold text-xs shadow-inner">
                         {initial}
                       </div>
                       <div>
-                        <p className="font-bold text-[#040d1b] dark:text-slate-100 leading-tight mb-0.5">{user.name}</p>
-                        <p className="text-xs text-slate-400">{user.email}</p>
+                        <p className="font-bold text-[#040d1b] dark:text-slate-100 leading-tight mb-0.5">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          {user.email}
+                        </p>
                       </div>
                     </div>
                   </td>
 
+                  {/* ROLE BADGE */}
                   <td className="p-4">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${getRoleBadgeStyle(user.role)}`}>
-                      {user.role?.toLowerCase() === "admin" && <MdShield className="text-[10px]" />}
-                      {user.role?.toLowerCase() === "librarian" && <MdOutlineSupervisedUserCircle className="text-[10px]" />}
-                      {(user.role?.toLowerCase() === "user" || !user.role) && <MdPerson className="text-[10px]" />}
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${getRoleBadgeStyle(
+                        role
+                      )}`}
+                    >
+                      {role === "admin" && (
+                        <MdShield className="text-[10px]" />
+                      )}
+                      {role === "librarian" && (
+                        <MdOutlineSupervisedUserCircle className="text-[10px]" />
+                      )}
+                      {role === "user" && (
+                        <MdPerson className="text-[10px]" />
+                      )}
+
                       {currentRoleFormatted}
                     </span>
                   </td>
 
+                  {/* ACTIONS */}
                   <td className="p-4 pr-6 text-right">
                     <div className="flex justify-end items-center gap-3">
                       <select
-                        value={currentRoleFormatted}
-                        onChange={(e) => onChangeRole && onChangeRole(userId, e.target.value)}
+                        value={role}
+                        onChange={(e) =>
+                          onChangeRole?.(userId, e.target.value)
+                        }
                         className="bg-slate-50 dark:bg-slate-800 text-[#45474c] dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 focus:ring-2 focus:ring-[#775a19]/20 focus:outline-none transition-all cursor-pointer"
                       >
-                        <option value="User">User</option>
-                        <option value="Librarian">Librarian</option>
-                        <option value="Admin">Admin</option>
+                        <option value="user">User</option>
+                        <option value="librarian">Librarian</option>
+                        <option value="admin">Admin</option>
                       </select>
 
                       <button
-                        onClick={() => onDelete && onDelete(userId)}
+                        onClick={() => onDelete?.(userId)}
                         className="p-2 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 hover:border-red-200 transition-colors"
                         title="Delete User Account"
                       >

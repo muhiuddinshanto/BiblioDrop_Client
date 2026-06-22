@@ -86,7 +86,7 @@ export default function OrdersContent({ orders = [] }) {
                         It looks like your order history is empty. Head back to the main catalog to request your first archival volume.
                     </p>
                     <Link
-                    href="/books" className="bg-[#040d1b] text-white hover:bg-[#1a2332] font-semibold text-sm px-5 py-2.5 rounded-lg transition-all shadow-sm">
+                        href="/books" className="bg-[#040d1b] text-white hover:bg-[#1a2332] font-semibold text-sm px-5 py-2.5 rounded-lg transition-all shadow-sm">
                         Browse Catalog
                     </Link>
                 </div>
@@ -182,9 +182,10 @@ export default function OrdersContent({ orders = [] }) {
 
                                             {/* অ্যাকশন বাটন */}
                                             <td className="py-4 px-6 text-center">
-                                                <button className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#fed488]/30 hover:text-[#775a19] dark:hover:text-[#fed488] font-bold text-xs px-3 py-2 rounded-lg transition-all border border-transparent hover:border-[#fed488]/60">
+                                                <Link
+                                                    href={`/books/${order.BookId}`} className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#fed488]/30 hover:text-[#775a19] dark:hover:text-[#fed488] font-bold text-xs px-3 py-2 rounded-lg transition-all border border-transparent hover:border-[#fed488]/60">
                                                     <MdRemoveRedEye className="text-sm" /> View
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     );

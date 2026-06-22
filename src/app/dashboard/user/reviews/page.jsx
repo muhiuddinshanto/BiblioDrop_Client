@@ -41,28 +41,34 @@ export default function UserReviewsPage() {
   }, [session]);
 
   //  DELETE REVIEW HANDLER 
-  const handleDelete = async (reviewId) => {
-    if (!window.confirm("Are you sure you want to delete this review?")) return;
+ const handleDelete = async (reviewId) => {
+  if (!window.confirm("Are you sure you want to delete this review?")) return;
 
-    
-    const loadingToast = toast.loading("Deleting your review...");
+  const loadingToast = toast.loading("Deleting your review...");
 
-    try {
-      const res = await reviewDelete(reviewId,{ status: "Deleted" });
+  try {
+    const res = await reviewDelete(reviewId);
 
-      if (res.ok) {
-        setReviews(prev => prev.filter(item => item._id !== reviewId));
-        toast.success("Review deleted successfully!", { id: loadingToast }); 
-      } else {
-        const errData = await res.json();
-        toast.error(errData.message || "Failed to delete review.", { id: loadingToast }); 
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-      toast.error("Network error. Please try again.", { id: loadingToast });
+    if (res?.success) {
+      setReviews((prev) =>
+        prev.filter((item) => item._id !== reviewId)
+      );
+
+      toast.success("Review deleted successfully!", {
+        id: loadingToast,
+      });
+    } else {
+      toast.error(res?.data?.message || "Failed to delete review.", {
+        id: loadingToast,
+      });
     }
-  };
-
+  } catch (err) {
+    console.error("Delete error:", err);
+    toast.error("Network error. Please try again.", {
+      id: loadingToast,
+    });
+  }
+};
  
   const startEdit = (review) => {
     setEditingId(review._id);
@@ -72,34 +78,42 @@ export default function UserReviewsPage() {
 
   
   const handleUpdate = async (reviewId) => {
-    if (!editComment.trim()) return;
-    setIsUpdating(true);
-    const loadingToast = toast.loading("Saving changes...");
+  if (!editComment.trim()) return;
 
-    try {
-      const res = await reviewUpdate(reviewId, { comment: editComment, rating: editRating });
+  setIsUpdating(true);
+  const loadingToast = toast.loading("Saving changes...");
 
-      if (res.ok) {
-        setReviews(prev => prev.map(item => 
-          item._id === reviewId 
-            ? { ...item, comment: editComment, rating: editRating } 
+  try {
+    const res = await reviewUpdate(reviewId, {
+      comment: editComment,
+      rating: editRating,
+    });
+
+    if (res?.success) {
+      setReviews((prev) =>
+        prev.map((item) =>
+          item._id === reviewId
+            ? { ...item, comment: editComment, rating: editRating }
             : item
-        ));
-        setEditingId(null);
-        toast.success("Review updated successfully!", { id: loadingToast }); // âœ… à¦¸à¦¾à¦•à¦¸à§‡à¦¸ à¦Ÿà§‹à¦¸à§à¦Ÿ
-      } else {
-        const errData = await res.json();
-        toast.error(errData.message || "Failed to update review.", { id: loadingToast }); // âœ… à¦«à§‡à¦‡à¦² à¦Ÿà§‹à¦¸à§à¦Ÿ
-      }
-    } catch (err) {
-      console.error("Update error:", err);
-      toast.error("Network error. Could not update.", { id: loadingToast });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+        )
+      );
 
-  // â”€â”€â”€ Loading Skeleton â”€â”€â”€
+      setEditingId(null);
+      toast.success("Review updated successfully!", { id: loadingToast });
+    } else {
+      toast.error(res?.message || "Failed to update review.", {
+        id: loadingToast,
+      });
+    }
+  } catch (err) {
+    console.error("Update error:", err);
+    toast.error("Network error. Could not update.", { id: loadingToast });
+  } finally {
+    setIsUpdating(false);
+  }
+};
+
+ 
   if (isLoading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-10 space-y-4">
