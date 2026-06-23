@@ -5,23 +5,22 @@ import ManageDeliveriesClient from "@/components/Deashboard/librarian/ManageDeli
 import { orderByAuthorId } from "@/lib/api/order";
 
 export default async function ManageDeliveriesPage() {
-  // à§§. à¦¸à¦¾à¦°à§à¦­à¦¾à¦° à¦¸à¦¾à¦‡à¦¡ à¦¥à§‡à¦•à§‡ à¦•à¦¾à¦°à§‡à¦¨à§à¦Ÿ à¦‡à¦‰à¦œà¦¾à¦° à¦¸à§‡à¦¶à¦¨ à¦°à¦¿à¦•à§‹à§Ÿà§‡à¦¸à§à¦Ÿ à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡
+ 
   const user = await getUserSession();
   
-  // à§¨. à¦¡à¦¾à¦Ÿà¦¾à¦¬à§‡à¦œ à¦¥à§‡à¦•à§‡ à¦…à¦°à§à¦¡à¦¾à¦° à¦«à§‡à¦š à¦•à¦°à¦¾ à¦¹à¦šà§à¦›à§‡
+  
   let fetchedDeliveries = [];
   if (user?.id) {
     fetchedDeliveries = await orderByAuthorId(user?.id);
     console.log("Fetched Deliveries:", fetchedDeliveries);
   }
 
-  // à¦¡à¦¾à¦Ÿà¦¾à¦¬à§‡à¦œ à¦¥à§‡à¦•à§‡ à¦¡à¦¾à¦Ÿà¦¾ à¦à¦¸à§‡à¦›à§‡ à¦•à¦¿à¦¨à¦¾ à¦à¦¬à¦‚ à¦¸à§‡à¦Ÿà¦¿ à¦…à§à¦¯à¦¾à¦°à§‡ à¦•à¦¿à¦¨à¦¾ à¦¤à¦¾ à¦¨à¦¿à¦¶à§à¦šà¦¿à¦¤ à¦•à¦°à¦¾
   const hasDeliveries = Array.isArray(fetchedDeliveries) && fetchedDeliveries.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-      {/* à¦¹à§‡à¦¡à¦¾à¦° à¦¸à§‡à¦•à¦¶à¦¨ */}
+      {/* হেডার সেকশন */}
       <div className="border-b border-slate-100 pb-4">
         <h1 className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2">
           <MdLocalShipping className="text-[#775a19]" /> Logistics & Deliveries
@@ -31,7 +30,7 @@ export default async function ManageDeliveriesPage() {
         </p>
       </div>
 
-      {/* ðŸš€ à¦•à¦¨à§à¦¡à¦¿à¦¶à¦¨à¦¾à¦² à¦°à§‡à¦¨à§à¦¡à¦¾à¦°à¦¿à¦‚: à¦¡à¦¾à¦Ÿà¦¾ à¦¥à¦¾à¦•à¦²à§‡ à¦Ÿà§‡à¦¬à¦¿à¦² à¦¦à§‡à¦–à¦¾à¦¬à§‡, à¦¨à¦¾ à¦¥à¦¾à¦•à¦²à§‡ à¦¸à§à¦¨à§à¦¦à¦° Empty UI à¦¦à§‡à¦–à¦¾à¦¬à§‡ */}
+     
       {hasDeliveries ? (
         <ManageDeliveriesClient
           key={fetchedDeliveries.map((delivery) => delivery._id).join("-")}

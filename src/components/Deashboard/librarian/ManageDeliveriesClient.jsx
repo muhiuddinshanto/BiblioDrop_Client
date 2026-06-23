@@ -10,15 +10,14 @@ export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
   const [deliveries, setDeliveries] = useState(initialDeliveries);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // ðŸ’¡ à¦¡à¦¾à¦‡à¦¨à¦¾à¦®à¦¿à¦• à¦¡à§‡à¦²à¦¿à¦­à¦¾à¦°à¦¿ à¦¸à§à¦Ÿà§à¦¯à¦¾à¦Ÿà¦¾à¦¸ à¦šà§‡à¦žà§à¦œà¦¾à¦° à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
+  
   const handleDeliveryStatusChange = async (id, newStatus) => {
     setIsUpdating(true);
     console.log(`Shipment ID: ${id} updated to state: ${newStatus}`);
 
-    // à§§. à¦¬à§à¦¯à¦¾à¦•à¦†à¦ª à¦°à¦¾à¦–à¦¾ (à¦¯à¦¦à¦¿ à¦à¦ªà¦¿à¦†à¦‡ à¦«à§‡à¦‡à¦² à¦•à¦°à§‡ à¦¤à¦¬à§‡ à¦†à¦—à§‡à¦° à¦¸à§à¦Ÿà§‡à¦Ÿà§‡ à¦«à§‡à¦°à¦¤ à¦¯à¦¾à¦“à§Ÿà¦¾à¦° à¦œà¦¨à§à¦¯)
+    
     const previousDeliveries = [...deliveries];
 
-    // à§¨. UI-à¦¤à§‡ à¦‡à¦¨à¦¸à§à¦Ÿà§à¦¯à¦¾à¦¨à§à¦Ÿ à¦¸à§à¦Ÿà§‡à¦Ÿ à¦†à¦ªà¦¡à§‡à¦Ÿ (Optimistic Update)
     setDeliveries((prevDeliveries) =>
       prevDeliveries.map((item) =>
         item._id === id ? { ...item, status: newStatus } : item
@@ -26,8 +25,12 @@ export default function ManageDeliveriesClient({ initialDeliveries = [] }) {
     );
 
     try {
-      // ðŸš€ à¦¬à§à¦¯à¦¾à¦•à¦à¦¨à§à¦¡ à¦à¦ªà¦¿à¦†à¦‡ à¦à¦¨à§à¦¡à¦ªà¦¯à¦¼à§‡à¦¨à§à¦Ÿ à¦Ÿà§à¦°à¦¿à¦—à¦¾à¦° à¦•à¦°à¦¾ à¦¹à¦²à§‹
+      
       const response = await orderBooksStatus(id, newStatus);
+
+      if(response.success){
+        toast.success("Shipment status updated successfully.");
+      }
       
       if (!response.success) {
         throw new Error(response.message || "Failed to update");

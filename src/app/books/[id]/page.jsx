@@ -1,7 +1,7 @@
 import BookDetailsContent from '@/components/Books/BookDetailsContent';
 import { getBooksById } from '@/lib/api/books';
 import React from 'react';
-import { reviewsByUserId } from '@/lib/api/reviews';
+import { reviewsByBookId } from '@/lib/api/reviews';
 
 const BookDetailPage = async ({ params }) => {
     const { id } = await params;
@@ -21,7 +21,7 @@ const BookDetailPage = async ({ params }) => {
     //  Reviews আলাদাভাবে fetch 
     let reviewsData = [];
     try {
-        const reviewJson = await reviewsByUserId(rawBook._id);
+        const reviewJson = await reviewsByBookId(rawBook._id);
         reviewsData = reviewJson || [];
     } catch {
         reviewsData = [];
