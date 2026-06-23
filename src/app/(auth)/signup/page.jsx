@@ -1,299 +1,291 @@
 // src/app/(auth)/signup/page.jsx
 "use client";
+
 import React, { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation"; // 👈 useRouter ইম্পোর্ট করুন
-import {
-  Button,
-  Description,
-  FieldError,
-  Form,
-  Input,
-  Label,
-  TextField,
-  RadioGroup,
-  Radio,
-} from "@heroui/react";
-import { FaGoogle, FaCheck, FaRotateLeft, FaEye, FaEyeSlash, FaUser, FaEnvelope, FaImage } from "react-icons/fa6";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@heroui/react";
+import { 
+  FaGoogle, 
+  FaCheck, 
+  FaEye, 
+  FaEyeSlash, 
+  FaUser, 
+  FaEnvelope, 
+  FaImage,
+  FaCircleCheck 
+} from "react-icons/fa6";
+import { motion } from "framer-motion";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function RegisterForm() {
-
   const [passwordValue, setPasswordValue] = useState("");
+  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState("user");
   const [photoPreview, setPhotoPreview] = useState("");
 
   const searchParams = useSearchParams();
-  const redirectParam = searchParams.get("redirect"); 
+  const redirectParam = searchParams.get("redirect");
   const redirectTo = redirectParam && redirectParam !== "null" ? redirectParam : null;
   const router = useRouter();
 
+  const isPasswordInvalid = passwordValue && confirmPasswordValue && passwordValue !== confirmPasswordValue;
+
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (passwordValue !== confirmPasswordValue) {
+      toast.error("❌ Passwords do not match!");
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
 
-    const formValues = {};
-    formData.forEach((value, key) => {
-      formValues[key] = value.toString();
-    });
-    formValues.role = role;
-
-   
-
     try {
-      // 💡 Better-Auth অফিশিয়াল সাইন-আপ মেথড (ফিক্সড)
       const { data: authData, error } = await authClient.signUp.email({
         name: formData.get("name"),
         email: formData.get("email"),
-        password: formData.get("password"),
+        password: passwordValue,
         image: formData.get("photoUrl"),
         role: role,
       });
 
       if (error) {
-        // Better Auth এরর মেসেজ হ্যান্ডলিং
-        toast.error(`❌ Error: ${error.message || "Something went wrong!"}`);
+        toast.error(`❌ ${error.message || "Registration failed"}`);
         return;
       }
 
       if (authData) {
-        toast.success(`🎉 Registration Successful for ${formData.get("name")}!`);
+        toast.success(`🎉 Welcome ${formData.get("name")}!`);
         router.push(redirectTo || "/");
       }
-
     } catch (err) {
-      console.error("Auth Request Crash:", err);
+      toast.error("Something went wrong. Please try again.");
+      console.error(err);
     }
   };
 
-  // Photo URL Preview
-  const handlePhotoChange = (e) => {
-    const url = e.target.value;
-    setPhotoPreview(url);
-  };
-
-  const handleGoogleLogin = async () => {
-    const data = await authClient.signIn.social({
-        provider: "google",
-      });
-
-      if (data) {
-        toast.success(`🎉 Login Successful for ${data.user?.name || "User"}!`);
-        router.push(redirectTo || "/");
-      }
-  };
-
   return (
-    <div className="mx-auto w-full max-w-md p-5 sm:p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 shadow-2xl my-6 sm:my-10">
-
-      {/* Header */}
-      <div className="text-center mb-6 sm:mb-8">
-        <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#0F172A] to-slate-800 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 shadow-inner text-2xl sm:text-3xl">
-          📚
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">Create Account</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5 sm:mt-2">Join the BiblioDrop community today</p>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-4 transition-colors duration-300">
+      {/* ব্যাকগ্রাউন্ড গ্লো */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-blue-500/10 dark:bg-amber-500/5 blur-[120px]" />
+        <div className="absolute -bottom-[40%] -right-[20%] w-[80%] h-[80%] rounded-full bg-amber-500/10 dark:bg-blue-500/5 blur-[120px]" />
       </div>
 
-      {/* Google Button */}
-      <Button
-        onClick={handleGoogleLogin}
-        variant="ghost"
-        className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 hover:border-[#0F172A] hover:bg-slate-50 text-[#0F172A] font-semibold rounded-2xl py-5 sm:py-6 text-sm sm:text-base transition-all active:scale-[0.985]"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-lg z-10"
       >
-        <FaGoogle className="text-rose-500 text-lg sm:text-xl" />
-        Continue with Google
-      </Button>
-
-      <div className="relative flex py-4 sm:py-6 items-center">
-        <div className="flex-grow border-t border-slate-200"></div>
-        <span className="flex-shrink mx-4 sm:mx-6 text-xs font-bold text-slate-400 uppercase tracking-[2px]">or</span>
-        <div className="flex-grow border-t border-slate-200"></div>
-      </div>
-
-      {/* Main Form */}
-      <Form className="flex flex-col gap-5 sm:gap-6" onSubmit={onSubmit}>
-
-        {/* Full Name */}
-        <TextField isRequired name="name" type="text">
-          <Label className="text-sm font-semibold text-[#0F172A]">Full Name</Label>
-          <div className="relative mt-1">
-            <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
-            <Input placeholder="John Doe" className="pl-11 w-full" />
+        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-slate-800/80 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none p-6 sm:p-10 transition-all">
+          
+          {/* হেডার */}
+          <div className="text-center mb-8">
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="mx-auto w-16 h-16 bg-slate-900 dark:bg-amber-400 rounded-2xl flex items-center justify-center text-3xl shadow-md mb-4"
+            >
+              📖
+            </motion.div>
+            <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              Join BiblioDrop
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Create your scholarly account</p>
           </div>
-          <FieldError className="text-xs text-rose-500 mt-1" />
-        </TextField>
 
-        {/* Email */}
-        <TextField
-          isRequired
-          name="email"
-          type="email"
-          validate={(value) =>
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)
-              ? "Please enter a valid email address"
-              : null
-          }
-        >
-          <Label className="text-sm font-semibold text-[#0F172A]">Email Address</Label>
-          <div className="relative mt-1">
-            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
-            <Input placeholder="john@example.com" className="pl-11 w-full" />
-          </div>
-          <Description className="text-[11px] text-slate-400 mt-1">Must be unique and valid</Description>
-          <FieldError className="text-xs text-rose-500 mt-1" />
-        </TextField>
+          {/* গুগল লগইন */}
+          <Button
+            onClick={() => authClient.signIn.social({ provider: "google" })}
+            variant="bordered"
+            className="w-full flex items-center justify-center gap-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-medium rounded-2xl h-12 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+          >
+            <FaGoogle className="text-[#EA4335] text-lg" />
+            Continue with Google
+          </Button>
 
-        {/* Profile Photo */}
-        <TextField isRequired name="photoUrl" type="url">
-          <Label className="text-sm font-semibold text-[#0F172A]">Profile Photo URL</Label>
-          <div className="relative mt-1">
-            <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
-            <Input
-              placeholder="https://example.com/avatar.jpg"
-              className="pl-11 w-full"
-              onChange={handlePhotoChange}
-            />
+          <div className="relative flex items-center py-6">
+            <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
+            <span className="px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">or</span>
+            <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
           </div>
-          {photoPreview && (
-            <div className="mt-3 flex justify-center">
-              <img
-                src={photoPreview}
-                alt="Preview"
-                className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-2xl border border-slate-200 shadow-sm"
-                onError={(e) => e.target.style.display = 'none'}
-              />
+
+          {/* ফর্ম */}
+          <form className="flex flex-col gap-5" onSubmit={onSubmit}>
+            
+            {/* Full Name */}
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-slate-700 dark:text-slate-300 font-medium text-sm">Full Name</label>
+              <div className="relative flex items-center">
+                <FaUser className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                <input
+                  required
+                  type="text"
+                  name="name"
+                  placeholder="Mohiuddin Shanto"
+                  className="w-full h-12 pl-11 pr-4 bg-transparent border border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-amber-400 rounded-2xl outline-none text-sm transition-all"
+                />
+              </div>
             </div>
-          )}
-          <FieldError className="text-xs text-rose-500 mt-1" />
-        </TextField>
 
-        {/* Password */}
-        <TextField
-          isRequired
-          name="password"
-          type={showPassword ? "text" : "password"}
-          onChange={(val) => setPasswordValue(val)}
-          validate={(value) => {
-            if (value.length < 8) return "Password must be at least 8 characters";
-            if (!/[A-Z]/.test(value)) return "Must contain at least one uppercase letter";
-            if (!/[0-9]/.test(value)) return "Must contain at least one number";
-            return null;
-          }}
-        >
-          <Label className="text-sm font-semibold text-[#0F172A]">Password</Label>
-          <div className="relative mt-1">
-            <Input placeholder="Create a strong password" className="pr-12 w-full" />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300 focus:outline-none"
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-          <Description className="text-[11px] text-slate-400 mt-1">
-            Minimum 8 characters with uppercase & number
-          </Description>
-          <FieldError className="text-xs text-rose-500 mt-1" />
-        </TextField>
-
-        {/* Confirm Password */}
-        <TextField
-          isRequired
-          name="confirmPassword"
-          type={showConfirmPassword ? "text" : "password"}
-          validate={(value) => (value !== passwordValue ? "Passwords do not match" : null)}
-        >
-          <Label className="text-sm font-semibold text-[#0F172A]">Confirm Password</Label>
-          <div className="relative mt-1">
-            <Input placeholder="Retype your password" className="pr-12 w-full" />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300 focus:outline-none"
-            >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-          <FieldError className="text-xs text-rose-500 mt-1" />
-        </TextField>
-
-        {/* Role Selection */}
-        <div className="flex flex-col gap-3">
-          <Label className="text-sm font-semibold text-[#0F172A]">Choose Your Role</Label>
-          <RadioGroup
-            value={role}
-            onChange={setRole}
-            orientation="vertical"
-            className="w-full gap-3 sm:flex-row sm:gap-4"
-          >
-            <Radio value="user" className="w-full sm:flex-1">
-              <div className="border-2 border-slate-200 hover:border-[#0F172A] rounded-2xl p-4 cursor-pointer transition-all data-[selected=true]:border-[#0F172A] data-[selected=true]:bg-slate-50 w-full">
-                <Radio.Control>
-                  <Radio.Indicator />
-                </Radio.Control>
-                <Radio.Content>
-                  <Label className="text-sm font-medium cursor-pointer text-[#0F172A]">User (Reader)</Label>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Browse, read & review books</p>
-                </Radio.Content>
+            {/* Email Address */}
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-slate-700 dark:text-slate-300 font-medium text-sm">Email Address</label>
+              <div className="relative flex items-center">
+                <FaEnvelope className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                <input
+                  required
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  className="w-full h-12 pl-11 pr-4 bg-transparent border border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-amber-400 rounded-2xl outline-none text-sm transition-all"
+                />
               </div>
-            </Radio>
+            </div>
 
-            <Radio value="librarian" className="w-full sm:flex-1">
-              <div className="border-2 border-slate-200 hover:border-[#0F172A] rounded-2xl p-4 cursor-pointer transition-all data-[selected=true]:border-[#0F172A] data-[selected=true]:bg-slate-50 w-full">
-                <Radio.Control>
-                  <Radio.Indicator />
-                </Radio.Control>
-                <Radio.Content>
-                  <Label className="text-sm font-medium cursor-pointer text-[#0F172A]">Librarian</Label>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage books & catalog</p>
-                </Radio.Content>
+            {/* Profile Photo URL */}
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-slate-700 dark:text-slate-300 font-medium text-sm">Profile Photo URL</label>
+              <div className="relative flex items-center">
+                <FaImage className="absolute left-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                <input
+                  type="url"
+                  name="photoUrl"
+                  placeholder="https://example.com/avatar.jpg"
+                  onChange={(e) => setPhotoPreview(e.target.value)}
+                  className="w-full h-12 pl-11 pr-4 bg-transparent border border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-amber-400 rounded-2xl outline-none text-sm transition-all"
+                />
               </div>
-            </Radio>
-          </RadioGroup>
-        </div>
+              {photoPreview && (
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mt-2 flex justify-center">
+                  <img 
+                    src={photoPreview} 
+                    alt="Preview" 
+                    className="w-16 h-16 object-cover rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm" 
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </motion.div>
+              )}
+            </div>
 
-        {/* Submit Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 sm:mt-6">
-          <Button
-            type="submit"
-            style={{ backgroundColor: "#0F172A" }}
-            className="w-full sm:flex-1 text-white font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg shadow-slate-900/20 hover:brightness-105"
-          >
-            <FaCheck size={17} />
-            Create Account
-          </Button>
+            {/* Password */}
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-slate-700 dark:text-slate-300 font-medium text-sm">Password</label>
+              <div className="relative flex items-center">
+                <input
+                  required
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={passwordValue}
+                  onChange={(e) => setPasswordValue(e.target.value)}
+                  className="w-full h-12 px-4 pr-12 bg-transparent border border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-amber-400 rounded-2xl outline-none text-sm transition-all"
+                />
+                <button className="absolute right-4 focus:outline-none" type="button" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? (
+                    <FaEyeSlash className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
+                  ) : (
+                    <FaEye className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
+                  )}
+                </button>
+              </div>
+            </div>
 
-          <Button
-            type="reset"
-            variant="flat"
-            onPress={() => {
-              setRole("user");
-              setPhotoPreview("");
-            }}
-            className="w-full sm:w-auto border border-slate-200 text-slate-600 dark:text-slate-300 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 hover:bg-slate-50"
-          >
-            <FaRotateLeft size={17} />
-            Reset
-          </Button>
+            {/* Confirm Password */}
+            <div className="w-full flex flex-col gap-1.5">
+              <label className="text-slate-700 dark:text-slate-300 font-medium text-sm">Confirm Password</label>
+              <div className="relative flex items-center">
+                <input
+                  required
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={confirmPasswordValue}
+                  onChange={(e) => setConfirmPasswordValue(e.target.value)}
+                  className={`w-full h-12 px-4 pr-12 bg-transparent border rounded-2xl outline-none text-sm transition-all
+                    ${isPasswordInvalid 
+                      ? "border-rose-500 focus:border-rose-500" 
+                      : "border-slate-200 dark:border-slate-800 focus:border-slate-900 dark:focus:border-amber-400"
+                    }`}
+                />
+                <button className="absolute right-4 focus:outline-none" type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                  {showConfirmPassword ? (
+                    <FaEyeSlash className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
+                  ) : (
+                    <FaEye className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
+                  )}
+                </button>
+              </div>
+              {isPasswordInvalid && (
+                <span className="text-xs text-rose-500 mt-0.5">Passwords do not match</span>
+              )}
+            </div>
+
+            {/* Role Selection */}
+            <div className="w-full flex flex-col gap-2.5 mt-1">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">I want to join as</label>
+              <div className="grid grid-cols-2 gap-4">
+                
+                {/* Reader Option */}
+                <div
+                  onClick={() => setRole("user")}
+                  className={`relative flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none
+                    ${role === "user" 
+                      ? "border-slate-900 bg-slate-50 dark:border-amber-400 dark:bg-amber-400/10 shadow-sm" 
+                      : "border-slate-200 bg-transparent hover:bg-slate-50/50 dark:border-slate-800/80 dark:hover:bg-slate-800/30"
+                    }`}
+                >
+                  <div className="flex flex-col flex-1">
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">User</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Browse & collect books</span>
+                  </div>
+                  {role === "user" && (
+                    <FaCircleCheck className="text-slate-900 dark:text-amber-400 text-lg flex-shrink-0 mt-0.5" />
+                  )}
+                </div>
+
+                {/* Librarian Option */}
+                <div
+                  onClick={() => setRole("librarian")}
+                  className={`relative flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none
+                    ${role === "librarian" 
+                      ? "border-slate-900 bg-slate-50 dark:border-amber-400 dark:bg-amber-400/10 shadow-sm" 
+                      : "border-slate-200 bg-transparent hover:bg-slate-50/50 dark:border-slate-800/80 dark:hover:bg-slate-800/30"
+                    }`}
+                >
+                  <div className="flex flex-col flex-1">
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">Librarian</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Manage the collection</span>
+                  </div>
+                  {role === "librarian" && (
+                    <FaCircleCheck className="text-slate-900 dark:text-amber-400 text-lg flex-shrink-0 mt-0.5" />
+                  )}
+                </div>
+
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="w-full bg-slate-900 hover:bg-black text-white dark:bg-amber-400 dark:text-slate-900 dark:hover:bg-amber-300 font-semibold h-12 rounded-2xl text-sm shadow-md mt-2 transition-all active:scale-[0.99]"
+            >
+              <FaCheck className="mr-2" />
+              Create My Account
+            </Button>
+          </form>
+
+          {/* Login Link */}
+          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-8">
+            Already have an account?{" "}
+            <Link href={`/login?redirect=${redirectTo}`} className="font-semibold text-slate-900 dark:text-amber-400 hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
-      </Form>
-            {/* Signin Link */}
-      <div className="text-center mt-6 pt-5 border-t border-slate-100 text-sm">
-        <p className="text-slate-500 dark:text-slate-400 font-medium">
-          Already have an account?{" "}
-          <Link 
-            href={`/login?redirect=${redirectTo}`} 
-            className="text-[#0F172A] font-bold hover:underline transition-all"
-          >
-            Sign In here
-          </Link>
-        </p>
-      </div>
+      </motion.div>
     </div>
   );
 }
