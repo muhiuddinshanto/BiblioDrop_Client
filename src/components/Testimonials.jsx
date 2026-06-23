@@ -1,19 +1,9 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaStar, FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useMotionValue, useAnimate } from 'framer-motion';
+import { FaStar, FaHeart, FaQuoteLeft } from 'react-icons/fa6';
 import Image from 'next/image';
-
-const cardVariants = {
-    hidden: { opacity: 0, x: 40 },
-    visible: (i) => ({
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }
-    }),
-    exit: { opacity: 0, x: -40, transition: { duration: 0.3 } }
-};
 
 const reviews = [
     {
@@ -66,159 +56,148 @@ const reviews = [
     },
 ];
 
-const CARDS_PER_PAGE = 3;
+// মসৃণ লুপের জন্য ডাবল সেট ডাটা
+const duplicatedReviews = [...reviews, ...reviews];
+
+const CARD_WIDTH = 360;
+const CARD_GAP = 24;
+const TOTAL_WIDTH = reviews.length * (CARD_WIDTH + CARD_GAP);
 
 export default function Testimonials() {
-    const [page, setPage] = useState(0);
-    const [direction, setDirection] = useState(1);
-    const touchStartX = useRef(0);
+    const [scope, animate] = useAnimate();
+    const [isDragging, setIsDragging] = useState(false);
+    const x = useMotionValue(0);
+    const animationRef = useRef(null);
 
-    const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE);
-    const currentGroup = reviews.slice(page * CARDS_PER_PAGE, page * CARDS_PER_PAGE + CARDS_PER_PAGE);
+    // ১. অবিরত স্লো অটো-স্ক্রোল অ্যানিমেশন ফাংশন
+    const startAutoScroll = () => {
+        if (isDragging) return;
 
-    const goTo = (nextPage) => {
-        setDirection(nextPage > page ? 1 : -1);
-        setPage(nextPage);
+        // বর্তমান পজিশন থেকে ১টি ফুল সেটের শেষ মাথা পর্যন্ত অ্যানিমেট হবে
+        const currentX = x.get();
+        // যদি স্ক্রোল করতে করতে বা ড্র্যাগ করতে করতে লুপের বাইরে চলে যায় তবে রিসেট
+        const targetX = currentX <= -TOTAL_WIDTH ? 0 : -TOTAL_WIDTH;
+        const remainingDistance = Math.abs(targetX - (currentX <= -TOTAL_WIDTH ? 0 : currentX));
+        
+        // গতি ঠিক করার জন্য (দূরত্ব / স্পিড ফ্যাক্টর)
+        const duration = remainingDistance / 30; // ৩০ পিক্সেল প্রতি সেকেন্ড (আপনার পছন্দমতো কমাতে/বাড়াতে পারেন)
+
+        animationRef.current = animate(x, targetX, {
+            duration: duration,
+            ease: "linear",
+            onComplete: () => {
+                x.set(0); // লুপ শেষে সাথে সাথে জিরোতে রিসেট (টের পাওয়া যাবে না)
+                startAutoScroll();
+            }
+        });
+    };
+
+    // ২. মাউন্ট এবং ড্র্যাগ চেঞ্জের উপর ভিত্তি করে অ্যানিমেশন কন্ট্রোল
+    useEffect(() => {
+        if (!isDragging) {
+            startAutoScroll();
+        }
+        return () => animationRef.current?.stop();
+    }, [isDragging]);
+
+    // ৩. ড্র্যাগ শেষ হলে লুপের পজিশন বাউন্ডারি হ্যান্ডেল করা
+    const handleDragEnd = (event, info) => {
+        setIsDragging(false);
+        let currentX = x.get();
+
+        // যদি ড্র্যাগ করতে করতে ডান বা বামে বাউন্ডারি ক্রস করে, তবে পজিশন রিসেট করুন
+        if (currentX > 0) {
+            x.set(currentX - TOTAL_WIDTH);
+        } else if (currentX < -TOTAL_WIDTH) {
+            x.set(currentX + TOTAL_WIDTH);
+        }
     };
 
     return (
-        <section className="w-full bg-slate-50/50 dark:bg-slate-950 py-24 px-6 lg:px-8 border-t border-slate-100 dark:border-slate-800 overflow-hidden">
-            <div className="mx-auto max-w-6xl">
+        <section className="w-full bg-white dark:bg-[#0D1117] py-20 px-4 overflow-hidden relative select-none transition-colors duration-300">
+            
+            {/* লাইট ও ডার্ক মোডের জন্য আলাদা অ্যাম্বিয়েন্ট গ্লো */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className="absolute -top-32 left-1/4 w-[600px] h-[600px] rounded-full bg-[#C5A059]/5 dark:bg-[#C5A059]/5 blur-[120px]" />
+                <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-blue-500/5 dark:bg-blue-900/10 blur-[100px]" />
+            </div>
 
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center max-w-xl mx-auto mb-16"
-                >
-                    <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#C5A059] flex items-center justify-center gap-1.5 mb-3">
-                        <FaHeart className="animate-pulse text-[9px]" /> Reader Feedback
+            <div className="mx-auto max-w-7xl relative z-10">
+                {/* হেডার */}
+                <div className="text-center max-w-xl mx-auto mb-14">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-[#C5A059] mb-3">
+                        <FaHeart className="animate-pulse text-[9px]" />
+                        Reader Feedback
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#1A2332] dark:text-slate-50 tracking-tight">
-                        Voices of Our Community
+                    <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                        Voices of Our <span className="text-[#C5A059]">Community</span>
                     </h2>
-                    <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Discover how scholars, researchers, and book collectors experience our premium local delivery ecosystem.
-                    </p>
-                </motion.div>
+                </div>
 
-                {/* Slider */}
-                <div
-                    className="relative overflow-hidden"
-                    onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
-                    onTouchEnd={(e) => {
-                        const dx = e.changedTouches[0].clientX - touchStartX.current;
-                        if (Math.abs(dx) > 40) {
-                            if (dx < 0 && page < totalPages - 1) goTo(page + 1);
-                            if (dx > 0 && page > 0) goTo(page - 1);
-                        }
-                    }}
-                >
-                    <AnimatePresence mode="wait" custom={direction}>
+                {/* স্লাইডার ট্র্যাক */}
+                <div className="relative w-full" ref={scope}>
+                    
+                    {/* ফেড ওভারলে (লাইট এবং ডার্ক মোড ফ্রেন্ডলি) */}
+                    <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-r from-white via-white/50 to-transparent dark:from-[#0D1117] dark:via-[#0D1117]/50 dark:to-transparent" />
+                    <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-white via-white/50 to-transparent dark:from-[#0D1117] dark:via-[#0D1117]/50 dark:to-transparent" />
+
+                    {/* মেইন মার্কি কন্টেইনার */}
+                    <div className="overflow-visible cursor-grab active:cursor-grabbing">
                         <motion.div
-                            key={page}
-                            custom={direction}
-                            initial={{ opacity: 0, x: direction * 60 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: direction * -60 }}
-                            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                            className="grid grid-cols-1 gap-4 md:grid-cols-3"
+                            className="flex"
+                            style={{ gap: CARD_GAP, x }}
+                            drag="x"
+                            onDragStart={() => {
+                                setIsDragging(true);
+                                animationRef.current?.stop(); // ড্র্যাগ শুরু হলে অটো স্ক্রোল পজ করুন
+                            }}
+                            onDragEnd={handleDragEnd}
                         >
-                            {currentGroup.map((review, i) => (
-                                <motion.div
-                                    key={review.id}
-                                    custom={i}
-                                    variants={cardVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    className="group relative flex flex-col bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/70 dark:hover:shadow-slate-900/60 hover:border-slate-200 dark:hover:border-slate-700"
+                            {duplicatedReviews.map((review, i) => (
+                                <div
+                                    key={`${review.id}-${i}`}
+                                    style={{ width: CARD_WIDTH, flexShrink: 0 }}
+                                    className="group relative flex flex-col bg-slate-50 dark:bg-[#161B27] border border-slate-200/60 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm dark:shadow-xl transition-colors duration-300"
                                 >
-                                    {/* Golden top bar on hover */}
-                                    <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#C5A059] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
+                                    {/* টপ অ্যাকসেন্ট হোভার লাইন */}
+                                    <div className="absolute top-0 left-6 right-6 h-[1.5px] bg-gradient-to-r from-transparent via-[#C5A059]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                                    {/* Decorative quote */}
-                                    <div className="absolute top-4 right-5 text-4xl leading-none text-slate-100 dark:text-slate-800 group-hover:text-[#C5A059]/10 transition-colors duration-300 font-serif select-none">
-                                        &quot;
+                                    <FaQuoteLeft className="text-[#C5A059]/15 text-3xl mb-4 flex-shrink-0" />
+
+                                    <div className="flex gap-0.5 text-[#C5A059] text-[10px] mb-3">
+                                        {[...Array(review.rating)].map((_, idx) => <FaStar key={idx} />)}
                                     </div>
 
-                                    {/* Stars */}
-                                    <div className="flex gap-0.5 text-[#C5A059] text-[10px] mb-4">
-                                        {[...Array(review.rating)].map((_, i) => <FaStar key={i} />)}
-                                    </div>
-
-                                    {/* Quote */}
-                                    <blockquote className="flex-1 text-[12.5px] leading-relaxed text-slate-600 dark:text-slate-300 italic mb-5">
-                                        &quot;{review.comment}&quot;
+                                    <blockquote className="flex-1 text-[13px] leading-[1.7] text-slate-600 dark:text-slate-300 mb-6">
+                                        "{review.comment}"
                                     </blockquote>
 
-                                    <div className="w-full h-px bg-slate-100 dark:bg-slate-800 mb-4" />
+                                    <div className="w-full h-px bg-slate-200 dark:bg-slate-800/60 mb-4" />
 
-                                    {/* Bio */}
+                                    {/* প্রোফাইল বায়ো */}
                                     <div className="flex items-center gap-3">
-                                        <div className="relative w-10 h-10 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 flex-shrink-0">
+                                        <div className="relative w-9 h-9 rounded-full overflow-hidden border border-slate-300 dark:border-slate-700 flex-shrink-0 ring-2 ring-[#C5A059]/10">
                                             <Image
                                                 src={review.avatar}
                                                 alt={review.name}
                                                 fill
                                                 className="object-cover"
-                                                sizes="40px"
+                                                sizes="36px"
                                             />
                                         </div>
                                         <div>
-                                            <h4 className="text-[12.5px] font-black text-[#1A2332] dark:text-slate-100 tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            <h4 className="text-[13px] font-bold text-slate-800 dark:text-white tracking-tight transition-colors">
                                                 {review.name}
                                             </h4>
-                                            <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">
+                                            <p className="text-[10px] text-[#C5A059]/80 dark:text-[#C5A059]/70 font-semibold tracking-wider uppercase mt-0.5">
                                                 {review.role}
                                             </p>
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </motion.div>
-                    </AnimatePresence>
-                </div>
-
-                {/* Controls */}
-                <div className="flex items-center justify-center gap-4 mt-8">
-                    <button
-                        onClick={() => goTo(page - 1)}
-                        disabled={page === 0}
-                        className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:border-[#C5A059] hover:text-[#C5A059] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                        aria-label="Previous"
-                    >
-                        <FaChevronLeft className="text-xs" />
-                    </button>
-
-                    <div className="flex gap-1.5 items-center">
-                        {Array.from({ length: totalPages }).map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => goTo(i)}
-                                className={`rounded-full transition-all duration-200 ${
-                                    i === page
-                                        ? 'w-5 h-2 bg-[#C5A059]'
-                                        : 'w-2 h-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
-                                }`}
-                                aria-label={`Go to page ${i + 1}`}
-                            />
-                        ))}
                     </div>
-
-                    <span className="text-[11px] text-slate-400 font-mono min-w-[36px] text-center">
-                        {page + 1} / {totalPages}
-                    </span>
-
-                    <button
-                        onClick={() => goTo(page + 1)}
-                        disabled={page === totalPages - 1}
-                        className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:border-[#C5A059] hover:text-[#C5A059] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                        aria-label="Next"
-                    >
-                        <FaChevronRight className="text-xs" />
-                    </button>
                 </div>
 
             </div>
