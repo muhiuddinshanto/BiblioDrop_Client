@@ -1,5 +1,4 @@
-"use client"; // Recharts à¦…à§à¦¯à¦¾à¦¨à¦¿à¦®à§‡à¦¶à¦¨à§‡à¦° à¦œà¦¨à§à¦¯ à¦•à§à¦²à¦¾à¦¯à¦¼à§‡à¦¨à§à¦Ÿ à¦•à¦®à§à¦ªà§‹à¦¨à§‡à¦¨à§à¦Ÿ à¦†à¦¬à¦¶à§à¦¯à¦•
-
+"use client"; 
 import React from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -268,7 +267,7 @@ export default function OverviewContent({
           </div>
         </div>
 
-        {/* à¦°à¦¿à¦¸à§‡à¦¨à§à¦Ÿ à¦…à¦°à§à¦¡à¦¾à¦°à¦¸ à¦¸à§‡à¦•à¦¶à¦¨ */}
+        
         <div className="col-span-12 lg:col-span-7 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6 border-b border-slate-50 dark:border-slate-800 pb-3">

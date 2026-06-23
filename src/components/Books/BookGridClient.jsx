@@ -10,7 +10,7 @@ export default function BookGridClient({ initialBooks }) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // à¦¸à§‡à¦« à¦¡à§‡à¦Ÿà¦¾ à¦ªà¦¾à¦°à§à¦¸à¦¿à¦‚ (à¦…à¦¬à¦œà§‡à¦•à§à¦Ÿ à¦¬à¦¾ à¦…à§à¦¯à¦¾à¦°à§‡ à¦¯à¦¾à¦‡ à¦†à¦¸à§à¦•)
+  
     const initialBooksArray = Array.isArray(initialBooks) ? initialBooks : (initialBooks?.books || []);
     const backendTotalItems = Array.isArray(initialBooks) ? initialBooks.length : (initialBooks?.total || 0);
 
@@ -18,7 +18,7 @@ export default function BookGridClient({ initialBooks }) {
     const [isPending, startTransition] = useTransition();
     const loading = isPending;
 
-    // URL à¦¥à§‡à¦•à§‡ à¦¡à¦¿à¦°à§‡à¦•à§à¦Ÿ à¦•à¦¾à¦°à§‡à¦¨à§à¦Ÿ à¦ªà§‡à¦œ à¦°à¦¿à¦¡ à¦•à¦°à¦¾
+   
     const currentPage = Number(searchParams.get("page")) || 1;
     const currentSearch = searchParams.get("search");
 
@@ -30,11 +30,11 @@ export default function BookGridClient({ initialBooks }) {
     const totalItems = backendTotalItems;
     const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 
-    // 'Showing X-Y of Z' à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦¶à¦¨
+    
     const currentStartItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
     const currentEndItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-    // ðŸ”¢ à¦•à¦¾à¦¸à§à¦Ÿà¦® à¦ªà§‡à¦œ à¦¨à¦¾à¦®à§à¦¬à¦¾à¦° à¦à¦¬à¦‚ à¦‡à¦²à¦¿à¦ªà¦¸à¦¿à¦¸ (...) à¦œà§‡à¦¨à¦¾à¦°à§‡à¦Ÿ à¦•à¦°à¦¾à¦° à¦²à¦œà¦¿à¦•
+    
     const getPageNumbers = () => {
         const pages = [];
         pages.push(1);
@@ -70,7 +70,7 @@ export default function BookGridClient({ initialBooks }) {
 
     const isFirstRender = useRef(true);
 
-    // à¦«à¦¿à¦²à§à¦Ÿà¦¾à¦° à¦¬à¦¾ à¦¸à¦°à§à¦Ÿ à¦šà§‡à¦žà§à¦œ à¦¹à¦²à§‡ URL à¦†à¦ªà¦¡à§‡à¦Ÿ à¦•à¦°à¦¾à¦° à¦²à¦œà¦¿à¦•
+   
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
@@ -94,7 +94,7 @@ export default function BookGridClient({ initialBooks }) {
         }); 
     }, [currentSearch, itemsPerPage, maxPrice, router, selectedCategories, sortBy]);
 
-    // à¦¶à§à¦§à§à¦®à¦¾à¦¤à§à¦° à¦ªà§‡à¦œ à¦šà§‡à¦žà§à¦œ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à§‡à¦² à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯ à¦¡à§‡à¦¡à¦¿à¦•à§‡à¦Ÿà§‡à¦¡ à¦«à¦¾à¦‚à¦¶à¦¨
+  
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             const params = new URLSearchParams(searchParams.toString());
@@ -133,7 +133,7 @@ export default function BookGridClient({ initialBooks }) {
         <section className="w-full bg-white dark:bg-slate-900 px-6 py-16 dark:bg-slate-950 lg:px-8">
             <div className="mx-auto max-w-7xl grid grid-cols-1 gap-10 lg:grid-cols-12">
 
-                {/* === à¦¸à¦¾à¦‡à¦¡à¦¬à¦¾à¦° à¦«à¦¿à¦²à§à¦Ÿà¦¾à¦° === */}
+                
                 <div className="hidden lg:col-span-3 lg:flex flex-col gap-8 border-r border-gray-100 pr-8 dark:border-slate-800">
                     <div>
                         <h3 className="text-lg font-black text-[#0F172A] dark:text-slate-100 tracking-tight">Filters</h3>
@@ -178,7 +178,7 @@ export default function BookGridClient({ initialBooks }) {
                     </button>
                 </div>
 
-                {/* === à¦®à§‡à¦‡à¦¨ à¦¬à§à¦• à¦—à§à¦°à¦¿à¦¡ === */}
+                
                 <div className="lg:col-span-9">
                     <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6 dark:border-slate-800">
                         <div>
@@ -202,12 +202,12 @@ export default function BookGridClient({ initialBooks }) {
                         </div>
                     </div>
 
-                    {/* ðŸ”„ à¦²à§‹à¦¡à¦¿à¦‚ à¦…à¦¥à¦¬à¦¾ à¦•à¦¨à¦Ÿà§‡à¦¨à§à¦Ÿ à¦¥à¦¾à¦•à¦¾ à¦…à¦¬à¦¸à§à¦¥à¦¾à§Ÿ à¦ªà§‡à¦œà§‡à¦° à¦²à§‡à¦†à¦‰à¦Ÿ à¦¸à§à¦¥à¦¿à¦° à¦°à¦¾à¦–à¦¾à¦° à¦®à§‡à¦•à¦¾à¦¨à¦¿à¦œà¦® */}
+                    
                     {(loading || books.length > 0) ? (
                         <>
                             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
                                 {loading ? (
-                                    // à§§. à¦²à§‹à¦¡ à¦¹à¦“à§Ÿà¦¾à¦° à¦¸à¦®à§Ÿ à¦¹à§à¦Ÿ à¦•à¦°à§‡ à¦—à§à¦°à¦¿à¦¡ à¦¡à¦¿à¦²à¦¿à¦Ÿ à¦¨à¦¾ à¦¹à§Ÿà§‡ à§¯à¦Ÿà¦¿ à¦¸à§à¦¨à§à¦¦à¦° à¦…à§à¦¯à¦¾à¦¨à¦¿à¦®à§‡à¦Ÿà§‡à¦¡ à¦•à¦™à§à¦•à¦¾à¦² (Skeleton) à¦¦à§‡à¦–à¦¾à¦¬à§‡
+                                   
                                     Array.from({ length: itemsPerPage }).map((_, idx) => (
                                         <div 
                                             key={idx} 
@@ -220,7 +220,7 @@ export default function BookGridClient({ initialBooks }) {
                                         </div>
                                     ))
                                 ) : (
-                                    // à§¨. à¦¡à¦¾à¦Ÿà¦¾ à¦¸à¦«à¦²à¦­à¦¾à¦¬à§‡ à¦šà¦²à§‡ à¦†à¦¸à¦²à§‡ à¦†à¦¸à¦² à¦•à¦¾à¦°à§à¦¡ à¦°à§‡à¦¨à§à¦¡à¦¾à¦° à¦¹à¦¬à§‡
+                            
                                     books.map((book) => {
                                         const bookId = book._id?.$oid || book._id;
                                         return (
@@ -232,7 +232,7 @@ export default function BookGridClient({ initialBooks }) {
                                 )}
                             </div>
 
-                            {/* === HeroUI à¦¸à§à¦Ÿà§à¦°à¦¾à¦•à¦šà¦¾à¦°à§à¦¡ à¦ªà§‡à¦œà¦¿à¦¨à§‡à¦¶à¦¨ (à¦¯à¦¾ à¦²à§‹à¦¡à¦¿à¦‚ à¦…à¦¬à¦¸à§à¦¥à¦¾à§Ÿà¦“ à¦¨à¦¿à¦šà§‡ à¦«à¦¿à¦•à§à¦¸à¦¡ à¦¥à¦¾à¦•à¦¬à§‡) === */}
+                            
                             <div className="mt-12 flex flex-col items-center justify-between gap-4 sm:flex-row border-t border-gray-100 pt-6 dark:border-slate-800">
                                 <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
                                     Showing <b className="text-slate-800 dark:text-slate-200">{currentStartItem}</b> to <b className="text-slate-800 dark:text-slate-200">{currentEndItem}</b> of <b className="text-slate-800 dark:text-slate-200">{totalItems}</b> results

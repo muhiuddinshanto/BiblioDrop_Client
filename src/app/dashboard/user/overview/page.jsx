@@ -1,4 +1,5 @@
 import OverviewContent from '@/components/Deashboard/OverviewContent';
+import { getBooks } from '@/lib/api/books';
 import { orderById } from '@/lib/api/order';
 import { getUsersStats } from '@/lib/api/users';
 import { wishlistById } from '@/lib/api/wishlist';
@@ -11,6 +12,9 @@ export default async function UserOverviewPage() {
   const orders = user?.id ? await orderById(user.id) : [];
   const wishlist = user?.id ? await wishlistById(user.id) : [];
   const safeWishlist = wishlist ?? [];
+
+  const booksData = await getBooks();
+  console.log(booksData, "🚀 ~ file: page.jsx:12 ~ UserOverviewPage ~ booksData");
   
   // ব্যাকএন্ড থেকে আসা অ্যানালিটিক্স ডাটা (যা আমরা আগের স্টেপে তৈরি করেছি)
   const userState = user?.id ? await getUsersStats(user.id) : null;
