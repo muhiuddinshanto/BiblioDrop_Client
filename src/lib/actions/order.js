@@ -18,9 +18,7 @@ export const orderBooks = async ({ bookId, totalPrice }) => {
   }
 };
 
-// export const orderBooks = async(orderBooks)=>{
-//     return serverMuatation('/api/orders', orderBooks);
-// }
+
 
 
 

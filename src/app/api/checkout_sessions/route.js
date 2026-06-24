@@ -5,7 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export async function POST(req) {
     try {
         const body = await req.json();
-        
+
         const product = body.product || {};
         const userId = body.userId;
         const BookId = body.BookId;
@@ -13,8 +13,8 @@ export async function POST(req) {
         const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 
         // 💡 ডেসক্রিপশন খালি স্ট্রিং হওয়া আটকাতে লজিক
-        const productDescription = product.description && product.description.trim() !== "" 
-            ? product.description 
+        const productDescription = product.description && product.description.trim() !== ""
+            ? product.description
             : "No description available"; // খালি হলে স্ট্রাইপকে এই ডিফল্ট টেক্সট দেবে
 
         const session = await stripe.checkout.sessions.create({
@@ -24,10 +24,10 @@ export async function POST(req) {
                     quantity: 1,
                     price_data: {
                         currency: "usd",
-                        unit_amount: Math.round((product.price || 0) * 100), 
+                        unit_amount: Math.round((product.price || 0) * 100),
                         product_data: {
                             name: product.title || "Book",
-                            description: productDescription, // 👈 এখন আর খালি স্ট্রিং যাওয়ার সুযোগ নেই
+                            description: productDescription, 
                             images: product.image ? [product.image] : [],
                         },
                     },
@@ -36,14 +36,15 @@ export async function POST(req) {
 
             // 🎯 মেটাডাটা ম্যাপিং
             metadata: {
-                userid: userId ? userId.toString() : "", 
-                bookid: BookId ? BookId.toString() : "", 
+                userid: userId ? userId.toString() : "",
+                bookid: BookId ? BookId.toString() : "",
                 title: product.title || "Unknown Title",
-                author: product.author || "Unknown Author",     
-                category: product.category || "General",       
-                price: (product.price || 0).toString(), 
-                image: product.image || "", 
-                authorid: product.userId ? product.userId.toString() : "", 
+                author: product.author || "Unknown Author",
+                category: product.category || "General",
+                price: (product.price || 0).toString(),
+                image: product.image || "",
+                authorid: product.userId ? product.userId.toString() : "",
+                status: "Pending Approval",  
             },
 
             success_url: `${baseUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,

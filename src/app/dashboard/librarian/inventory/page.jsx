@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default async function ManageInventoryPage() {
   const user = await getUserSession();
-  console.log("ðŸš€ Logged In User:", user);
+  console.log(" Logged In User:", user);
 
   let fetchedBooks = null;
 
@@ -14,25 +14,25 @@ export default async function ManageInventoryPage() {
     fetchedBooks = await getBooksByUserId(user.id);
   }
 
-  console.log("ðŸš€ Database Response (Raw):", fetchedBooks);
+  console.log(" Database Response (Raw):", fetchedBooks);
 
-  // ==================== ðŸ›¡ï¸ à¦¬à§à¦²à§‡à¦Ÿà¦ªà§à¦°à§à¦« à¦¸à§à¦¯à¦¾à¦¨à¦¿à¦Ÿà¦¾à¦‡à¦œà§‡à¦¶à¦¨ à¦—à¦¾à¦°à§à¦¡ ====================
+  
   let sanitizedBooks = [];
 
   if (fetchedBooks) {
     if (Array.isArray(fetchedBooks)) {
-      // à§§. à¦¡à¦¾à¦Ÿà¦¾ à¦¸à¦°à¦¾à¦¸à¦°à¦¿ à¦…à§à¦¯à¦¾à¦°à§‡ à¦¹à¦²à§‡
+      
       sanitizedBooks = fetchedBooks.map((book) => ({
         ...book,
 
-        // status à¦¯à¦¦à¦¿ object à¦¹à§Ÿà§‡ corrupt à¦¥à¦¾à¦•à§‡, à¦­à§‡à¦¤à¦° à¦¥à§‡à¦•à§‡ status à¦¬à§‡à¦° à¦•à¦°à§‹
+       
         status:
           typeof book.status === "object"
             ? (book.status?.status ?? "Pending Approval")
             : (book.status ?? "Pending Approval"),
       }));
     } else if (typeof fetchedBooks === "object") {
-      // à§¨. à¦¡à¦¾à¦Ÿà¦¾ à¦¯à¦¦à¦¿ à¦•à§‹à¦¨à§‹ object wrapper à¦à¦° à¦­à§‡à¦¤à¦°à§‡ à¦†à¦¸à§‡
+  
 
       if (fetchedBooks.books && Array.isArray(fetchedBooks.books)) {
         sanitizedBooks = fetchedBooks.books.map((book) => ({
@@ -54,7 +54,7 @@ export default async function ManageInventoryPage() {
         fetchedBooks.result &&
         Array.isArray(fetchedBooks.result)
       ) {
-        // Express à¦¥à§‡à¦•à§‡ { success: true, result: [...] } à¦†à¦¸à¦¤à§‡ à¦ªà¦¾à¦°à§‡
+        
         sanitizedBooks = fetchedBooks.result.map((book) => ({
           ...book,
           status:
@@ -63,7 +63,7 @@ export default async function ManageInventoryPage() {
               : (book.status ?? "Pending Approval"),
         }));
       } else if (fetchedBooks.title) {
-        // à§©. à¦¯à¦¦à¦¿ à¦¸à¦°à¦¾à¦¸à¦°à¦¿ à¦à¦•à¦Ÿà¦¿ single book object à¦†à¦¸à§‡
+        
         sanitizedBooks = [
           {
             ...fetchedBooks,
@@ -78,7 +78,7 @@ export default async function ManageInventoryPage() {
         typeof fetchedBooks.data === "object" &&
         fetchedBooks.data.title
       ) {
-        // à§ª. à¦¯à¦¦à¦¿ data à¦à¦° à¦­à¦¿à¦¤à¦°à§‡ single book object à¦¥à¦¾à¦•à§‡
+       
         sanitizedBooks = [
           {
             ...fetchedBooks.data,
@@ -94,13 +94,12 @@ export default async function ManageInventoryPage() {
 
   console.log("ðŸ“Š Cleaned Sanitized Books Array:", sanitizedBooks);
 
-  // à¦¡à¦¾à¦Ÿà¦¾ à¦­à§à¦¯à¦¾à¦²à¦¿à¦¡à§‡à¦¶à¦¨ à¦šà§‡à¦•
   const hasBooks =
     Array.isArray(sanitizedBooks) && sanitizedBooks.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-      {/* à¦¹à§‡à¦¡à¦¾à¦° à¦¸à§‡à¦•à¦¶à¦¨ */}
+     
       <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight mb-1 flex items-center gap-2">

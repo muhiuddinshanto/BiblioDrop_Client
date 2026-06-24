@@ -6,7 +6,7 @@ import { FaStar } from "react-icons/fa6";
 export default function BookCard({ book }) {
   const { title, author, category, price, image, rating, reviews, badge } = book;
 
-  // ব্যাকআপ ইমেজ (যদি কোনো কারণে এপিআই থেকে ইমেজ না আসে বা ব্রোকেন হয়)
+
   const fallbackImage = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=500";
 
   return (

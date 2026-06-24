@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 async function fetchPlatformCatalog() {
   try {
-    // ডাটাবেজ বা ব্যাকএন্ড থেকে সব বই নিয়ে আসার কোড:
+
     const res = await getBooks();
     return res || [];
   } catch (error) {

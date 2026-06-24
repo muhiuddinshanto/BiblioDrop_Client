@@ -16,7 +16,7 @@ const CATEGORIES = [
 ];
 
 export default function BookForm({ onSubmit, initialData = null, isSubmitting = false }) {
-  // à¦¡à¦¿à¦«à¦²à§à¦Ÿ à¦¬à§à¦²à§à¦¯à¦¾à¦™à§à¦• à¦¸à§à¦Ÿà§‡à¦Ÿà§‡à¦° à¦…à¦¬à¦œà§‡à¦•à§à¦Ÿ
+
   const defaultFields = {
     title: "",
     author: "",
@@ -29,7 +29,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     title: initialData?.title || "",
     author: initialData?.author || "",
     description: initialData?.description || "",
-    price: initialData?.price || "", 
+    price: initialData?.price || "",
     category: initialData?.category || "",
   });
 
@@ -37,13 +37,13 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // à¦‡à¦¨à¦ªà§à¦Ÿ à¦šà§‡à¦žà§à¦œ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // à¦‡à¦®à§‡à¦œ à¦¸à¦¿à¦²à§‡à¦•à§à¦Ÿ à¦à¦¬à¦‚ à¦ªà§à¦°à¦¿à¦­à¦¿à¦‰ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,9 +52,9 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     }
   };
 
-  // imgBB-à¦¤à§‡ à¦‡à¦®à§‡à¦œ à¦†à¦ªà¦²à§‹à¦¡ à¦•à¦°à¦¾à¦° à¦®à§‡à¦‡à¦¨ à¦²à¦œà¦¿à¦•
+
   const uploadToImgBB = async (file) => {
-    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
     if (!apiKey) {
       console.error("imgBB API Key is missing!");
       toast.error("Image upload failed: API key not configured.");
@@ -80,10 +80,10 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     }
   };
 
-  // à¦«à¦°à§à¦® à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦¹à§à¦¯à¦¾à¦¨à§à¦¡à¦²à¦¾à¦°
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formTarget = e.target; // à¦«à¦°à§à¦® à¦à¦²à¦¿à¦®à§‡à¦¨à§à¦Ÿ à¦°à§‡à¦«à¦¾à¦°à§‡à¦¨à§à¦¸ à¦°à¦¾à¦–à¦¾ à¦¹à¦²à§‹ à¦°à¦¿à¦¸à§‡à¦Ÿ à¦•à¦°à¦¾à¦° à¦œà¦¨à§à¦¯
+    const formTarget = e.target; // à¦«à¦°à§à¦® 
     setUploadingImage(true);
 
     let finalImageUrl = imagePreview;
@@ -108,20 +108,20 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
     setUploadingImage(false);
 
     try {
-      // à¦®à§‡à¦‡à¦¨ à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦«à¦¾à¦‚à¦¶à¦¨à§‡ à¦¡à¦¾à¦Ÿà¦¾ à¦ªà¦¾à¦ à¦¾à¦¨à§‹ à¦à¦¬à¦‚ à¦à¦° à¦°à§‡à¦¸à¦ªà¦¨à§à¦¸à§‡à¦° à¦œà¦¨à§à¦¯ à¦…à¦ªà§‡à¦•à§à¦·à¦¾ à¦•à¦°à¦¾
+
       await onSubmit({
         ...formData,
-        price: Number(formData.price), 
+        price: Number(formData.price),
         image: finalImageUrl,
-        status: "Pending Approval", 
+        status: "Pending Approval",
       });
 
-      // ðŸ’¡ à¦¸à¦«à¦²à¦­à¦¾à¦¬à§‡ à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦¹à¦“à§Ÿà¦¾à¦° à¦ªà¦° à¦¯à¦¦à¦¿ à¦à¦Ÿà¦¿ à¦¨à¦¤à§à¦¨ à¦à¦¨à§à¦Ÿà§à¦°à¦¿ à¦¹à§Ÿ (initialData à¦¨à¦¾ à¦¥à¦¾à¦•à§‡), à¦¤à¦¬à§‡ à¦«à¦¿à¦²à§à¦¡ à¦•à§à¦²à¦¿à§Ÿà¦¾à¦° à¦¹à¦¬à§‡
+
       if (!initialData) {
-        setFormData(defaultFields); // à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦«à¦¿à¦²à§à¦¡ à¦¸à§à¦Ÿà§‡à¦Ÿ à¦°à¦¿à¦¸à§‡à¦Ÿ
-        setImageFile(null); // à¦«à¦¾à¦‡à¦² à¦¸à§à¦Ÿà§‡à¦Ÿ à¦°à¦¿à¦¸à§‡à¦Ÿ
-        setImagePreview(null); // à¦‡à¦®à§‡à¦œ à¦ªà§à¦°à¦¿à¦­à¦¿à¦‰ à¦¬à¦•à§à¦¸ à¦°à¦¿à¦¸à§‡à¦Ÿ
-        formTarget.reset(); // HTML à¦¡à¦® à¦‡à¦¨à¦ªà§à¦Ÿ à¦°à¦¿à¦¸à§‡à¦Ÿ (à¦«à¦¾à¦‡à¦² à¦¸à¦¿à¦²à§‡à¦•à§à¦Ÿà¦°à§‡à¦° à¦­à§‡à¦¤à¦°à§‡à¦° à¦­à§à¦¯à¦¾à¦²à§ à¦•à§à¦²à¦¿à¦¨à§‡à¦° à¦œà¦¨à§à¦¯)
+        setFormData(defaultFields);
+        setImageFile(null);
+        setImagePreview(null);
+        formTarget.reset();
       }
     } catch (error) {
       console.error("Submission handler error:", error);
@@ -130,8 +130,8 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
 
   return (
     <form onSubmit={handleSubmit} className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 p-6 md:p-8 shadow-sm space-y-6">
-      
-      {/* à¦¦à§à¦‡ à¦•à¦²à¦¾à¦®à§‡à¦° à¦—à§à¦°à¦¿à¦¡ (Title & Author) */}
+
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
           <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Book Title</label>
@@ -160,7 +160,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
       </div>
 
-      {/* dua à¦•à¦²à¦¾à¦®à§‡à¦° à¦—à§à¦°à¦¿à¦¡ (Category & Price) */}
+      {/* (Category & Price) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
           <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Category</label>
@@ -179,7 +179,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Book Price ($)</label>
+          <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Delivery Fee ($)</label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
               <MdAttachMoney />
@@ -217,8 +217,8 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
       <div className="space-y-1.5">
         <label className="text-xs font-bold uppercase tracking-wider text-[#45474c] dark:text-slate-400">Book Cover Image</label>
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center border border-dashed border-slate-200 dark:border-slate-700 p-4 rounded-xl">
-          
-          {/* à¦ªà§à¦°à¦¿à¦­à¦¿à¦‰ à¦¬à¦•à§à¦¸ */}
+
+
           <div className="sm:col-span-3 flex justify-center bg-slate-50 dark:bg-slate-800 rounded-lg p-2 h-28 border border-slate-100 dark:border-slate-700 overflow-hidden">
             {imagePreview ? (
               <img src={imagePreview} alt="Cover Preview" className="h-full object-contain rounded shadow-sm" />
@@ -230,7 +230,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
             )}
           </div>
 
-          {/* à¦«à¦¾à¦‡à¦² à¦†à¦ªà¦²à§‹à¦¡à¦¾à¦° à¦à¦°à¦¿à¦¯à¦¼à¦¾ */}
+
           <div className="sm:col-span-9 relative w-full">
             <input
               type="file"
@@ -251,7 +251,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </div>
       </div>
 
-      {/* à¦‡à¦¨à¦«à§‹ à¦¨à§‹à¦Ÿ */}
+
       <div className="bg-amber-50/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/50 rounded-xl p-4 flex items-start gap-3">
         <MdHourglassEmpty className="text-lg text-[#775a19] mt-0.5 flex-shrink-0" />
         <p className="text-xs text-[#775a19] font-medium leading-relaxed">
@@ -259,7 +259,7 @@ export default function BookForm({ onSubmit, initialData = null, isSubmitting = 
         </p>
       </div>
 
-      {/* à¦¸à¦¾à¦¬à¦®à¦¿à¦Ÿ à¦¬à¦¾à¦Ÿà¦¨ */}
+
       <button
         type="submit"
         disabled={isSubmitting || uploadingImage}

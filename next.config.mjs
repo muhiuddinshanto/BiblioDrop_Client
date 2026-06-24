@@ -4,7 +4,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**', // এটি যেকোনো ডোমেইনের ইমেজকে ওয়ান-টাইম পারমিশন দিয়ে দেবে
+        hostname: '**', 
+        
       },
     ],
   },

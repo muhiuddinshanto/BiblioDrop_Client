@@ -9,23 +9,30 @@ import { MdCheckCircle, MdReceiptLong, MdArrowForward, MdHome } from "react-icon
 export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: isSessionLoading } = authClient.useSession();
   const [details, setDetails] = useState(null);
-  const [loading, setLoading] = useState(Boolean(sessionId));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!sessionId) return;
-    if (!session) return;
+    // সেশন অথবা সেশন আইডি যেকোনো একটা মিসিং থাকলে রিকোয়েস্ট আটকাবে
+    if (!sessionId || !session?.session?.token) {
+      // যদি সেশন লোড হওয়া শেষ হয়ে যায় কিন্তু তাও টোকেন না থাকে, তখন লোডিং ফলস হবে
+      if (!isSessionLoading && !session) {
+        setLoading(false);
+      }
+      return;
+    }
 
     const fetchSession = async () => {
       try {
-        const token = session?.session?.token;
+        setLoading(true);
+        const token = session.session.token;
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/checkout-session/${sessionId}`,
           { headers: { authorization: `Bearer ${token}` } }
         );
 
-        // âœ… HTML response à¦à¦²à§‡ à¦¯à§‡à¦¨ à¦«à§à¦°à¦¨à§à¦Ÿà¦à¦¨à§à¦¡ crash à¦¨à¦¾ à¦•à¦°à§‡, à¦¤à¦¾à¦° à¦œà¦¨à§à¦¯ à¦•à¦¨à§à¦Ÿà§‡à¦¨à§à¦Ÿ-à¦Ÿà¦¾à¦‡à¦ª à¦šà§‡à¦•
+        // রেসপন্স টাইপ চেক (JSON কিনা)
         const contentType = res.headers.get("content-type");
         if (!contentType?.includes("application/json")) {
           console.error("Non-JSON response received:", res.status);
@@ -42,14 +49,14 @@ export default function SuccessPage() {
     };
 
     fetchSession();
-  }, [sessionId, session]);
+  }, [sessionId, session, isSessionLoading]);
 
-  // à¦à¦ªà¦¿à¦†à¦‡ à¦¡à¦¾à¦Ÿà¦¾ à¦²à§‹à¦¡ à¦¹à¦“à§Ÿà¦¾à¦° à¦†à¦—à§‡ à¦¬à¦¾ à¦«à§‡à¦‡à¦² à¦•à¦°à¦²à§‡ à¦«à¦²à¦¬à§à¦¯à¦¾à¦• à¦¡à¦¾à¦Ÿà¦¾ à¦…à¦¬à¦œà§‡à¦•à§à¦Ÿ
+  // ফলব্যাক ডাটা অবজেক্ট
   const transactionDetails = details || {
     orderId: "Processing...",
-    amount: "â€”",
+    amount: "—",
     paymentMethod: "Stripe / Card",
-    title: "â€”",
+    title: "—",
     date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   };
 
@@ -58,7 +65,7 @@ export default function SuccessPage() {
 
       <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 rounded-3xl p-8 shadow-sm text-center space-y-6">
 
-        {/* à¦¸à¦¾à¦•à¦¸à§‡à¦¸ à¦šà§‡à¦• à¦†à¦‡à¦•à¦¨ */}
+        {/* সাকসেস চেক আইকন */}
         <div className="flex justify-center">
           <div className="relative">
             <div className="absolute inset-0 bg-emerald-100 rounded-full scale-125 animate-ping opacity-20"></div>
@@ -68,7 +75,7 @@ export default function SuccessPage() {
           </div>
         </div>
 
-        {/* à¦¹à§‡à¦¡à¦¿à¦‚ à¦“ à¦¸à¦¾à¦¬à¦Ÿà¦¾à¦‡à¦Ÿà§‡à¦² */}
+        {/* হেডিং ও সাবটাইটেল */}
         <div className="space-y-1.5">
           <h1 className="text-2xl font-bold font-serif text-[#040d1b] dark:text-slate-100 tracking-tight">
             Payment Successful!
@@ -78,7 +85,7 @@ export default function SuccessPage() {
           </p>
         </div>
 
-        {/* à¦…à¦°à§à¦¡à¦¾à¦° à¦¸à¦¾à¦®à¦¾à¦°à¦¿ à¦•à¦¾à¦°à§à¦¡ */}
+        {/* অর্ডার সামারি কার্ড */}
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-left space-y-3 dark:border-slate-800 dark:bg-slate-950">
           <div className="flex items-center gap-1.5 border-b border-slate-200/60 pb-2 text-[#040d1b] dark:text-slate-100 font-bold text-xs uppercase tracking-wider">
             <MdReceiptLong className="text-base text-slate-400" />
@@ -118,7 +125,6 @@ export default function SuccessPage() {
           )}
         </div>
 
-        {/* à¦¨à§‡à¦­à¦¿à¦—à§‡à¦¶à¦¨ à¦¬à¦¾à¦Ÿà¦¨ à¦—à§à¦°à¦¿à¦¡ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <Link
             href="/dashboard/user"
@@ -137,7 +143,7 @@ export default function SuccessPage() {
 
       </div>
 
-      {/* à¦«à§à¦Ÿà¦¾à¦° à¦¸à¦¾à¦ªà§‹à¦°à§à¦Ÿ à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ */}
+      {/* ফুটার সাপোর্ট টেক্সট */}
       <p className="text-[11px] text-slate-400 mt-6">
         Having trouble? Contact our support at{" "}
         <span className="text-[#775a19] font-semibold underline cursor-pointer">
@@ -148,4 +154,3 @@ export default function SuccessPage() {
     </div>
   );
 }
-

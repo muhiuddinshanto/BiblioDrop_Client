@@ -2,23 +2,24 @@
 
 import { orderBooks } from '@/lib/actions/order';
 import { wishlistCreate } from '@/lib/actions/wishlist';
-import { bookDelete, bookDetailsUpdate, booksUpdate } from '@/lib/actions/books'; 
+import { bookDelete, bookDetailsUpdate, booksUpdate } from '@/lib/actions/books';
 import { authClient } from '@/lib/auth-client';
 
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   FaStar, FaTruckMoving, FaHeart, FaPenToSquare, FaTrashCan, FaXmark, FaRegCommentDots
 } from 'react-icons/fa6';
-import StatusToggleButton from './StatusToggleButton'; 
+import StatusToggleButton from './StatusToggleButton';
 import toast from 'react-hot-toast';
-import { purchaseChecker } from '@/lib/api/order';
+
 import { reviewSubmit } from '@/lib/actions/reviews';
+import { DeliveryRequestChecker } from '@/lib/api/order';
 
 export default function BookDetailsContent({ book: initialBook, reviewsData = [], isLoadingReviews = false }) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  
+
   // 💡 হাইড্রেশন এরর চিরতরে ফিক্স করার জন্য মাউন্টেড স্টেট
   const [isMounted, setIsMounted] = useState(false);
 
@@ -29,10 +30,10 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
   const [book, setBook] = useState(initialBook);
   const reviewsList = Array.isArray(reviewsData?.data) ? reviewsData.data : [];
   // 👈 এই লগটি সাময়িকভাবে যোগ করুন ডাটার চেহারা দেখার জন্য:
-console.log("REVIEWS DATA RECEIVED:", reviewsData);
+  console.log("REVIEWS DATA RECEIVED:", reviewsData);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [hasPurchased, setHasPurchased] = useState(false); 
+  const [hasDeliveryRequestd, setHasDeliveryRequestd] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
@@ -40,16 +41,16 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
   useEffect(() => {
     if (!session?.user || !book?._id) return;
 
-    const checkPurchase = async () => {
+    const checkDeliveryRequest = async () => {
       try {
-        const data = await purchaseChecker(book._id);
-        setHasPurchased(!!data?.hasPurchased);
+        const data = await DeliveryRequestChecker(book._id);
+        setHasDeliveryRequestd(!!data?.hasDeliveryRequestd);
       } catch {
-        setHasPurchased(false);
+        setHasDeliveryRequestd(false);
       }
     };
 
-    checkPurchase();
+    checkDeliveryRequest();
   }, [session, book?._id]);
 
   const handleReviewSubmit = async () => {
@@ -70,7 +71,7 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
       if (data?.success) {
         toast.success("Review submitted successfully! 🎉");
         setReviewForm({ rating: 5, comment: "" });
-        router.refresh(); 
+        router.refresh();
       } else {
         toast.error(data?.message || "Review submission failed.");
       }
@@ -160,10 +161,10 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
     if (!confirmed) return;
     setIsProcessing(true);
     try {
-      const data = await bookDelete(_id); 
+      const data = await bookDelete(_id);
       if (data?.success) {
         toast("Book removed from catalog! 💥");
-        router.refresh(); 
+        router.refresh();
         router.push("/dashboard/librarian/inventory");
       } else {
         toast.error(data?.message || "Failed to delete from server.");
@@ -185,7 +186,7 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
     try {
       const res = await orderBooks({ bookId: _id, totalPrice: price });
       if (res?.success && res?.url) {
-        window.location.href = res.url; 
+        window.location.href = res.url;
       } else {
         toast.error(res?.message || "Failed to process order. Please try again.");
       }
@@ -211,7 +212,7 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
       };
 
       const res = await wishlistCreate(_id, wishlistPayload);
-      
+
       if (res?.success) {
         toast.success("Added to wishlist! 🎉");
         router.refresh();
@@ -230,7 +231,7 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
     <section className="w-full bg-white dark:bg-slate-950 px-6 py-12 lg:px-8 relative">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 items-start">
-          
+
           {/* ইমেজ সেকশন */}
           <div className="md:col-span-5 flex flex-col items-center bg-slate-50 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 dark:bg-slate-900">
             <div className="relative w-full max-w-[320px] aspect-[3/4] shadow-2xl rounded-lg overflow-hidden">
@@ -292,27 +293,26 @@ console.log("REVIEWS DATA RECEIVED:", reviewsData);
           {/* হাইড্রেশন সেফটি কন্ডিশনাল ইউআই ব্লক */}
           {isMounted && (
             <>
-              {session && hasPurchased && !isLibrarianOwner && (
-                <div className="mt-6 p-5 rounded-2xl bg-amber-50/60 border border-amber-200 shadow-sm dark:border-amber-900/60 dark:bg-amber-950/20">
-                  <p className="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-500 mb-3">✍️ Write your review</p>
-                  <div className="flex gap-1 mb-3">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <button type="button" key={star} onClick={() => setReviewForm(p => ({ ...p, rating: star }))}>
-                        <FaStar className={star <= reviewForm.rating ? "text-amber-500 fill-current text-xl" : "text-slate-200 text-xl"} />
-                      </button>
-                    ))}
-                  </div>
-                  <textarea value={reviewForm.comment} onChange={e => setReviewForm(p => ({ ...p, comment: e.target.value }))} placeholder="আপনার মতামত লিখুন..." className="w-full border border-slate-200 bg-white dark:bg-slate-900 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-300 dark:border-slate-700 dark:text-slate-100" rows={3} />
-                  <button onClick={handleReviewSubmit} disabled={isSubmittingReview} className="mt-2 bg-[#0F172A] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#1E293B] transition disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900">
-                    {isSubmittingReview ? "Submitting..." : "Leave a review"}
-                  </button>
+              {session && hasDeliveryRequestd && !isLibrarianOwner && (
+              <div className="mt-6 p-5 rounded-2xl bg-amber-50/60 border border-amber-200 shadow-sm dark:border-amber-900/60 dark:bg-amber-950/20">
+                <p className="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-500 mb-3">✍️ Write your review</p>
+                <div className="flex gap-1 mb-3">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button type="button" key={star} onClick={() => setReviewForm(p => ({ ...p, rating: star }))}>
+                      <FaStar className={star <= reviewForm.rating ? "text-amber-500 fill-current text-xl" : "text-slate-200 text-xl"} />
+                    </button>
+                  ))}
                 </div>
+                <textarea value={reviewForm.comment} onChange={e => setReviewForm(p => ({ ...p, comment: e.target.value }))} placeholder="আপনার মতামত লিখুন..." className="w-full border border-slate-200 bg-white dark:bg-slate-900 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-300 dark:border-slate-700 dark:text-slate-100" rows={3} />
+                <button onClick={handleReviewSubmit} disabled={isSubmittingReview} className="mt-2 bg-[#0F172A] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#1E293B] transition disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900">
+                  {isSubmittingReview ? "Submitting..." : "Leave a review"}
+                </button>
+              </div>
               )}
-
-              {session && !hasPurchased && !isLibrarianOwner && (
-                <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center dark:border-slate-800 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">🔒 Only buyers of this book can leave reviews.</p>
-                </div>
+              {session && !hasDeliveryRequestd && !isLibrarianOwner && (
+              <div className="mt-6 p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center dark:border-slate-800 dark:bg-slate-900">
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">🔒 Only buyers of this book can leave reviews.</p>
+              </div>
               )}
 
               {session && isLibrarianOwner && (

@@ -29,31 +29,40 @@ export async function POST(request) {
         throw new Error("Missing checkout metadata");
       }
 
+      // 🛑 ডুপ্লিকেট আটকানোর চাবিকাঠি: আগে চেক করুন এই stripeSessionId অলরেডি আছে কিনা
+      const existingOrder = await ordersCollection.findOne({ stripeSessionId: session.id });
+      
+      if (existingOrder) {
+        console.log("⚠️ This order already processed. Skipping duplicate insert.");
+        return Response.json({ received: true, message: "Duplicate skipped" });
+      }
+
       const orderData = {
-        BookId: session.metadata.bookid,
-        title: session.metadata.title,
-        author: session.metadata.author,
-        category: session.metadata.category,
+        BookId: session.metadata.bookid || "",
+        title: session.metadata.title || "Unknown Title",
+        author: session.metadata.author || "Unknown Author",
+        category: session.metadata.category || "General",
         price: Number.parseFloat(session.metadata.price || "0"),
-        image: session.metadata.image,
-        userId: session.metadata.userid,
+        image: session.metadata.image || "",
+        userId: session.metadata.userid || "",
         PaymentStatus: "completed",
-        status: "Pending",
-        authorId: session.metadata.authorid,
+        authorId: session.metadata.authorid || "",
         stripeSessionId: session.id,
+        status: "Pending Approval", // 🎯 স্কিমা ঠিক থাকলে এটি আসবেই
         date: new Date(),
       };
 
-      await ordersCollection.updateOne(
-        { stripeSessionId: session.id },
-        { $setOnInsert: orderData },
-        { upsert: true }
-      );
+      // ফ্রেশ ইনসার্ট
+      await ordersCollection.insertOne(orderData);
+      console.log("✅ Order successfully saved to database with status!");
+
     } catch (error) {
       console.error("Webhook order save failed:", error);
+      // এখানেও এরর হলে স্ট্রাইপকে রেসপন্স দিন যেন সে বারবার রিকোয়েস্ট না পাঠায়
       return Response.json({ received: false, error: error.message }, { status: 500 });
     }
   }
 
+  // স্ট্রাইপকে জানান যে আপনার এপিআই সফলভাবে ডাটা রিসিভ করেছে
   return Response.json({ received: true });
 }
