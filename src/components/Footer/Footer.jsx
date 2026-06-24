@@ -1,116 +1,253 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-    FaGithub, 
-    FaLinkedinIn, 
-    FaXTwitter, 
-    FaEnvelope, 
-    FaArrowRight, 
-    FaLayerGroup 
+import { motion } from 'framer-motion';
+import {
+    FaGithub,
+    FaLinkedinIn,
+    FaXTwitter,
+    FaEnvelope,
+    FaArrowRight,
+    FaBookOpen,
+    FaCircleCheck,
 } from 'react-icons/fa6';
 
-/**
- * =========================================================================
- * @COMPONENT: Footer (Clean & Professional Tech-Vibe)
- * =========================================================================
- * Features:
- * 1. Fully responsive multi-column grid layout using Tailwind CSS.
- * 2. Integrated Newsletter input with active states matching your color palette.
- * 3. Dynamic year rendering and modern typography.
- */
+const NAV = [
+    {
+        label: "Discover",
+        links: [
+            { name: "All Books", href: "/books" },
+            { name: "Research", href: "/books?category=Science" },
+            { name: "New Arrivals", href: "/books?sort=new" },
+            { name: "Curators", href: "/librarians" },
+        ],
+    },
+    {
+        label: "Company",
+        links: [
+            { name: "About Us", href: "/about" },
+            { name: "Terms of Service", href: "/terms" },
+            { name: "Privacy Policy", href: "/privacy" },
+            { name: "Contact", href: "/contact" },
+        ],
+    },
+];
+
+const SOCIALS = [
+    { icon: FaGithub, href: "https://github.com", label: "GitHub" },
+    { icon: FaLinkedinIn, href: "https://linkedin.com", label: "LinkedIn" },
+    { icon: FaXTwitter, href: "https://x.com", label: "X / Twitter" },
+];
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 18 },
+    visible: (i = 0) => ({
+        opacity: 1,
+        y: 0,
+        transition: { delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+    const [email, setEmail] = useState("");
+    const [subscribed, setSubscribed] = useState(false);
+    const [focused, setFocused] = useState(false);
 
     const handleSubscribe = (e) => {
         e.preventDefault();
-        // Subscribe logic here
+        if (!email) return;
+        setSubscribed(true);
+        setEmail("");
+        setTimeout(() => setSubscribed(false), 4000);
     };
 
     return (
-        <footer className="w-full bg-[#1A2332] text-slate-400 pt-16 pb-8 px-6 lg:px-8 border-t border-slate-800">
-            <div className="mx-auto max-w-6xl">
-                
-                {/* 🎛️ Top Grid: Brand, Links & Newsletter */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
-                    
-                    {/* Column 1: Brand Info (4 Columns) */}
-                    <div className="md:col-span-4 flex flex-col gap-4">
-                        <Link href="/" className="flex items-center gap-2 text-white font-black text-xl tracking-tight">
-                            <div className="h-8 w-8 rounded-lg bg-[#C5A059] flex items-center justify-center text-[#1A2332] dark:text-slate-100">
-                                <FaLayerGroup className="text-sm" />
+        <footer className="relative w-full overflow-hidden bg-slate-50 dark:bg-[#080d16] text-slate-600 dark:text-slate-400 border-t border-slate-200/60 dark:border-none transition-colors duration-300">
+
+            {/* Ambient glow — top */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[1px]"
+                style={{
+                    background: "linear-gradient(90deg, transparent 0%, #D4AF37 50%, transparent 100%)",
+                    opacity: 0.35,
+                }}
+            />
+
+            {/* Radial glow behind logo */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute -top-32 left-0 w-[500px] h-[400px] opacity-[0.06] dark:opacity-[0.04]"
+                style={{
+                    background: "radial-gradient(ellipse at 20% 0%, #D4AF37 0%, transparent 70%)",
+                }}
+            />
+
+            <div className="relative mx-auto max-w-6xl px-6 lg:px-8 pt-16 pb-8">
+
+                {/* ── Top Section ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-14 border-b border-slate-200 dark:border-white/[0.05]">
+
+                    {/* Brand */}
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        custom={0}
+                        className="lg:col-span-4 flex flex-col gap-5"
+                    >
+                        <Link
+                            href="/"
+                            className="flex items-center gap-2.5 w-fit group"
+                        >
+                            <div className="h-9 w-9 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center transition-colors duration-300 group-hover:bg-[#D4AF37]/20">
+                                <FaBookOpen className="text-[#D4AF37] text-sm" />
                             </div>
-                            BiblioDrop<span className="text-[#C5A059]">.</span>
+                            <span className="text-slate-900 dark:text-white font-black text-xl tracking-tight font-sans">
+                                Biblio<span className="text-[#D4AF37]">Drop</span>
+                            </span>
                         </Link>
-                        <p className="text-xs leading-relaxed max-w-sm font-medium">
-                            A premium decentralized archival delivery network. Bridging world-class literature with scholarly communities through secure local distribution.
+
+                        <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-500 max-w-[280px]">
+                            A premium archival delivery network — bridging world-class literature with scholarly communities.
                         </p>
-                    </div>
 
-                    {/* Column 2: Quick Navigation (2 Columns) */}
-                    <div className="md:col-span-2 flex flex-col gap-3">
-                        <h4 className="text-xs font-black tracking-widest uppercase text-white">Archive</h4>
-                        <ul className="flex flex-col gap-2.5 text-xs font-semibold">
-                            <li><Link href="/books" className="hover:text-[#C5A059] transition-colors">All Books</Link></li>
-                            <li><Link href="/books?category=Science" className="hover:text-[#C5A059] transition-colors">Research</Link></li>
-                            <li><Link href="/librarians" className="hover:text-[#C5A059] transition-colors">Our Curators</Link></li>
-                        </ul>
-                    </div>
+                        {/* Social icons */}
+                        <div className="flex items-center gap-2 mt-1">
+                            {SOCIALS.map(({ icon: Icon, href, label }) => (
+                                <motion.a
+                                    key={label}
+                                    href={href}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    aria-label={label}
+                                    whileHover={{ y: -2, color: "#D4AF37" }}
+                                    transition={{ duration: 0.18 }}
+                                    className="h-8 w-8 rounded-lg border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-white/[0.03] flex items-center justify-center text-slate-400 dark:text-slate-500 hover:border-[#D4AF37]/30 dark:hover:border-[#D4AF37]/30 transition-colors duration-200 text-sm shadow-sm dark:shadow-none"
+                                >
+                                    <Icon />
+                                </motion.a>
+                            ))}
+                        </div>
+                    </motion.div>
 
-                    {/* Column 3: Platform Links (2 Columns) */}
-                    <div className="md:col-span-2 flex flex-col gap-3">
-                        <h4 className="text-xs font-black tracking-widest uppercase text-white">Company</h4>
-                        <ul className="flex flex-col gap-2.5 text-xs font-semibold">
-                            <li><Link href="/about" className="hover:text-[#C5A059] transition-colors">About Us</Link></li>
-                            <li><Link href="/terms" className="hover:text-[#C5A059] transition-colors">Terms of Service</Link></li>
-                            <li><Link href="/privacy" className="hover:text-[#C5A059] transition-colors">Privacy Policy</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Column 4: Newsletter Subscription (4 Columns) */}
-                    <div className="md:col-span-4 flex flex-col gap-3">
-                        <h4 className="text-xs font-black tracking-widest uppercase text-white">Join The Chronicle</h4>
-                        <p className="text-xs font-medium">Get notified instantly about new manuscript drops and curated arrivals.</p>
-                        
-                        <form onSubmit={handleSubscribe} className="mt-2 flex items-center gap-2 bg-slate-900 border border-slate-800 p-1.5 rounded-xl focus-within:border-[#C5A059] transition-colors">
-                            <div className="flex items-center gap-2 pl-3 flex-1">
-                                <FaEnvelope className="text-slate-500 dark:text-slate-400 text-sm" />
-                                <input 
-                                    type="email" 
-                                    placeholder="Enter institutional email..." 
-                                    className="w-full bg-transparent text-xs font-medium text-white outline-none placeholder-slate-600"
-                                    required
-                                />
-                            </div>
-                            <button 
-                                type="submit" 
-                                className="bg-[#C5A059] hover:bg-white dark:bg-slate-900 text-[#1A2332] dark:text-slate-100 font-bold text-xs px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 group"
+                    {/* Nav columns */}
+                    <div className="lg:col-span-4 grid grid-cols-2 gap-8">
+                        {NAV.map(({ label, links }, colIdx) => (
+                            <motion.div
+                                key={label}
+                                variants={fadeUp}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                custom={colIdx + 1}
+                                className="flex flex-col gap-4"
                             >
-                                Subscribe <FaArrowRight className="text-[10px] group-hover:translate-x-0.5 transition-transform" />
-                            </button>
-                        </form>
+                                <h4 className="text-[10px] font-black uppercase tracking-[.2em] text-slate-800 dark:text-white/80">
+                                    {label}
+                                </h4>
+                                <ul className="flex flex-col gap-2.5">
+                                    {links.map(({ name, href }) => (
+                                        <li key={name}>
+                                            <Link
+                                                href={href}
+                                                className="text-[13px] font-medium text-slate-500 dark:text-slate-500 hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-colors duration-200 flex items-center gap-1 group/link"
+                                            >
+                                                <span className="h-px w-0 bg-[#D4AF37] group-hover/link:w-3 transition-all duration-300 inline-block" />
+                                                {name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </motion.div>
+                        ))}
                     </div>
+
+                    {/* Newsletter */}
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        custom={3}
+                        className="lg:col-span-4 flex flex-col gap-4"
+                    >
+                        <div>
+                            <h4 className="text-[10px] font-black uppercase tracking-[.2em] text-slate-800 dark:text-white/80 mb-3">
+                                The Chronicle
+                            </h4>
+                            <p className="text-[13px] text-slate-500 dark:text-slate-500 leading-relaxed">
+                                New manuscript drops & curated arrivals — direct to your inbox.
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubscribe}>
+                            <motion.div
+                                animate={{
+                                    borderColor: subscribed
+                                        ? "rgba(34,197,94,0.4)"
+                                        : focused
+                                        ? "rgba(212,175,55,0.45)"
+                                        : "transparent",
+                                }}
+                                transition={{ duration: 0.25 }}
+                                className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.03] p-1.5 shadow-sm dark:shadow-none"
+                            >
+                                <div className="flex items-center gap-2 px-2.5 flex-1 min-w-0">
+                                    <FaEnvelope className="text-slate-400 dark:text-slate-600 text-[11px] flex-shrink-0" />
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        onFocus={() => setFocused(true)}
+                                        onBlur={() => setFocused(false)}
+                                        placeholder="your@email.com"
+                                        required
+                                        className="w-full bg-transparent text-[12.5px] font-medium text-slate-800 dark:text-white outline-none placeholder-slate-400 dark:placeholder-slate-700 truncate"
+                                    />
+                                </div>
+
+                                <motion.button
+                                    type="submit"
+                                    whileHover={{ scale: 1.04 }}
+                                    whileTap={{ scale: 0.96 }}
+                                    className="flex-shrink-0 flex items-center gap-1.5 bg-[#D4AF37] hover:bg-[#c9a332] text-[#080d16] font-black text-[11px] tracking-[.06em] uppercase px-3.5 py-2 rounded-lg transition-colors duration-200"
+                                >
+                                    {subscribed ? (
+                                        <>
+                                            <FaCircleCheck className="text-[10px]" />
+                                            Done
+                                        </>
+                                    ) : (
+                                        <>
+                                            Join
+                                            <FaArrowRight className="text-[9px]" />
+                                        </>
+                                    )}
+                                </motion.button>
+                            </motion.div>
+                        </form>
+
+                        {/* Trust note */}
+                        <p className="text-[11px] text-slate-400 dark:text-slate-700 font-medium">
+                            No spam. Unsubscribe anytime.
+                        </p>
+                    </motion.div>
 
                 </div>
 
-                {/* 🔒 Bottom Grid: Copyright & Socials */}
-                <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-[11px] font-semibold tracking-wide uppercase font-mono">
-                        &copy; {currentYear} BiblioDrop Inc. All rights reserved. Built with Scholarly Care.
+                {/* ── Bottom bar ── */}
+                <div className="pt-7 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p className="text-[11px] font-medium text-slate-400 dark:text-slate-700 tracking-wide">
+                        &copy; {currentYear} BiblioDrop Inc. — Built with scholarly care.
                     </p>
-                    
-                    {/* Social Icons */}
-                    <div className="flex items-center gap-4">
-                        <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#C5A059] hover:border-[#C5A059]/40 rounded-lg transition-all text-sm">
-                            <FaGithub />
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="p-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#C5A059] hover:border-[#C5A059]/40 rounded-lg transition-all text-sm">
-                            <FaLinkedinIn />
-                        </a>
-                        <a href="https://x.com" target="_blank" rel="noreferrer" className="p-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#C5A059] hover:border-[#C5A059]/40 rounded-lg transition-all text-sm">
-                            <FaXTwitter />
-                        </a>
+
+                    <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-700">
+                        <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        All systems operational
                     </div>
                 </div>
 

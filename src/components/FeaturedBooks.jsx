@@ -46,7 +46,7 @@ export default async function FeaturedBooks() {
                         </h2>
                         <div className="mt-1.5 h-0.5 w-12 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37]/20 rounded-full" />
                         <p className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                            ডাটাবেস থেকে বাছাইকৃত একদম নতুন প্রকাশিত বইসমূহ
+                            Explore the latest additions to our library.
                         </p>
                     </div>
 
@@ -71,8 +71,7 @@ export default async function FeaturedBooks() {
                 {!error && books.length === 0 && (
                     <div className="text-center py-12 rounded-2xl border border-dashed border-slate-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
                         <p className="text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500">
-                            বর্তমানে কোনো ফিচার্ড বই পাওয়া যায়নি।
-                        </p>
+                            No featured books are currently available.                        </p>
                     </div>
                 )}
 
