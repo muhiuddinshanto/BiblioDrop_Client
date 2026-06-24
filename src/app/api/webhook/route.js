@@ -48,7 +48,7 @@ export async function POST(request) {
         PaymentStatus: "completed",
         authorId: session.metadata.authorid || "",
         stripeSessionId: session.id,
-        status: "Pending Approval", // 🎯 স্কিমা ঠিক থাকলে এটি আসবেই
+        status: "pending", // 🎯 স্কিমা ঠিক থাকলে এটি আসবেই
         date: new Date(),
       };
 

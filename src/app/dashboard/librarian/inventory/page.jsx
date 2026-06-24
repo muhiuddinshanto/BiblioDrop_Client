@@ -92,7 +92,7 @@ export default async function ManageInventoryPage() {
     }
   }
 
-  console.log("ðŸ“Š Cleaned Sanitized Books Array:", sanitizedBooks);
+  console.log(" Cleaned Sanitized Books Array:", sanitizedBooks);
 
   const hasBooks =
     Array.isArray(sanitizedBooks) && sanitizedBooks.length > 0;

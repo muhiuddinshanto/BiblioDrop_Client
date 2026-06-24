@@ -44,7 +44,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
     const checkDeliveryRequest = async () => {
       try {
         const data = await DeliveryRequestChecker(book._id);
-        setHasDeliveryRequestd(!!data?.hasDeliveryRequestd);
+        setHasDeliveryRequestd(!!data?.hasPurchased);
       } catch {
         setHasDeliveryRequestd(false);
       }

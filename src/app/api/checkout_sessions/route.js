@@ -44,7 +44,7 @@ export async function POST(req) {
                 price: (product.price || 0).toString(),
                 image: product.image || "",
                 authorid: product.userId ? product.userId.toString() : "",
-                status: "Pending Approval",  
+                status: "Pending",  
             },
 
             success_url: `${baseUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
