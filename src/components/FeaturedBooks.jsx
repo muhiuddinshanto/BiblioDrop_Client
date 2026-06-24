@@ -2,7 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa6';
 import { getBooks } from '@/lib/api/books';
-import BookCard from './Books/BookCard';
+
+import BookCardHomePage from './Books/BookCardHomePage';
 
 export default async function FeaturedBooks() {
     let books = [];
@@ -68,7 +69,7 @@ export default async function FeaturedBooks() {
 
                         return (
                             <Link href={`/books/${bookId}`} key={bookId} className="block">
-                                <BookCard book={book} />
+                                <BookCardHomePage book={book} />
                             </Link>
                         );
                     })}
