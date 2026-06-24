@@ -2,79 +2,94 @@ import React from 'react';
 import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa6';
 import { getBooks } from '@/lib/api/books';
-
-import BookCardHomePage from './Books/BookCardHomePage';
+import FeaturedBooksSlider from './Books/Featuredbooksslider';
 
 export default async function FeaturedBooks() {
     let books = [];
     let error = null;
 
     try {
-        // ১. API বা ডিরেক্ট ফাংশন থেকে ডাটা ফেচ করা হচ্ছে
         const booksData = await getBooks();
-        
-        // ✨ [FIXED]: rawData-এর বদলে সঠিক ভেরিয়েবল booksData লগ করা হলো
-        console.log("Fetched Books Data:", booksData); 
-
-        // ৩. ডাইনামিক ফিল্টারিং ও স্লাইসিং লজিক (Latest 6 Published Books)
         if (Array.isArray(booksData)) {
             books = booksData
                 .filter(book => book.status === "Published")
-                .slice(0, 6);
+                .slice(0, 6); // স্লাইডারের সৌন্দর্য বাড়াতে ৩টির চেয়ে বেশি বই দেখাতে পারেন
         }
-
     } catch (err) {
-        console.error("Error fetching featured books:", err);
         error = "বইগুলো লোড করতে সমস্যা হচ্ছে। দয়া করে আবার চেষ্টা করুন।";
     }
 
     return (
-        <section className="w-full bg-slate-50/50 dark:bg-slate-950 py-16 px-6 lg:px-8">
-            <div className="mx-auto max-w-6xl">
+        <section className="relative w-full overflow-hidden bg-slate-50/50 dark:bg-[#080d16] py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
+            {/* Subtle background texture */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+                style={{
+                    backgroundImage:
+                        "radial-gradient(circle at 20% 50%, #D4AF37 0%, transparent 50%), radial-gradient(circle at 80% 20%, #D4AF37 0%, transparent 40%)",
+                }}
+            />
 
-                {/* সেকশন হেডার */}
-                <div className="flex items-end justify-between border-b border-slate-100 pb-5 mb-10">
+            <div className="relative mx-auto max-w-6xl">
+                {/* Section header */}
+                <div className="flex items-end justify-between mb-8 sm:mb-12">
                     <div>
-                        <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37]">Explore Our Catalog</span>
-                        <h2 className="mt-1 text-2xl font-black text-[#0F172A] dark:text-slate-100 tracking-tight sm:text-3xl">Featured Books</h2>
-                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">ডাটাবেস থেকে বাছাইকৃত একদম নতুন প্রকাশিত বইসমূহ</p>
+                        <span className="inline-block text-[9px] sm:text-[10px] font-black uppercase tracking-[.22em] text-[#D4AF37] mb-1 sm:mb-2">
+                            Explore Our Catalog
+                        </span>
+                        <h2
+                            className="text-2xl sm:text-3xl font-black tracking-tight text-[#0F172A] dark:text-slate-50 sm:text-4xl"
+                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        >
+                            Featured Books
+                        </h2>
+                        <div className="mt-1.5 h-0.5 w-12 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37]/20 rounded-full" />
+                        <p className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                            ডাটাবেস থেকে বাছাইকৃত একদম নতুন প্রকাশিত বইসমূহ
+                        </p>
                     </div>
+
                     <Link
                         href="/books"
-                        className="group flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0F172A] hover:text-slate-600 dark:text-slate-300 transition"
+                        className="group hidden sm:flex items-center gap-2 text-[11px] font-black uppercase tracking-[.14em]
+                            text-slate-500 dark:text-slate-400
+                            hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-colors duration-200"
                     >
-                        See All Books <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
+                        See All
+                        <FaArrowRight className="text-sm group-hover:translate-x-1.5 transition-transform duration-200" />
                     </Link>
                 </div>
 
-                {/* এরর স্টেট */}
+                {/* Error & Empty States */}
                 {error && (
-                    <div className="text-center py-10 bg-rose-50 rounded-2xl border border-dashed border-rose-200">
-                        <p className="text-sm font-bold text-rose-600">{error}</p>
+                    <div className="text-center py-10 rounded-2xl border border-dashed border-rose-200 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/20 px-4">
+                        <p className="text-xs sm:text-sm font-bold text-rose-500">{error}</p>
                     </div>
                 )}
 
-                {/* এম্পটি বা ফাঁকা স্টেট */}
                 {!error && books.length === 0 && (
-                    <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 shadow-sm">
-                        <p className="text-sm font-bold text-slate-500 dark:text-slate-400">বর্তমানে কোনো ফিচার্ড বই পাওয়া যায়নি।</p>
+                    <div className="text-center py-12 rounded-2xl border border-dashed border-slate-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02]">
+                        <p className="text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500">
+                            বর্তমানে কোনো ফিচার্ড বই পাওয়া যায়নি।
+                        </p>
                     </div>
                 )}
 
-                {/* 🛒 গ্রিড লেআউট (বুক কার্ডস) */}
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-                    {!error && books.map((book) => {
-                        // ✨ [FIXED]: নিরাপদ আইডি এক্সট্রাকশন (MongoDB এবং নরমাল আইডি উভয়ই সাপোর্ট করবে)
-                        const bookId = book._id?.$oid || book._id || book.id;
+                {/* Infinite Slider */}
+                {!error && books.length > 0 && (
+                    <FeaturedBooksSlider books={books} />
+                )}
 
-                        return (
-                            <Link href={`/books/${bookId}`} key={bookId} className="block">
-                                <BookCardHomePage book={book} />
-                            </Link>
-                        );
-                    })}
+                {/* Mobile "See All" */}
+                <div className="mt-8 text-center sm:hidden">
+                    <Link
+                        href="/books"
+                        className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[.14em] text-[#D4AF37]"
+                    >
+                        See All Books <FaArrowRight className="text-xs" />
+                    </Link>
                 </div>
-
             </div>
         </section>
     );
