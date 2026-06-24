@@ -10,7 +10,9 @@ export async function POST(req) {
         const userId = body.userId;
         const BookId = body.BookId;
 
-        const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+        const baseUrl = process.env.NODE_ENV === 'production' 
+            ? "https://bibliodrop.vercel.app" 
+            : "http://localhost:3000";
 
         // 💡 ডেসক্রিপশন খালি স্ট্রিং হওয়া আটকাতে লজিক
         const productDescription = product.description && product.description.trim() !== ""
