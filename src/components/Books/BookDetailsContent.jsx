@@ -352,7 +352,7 @@ export default function BookDetailsContent({ book: initialBook, reviewsData = []
               ))
             ) : (
               <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 dark:bg-slate-900">
-                <p className="text-sm font-bold text-slate-500 dark:text-slate-400">এই The book has not been reviewed yet.</p>
+                <p className="text-sm font-bold text-slate-500 dark:text-slate-400">The book has not been reviewed yet.</p>
               </div>
             )}
           </div>
